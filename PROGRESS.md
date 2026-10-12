@@ -72,7 +72,7 @@ Environment: Unity 6000.4.11f1 (arm64 editor, "Supported" stream; the user chose
 
 ### Known bugs / caveats
 - **The Input System handler switch only applies after an editor or player restart.** It is set by setup and has not been exercised yet, because there is no input code. Player input starts in M1.
-- **The player build rewrites `Assets/Settings/Rendering/LoamlightURP.asset` and `Assets/DefaultVolumeProfile.asset`.** URP fills in shader prefiltering and default volume overrides on the first build. These were committed after the first build; watch for churn on later builds.
+- **The first player build rewrote `Assets/Settings/Rendering/LoamlightURP.asset` and `Assets/DefaultVolumeProfile.asset`.** URP fills in shader prefiltering and default volume overrides. These changes were committed, and a second build left git clean. If a fresh `setup` ever recreates the URP asset, the first build will dirty it again.
 - Capture timing is from a development build. Release-build numbers will be lower; M1 will report both.
 
 ---
