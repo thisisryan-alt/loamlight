@@ -34,6 +34,10 @@ namespace Loamlight.Content
         public string ammo;            // ammo item id consumed by bows
         public float projectileSpeed;
 
+        [Header("Buckets")]
+        [Tooltip("'' = not a bucket, 'empty' scoops liquid, 'water' / 'lava' pours it.")]
+        public string bucket;
+
         [Header("Consumables")]
         public int heal;
         public int restoreMana;

@@ -20,6 +20,7 @@
     { "id": "iron_bar", "result": "iron_bar", "station": "furnace", "ingredients": [ { "item": "iron_ore", "count": 3 } ] },
     { "id": "stone_bricks", "result": "stone_bricks", "station": "furnace", "ingredients": [ { "item": "stone", "count": 2 } ] },
 
+    { "id": "bucket", "result": "bucket", "station": "anvil", "ingredients": [ { "item": "iron_bar", "count": 3 } ] },
     { "id": "iron_pickaxe", "result": "iron_pickaxe", "station": "anvil", "ingredients": [ { "item": "iron_bar", "count": 10 }, { "item": "wood", "count": 3 } ] },
     { "id": "iron_axe", "result": "iron_axe", "station": "anvil", "ingredients": [ { "item": "iron_bar", "count": 8 }, { "item": "wood", "count": 3 } ] }
   ]

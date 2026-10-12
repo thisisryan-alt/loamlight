@@ -3,7 +3,7 @@
   "name": "icons_tiles",
   "frameWidth": 16,
   "frameHeight": 16,
-  "columns": 12,
+  "columns": 15,
   "rows": 1,
   "pixelsPerUnit": 16,
   "pivot": [
@@ -29,7 +29,10 @@
         8,
         9,
         10,
-        11
+        11,
+        12,
+        13,
+        14
       ]
     }
   ],
@@ -56,64 +59,85 @@
       "h": 16
     },
     {
-      "name": "icon_iron_ore",
+      "name": "icon_glowcap",
       "x": 48,
       "y": 0,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_sand",
+      "name": "icon_gravel",
       "x": 64,
       "y": 0,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_stone",
+      "name": "icon_iron_ore",
       "x": 80,
       "y": 0,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_stone_bricks",
+      "name": "icon_obsidian",
       "x": 96,
       "y": 0,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_torch",
+      "name": "icon_sand",
       "x": 112,
       "y": 0,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_wood",
+      "name": "icon_stone",
       "x": 128,
       "y": 0,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_wood_platform",
+      "name": "icon_stone_bricks",
       "x": 144,
       "y": 0,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_stone_brick_wall",
+      "name": "icon_torch",
       "x": 160,
       "y": 0,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_wood_wall",
+      "name": "icon_wood",
       "x": 176,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_wood_platform",
+      "x": 192,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_stone_brick_wall",
+      "x": 208,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_wood_wall",
+      "x": 224,
       "y": 0,
       "w": 16,
       "h": 16

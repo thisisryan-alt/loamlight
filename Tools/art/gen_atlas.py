@@ -167,6 +167,43 @@ def style_bricks(art, rng):
     return rgb, height
 
 
+def style_gravel(art, rng):
+    pal = palette(art)
+    rgb = np.zeros((CELL, CELL, 3))
+    height = np.full((CELL, CELL), 0.25)
+    rgb[...] = pal[1] * 0.85
+    for _ in range(14):                              # pebbles of 2-3 px
+        r = int(rng.integers(1, 3))
+        cy, cx = rng.integers(0, CELL, 2)
+        tone = pal[int(rng.integers(1, 4))]
+        for dy in range(-r, r + 1):
+            for dx in range(-r, r + 1):
+                if dx * dx + dy * dy > r * r + 1:
+                    continue
+                y, x = (cy + dy) % CELL, (cx + dx) % CELL
+                rgb[y, x] = tone * (1.08 if dy < 0 else 0.92)
+                height[y, x] = 0.6 + 0.3 * (1 - (dx * dx + dy * dy) / (r * r + 1))
+    return rgb, height
+
+
+def style_obsidian(art, rng):
+    pal = palette(art)
+    n = value_noise(rng, CELL, 3)
+    rgb = np.array(pal)[np.where(n > 0.65, 3, np.where(n < 0.3, 1, 2))]
+    height = 0.5 + 0.35 * n
+    for _ in range(rng.integers(2, 4)):              # glassy glints
+        y, x = rng.integers(1, CELL - 1, 2)
+        rgb[y, x] = pal[0]
+        rgb[y - 1, x] = pal[3] * 1.15
+        height[y, x] = 0.9
+    for _ in range(rng.integers(1, 3)):              # conchoidal facets: diagonal light lines
+        y, x = rng.integers(2, CELL - 4, 2)
+        for i in range(3):
+            rgb[y + i, x + i] = pal[3]
+            height[y + i, x + i] = 0.75
+    return np.clip(rgb, 0, 255), height
+
+
 def style_grass(art, rng):
     return style_earth(art, rng)   # the grass cap is applied per mask in terrain_frame()
 
@@ -254,9 +291,35 @@ def style_grass_decor(art, rng):
     return rgb, height, alpha
 
 
-SHAPED = {"bark": style_bark, "platform": style_platform, "grass_decor": style_grass_decor}
+def style_glowcap(art, rng):
+    cap, capl, stem = hex_rgb(art["cap"]), hex_rgb(art["capLight"]), hex_rgb(art["stem"])
+    rgb = np.zeros((CELL, CELL, 3))
+    height = np.zeros((CELL, CELL))
+    alpha = np.zeros((CELL, CELL))
+    for _ in range(int(rng.integers(1, 3))):
+        x = int(rng.integers(4, 12))
+        h = int(rng.integers(4, 9))
+        w = int(rng.integers(2, 4))
+        for y in range(CELL - h, CELL):                       # stem
+            rgb[y, x] = stem
+            alpha[y, x] = 1
+            height[y, x] = 0.6
+        top = CELL - h
+        for dy in range(-2, 1):                               # cap
+            for dx in range(-w, w + 1):
+                if abs(dx) > w - (1 if dy == -2 else 0):
+                    continue
+                y, xx = top + dy, x + dx
+                if 0 <= y < CELL and 0 <= xx < CELL:
+                    rgb[y, xx] = capl if dy == -2 or (dy == -1 and abs(dx) < 2) else cap
+                    alpha[y, xx] = 1
+                    height[y, xx] = 0.9 - 0.1 * abs(dx)
+    return rgb, height, alpha
 
-STYLES = {"earth": style_earth, "stone": style_stone, "sand": style_sand, "planks": style_planks,
+
+SHAPED = {"glowcap": style_glowcap, "bark": style_bark, "platform": style_platform, "grass_decor": style_grass_decor}
+
+STYLES = {"gravel": style_gravel, "obsidian": style_obsidian, "moss": style_stone, "earth": style_earth, "stone": style_stone, "sand": style_sand, "planks": style_planks,
           "bricks": style_bricks, "grass": style_grass, "ore": style_ore}
 
 
@@ -294,6 +357,21 @@ def terrain_frame(art, style, rng_base, mask):
                 for x in xs:
                     for y in range(0, 6 + int(r.integers(0, 3))):
                         rgb[y, x] = top[1] if y < 5 else top[0]
+    emission = np.zeros((CELL, CELL, 3))
+    if style == "moss":
+        top = [hex_rgb(art[k]) for k in ("topDark", "top", "topLight")]
+        r = rng_for(art.get("top"), mask, "moss")
+        yy, xx = np.mgrid[0:CELL, 0:CELL]
+        dist = np.full((CELL, CELL), 99.0)
+        if mask & 1: dist = np.minimum(dist, yy)
+        if mask & 2: dist = np.minimum(dist, CELL - 1 - xx)
+        if mask & 4: dist = np.minimum(dist, CELL - 1 - yy)
+        if mask & 8: dist = np.minimum(dist, xx)
+        depth = 2 + r.integers(0, 3, (CELL, CELL))
+        moss = dist < depth
+        rgb[moss] = np.array(top)[np.clip((r.random((CELL, CELL))[moss] * 3).astype(int), 0, 2)]
+        height[moss] += 0.15
+        emission[moss & (r.random((CELL, CELL)) < 0.25)] = np.array(top[2]) * 0.22
     # outline + rounded corners on open sides
     outline = None
     dark = hex_rgb(art.get("dark", art["base"])) * 0.55
@@ -310,6 +388,7 @@ def terrain_frame(art, style, rng_base, mask):
             rgb[ny, x] = dark if not (style == "grass" and y == 0) else rgb[ny, x]
             rgb[y, nx] = dark if not (style == "grass" and y == 0) else rgb[y, nx]
     height = bevel(height, mask)
+    terrain_frame.last_emission = emission
     return rgb, height, alpha
 
 
@@ -514,7 +593,8 @@ def main():
             for mask in range(16):
                 for v in range(VARIANTS):
                     rgb, height, alpha = terrain_frame(art, style, rng_for(t["id"], v), mask)
-                    i = atlas.add(to_rgba(rgb, alpha), normals_from_height(height, alpha))
+                    em = np.clip(terrain_frame.last_emission * alpha[..., None], 0, 255).astype(np.uint8)
+                    i = atlas.add(to_rgba(rgb, alpha), normals_from_height(height, alpha), em)
                     start = i if start is None else start
             layout["tiles"][t["id"]] = {"layout": "terrain", "start": start, "count": 16 * VARIANTS, "variants": VARIANTS}
             rgb, height, alpha = terrain_frame(art, style, rng_for(t["id"], 0), 15)
@@ -533,10 +613,13 @@ def main():
             count = 1 if style == "platform" else VARIANTS
             for v in range(count):
                 rgb, height, alpha = SHAPED[style](art, rng_for(t["id"], v))
-                i = atlas.add(to_rgba(rgb, alpha), normals_from_height(height, alpha, 1.8))
+                em = None
+                if style == "glowcap":   # the whole mushroom glows; caps brightest
+                    em = np.clip(rgb * alpha[..., None] * 0.75, 0, 255).astype(np.uint8)
+                i = atlas.add(to_rgba(rgb, alpha), normals_from_height(height, alpha, 1.8), em)
                 start = i if start is None else start
             layout["tiles"][t["id"]] = {"layout": "variants", "start": start, "count": count}
-            if style == "platform":
+            if style in ("platform", "glowcap"):
                 icons.append(to_rgba(rgb, alpha)); icon_normals.append(normals_from_height(height, alpha, 1.8))
                 icon_names.append(t["id"])
         elif style == "object":
@@ -574,13 +657,40 @@ def main():
         icons.append(icon); icon_normals.append(normals_from_height(height * 0.6, np.ones((CELL, CELL)), 1.6))
         icon_names.append(w["id"])
 
+    # liquids: frame 0 = body, frame 1 = surface (top rows lighter); lava emits
+    layout["liquids"] = {}
+    for name, (deep, mid, light, glow) in {"water": ("#1f4f9a", "#2f6fc8", "#8fd0ff", 0.0),
+                                           "lava": ("#a8240c", "#f0641e", "#ffd25a", 1.0)}.items():
+        r = rng_for("liquid", name)
+        start = None
+        for surface in (False, True):
+            n = value_noise(r, CELL, 4)
+            pal = np.array([hex_rgb(deep), hex_rgb(mid), hex_rgb(light)])
+            idx = np.clip((n * 2.4).astype(int), 0, 2)
+            idx[idx == 2] = 1
+            rgb = pal[idx]
+            if name == "lava":
+                crust = value_noise(r, CELL, 6) > 0.72
+                rgb[crust] = hex_rgb("#4a140a")
+            if surface:
+                rgb[0:2] = pal[2]
+                rgb[2] = (pal[1] + pal[2]) / 2
+            alpha = np.ones((CELL, CELL))
+            em = np.clip(rgb * glow * 0.85, 0, 255).astype(np.uint8) if glow > 0 else None
+            if em is not None and name == "lava":
+                em[crust] = 0
+            height = 0.5 + 0.1 * n
+            i = atlas.add(to_rgba(rgb, alpha), normals_from_height(height, alpha, 0.8), em)
+            start = i if start is None else start
+        layout["liquids"][name] = {"layout": "variants", "start": start, "count": 2}
+
     A, N, E, frames = atlas.render()
     os.makedirs(args.out, exist_ok=True)
     Image.fromarray(A, "RGBA").save(os.path.join(args.out, "tiles.png"), optimize=False, compress_level=9)
     Image.fromarray(N, "RGB").save(os.path.join(args.out, "tiles_n.png"), optimize=False, compress_level=9)
     Image.fromarray(E, "RGB").save(os.path.join(args.out, "tiles_e.png"), optimize=False, compress_level=9)
     meta = {"version": 1, "cell": CELL, "slot": SLOT, "width": A.shape[1], "height": A.shape[0],
-            "tiles": layout["tiles"], "walls": layout["walls"], "frames": frames,
+            "tiles": layout["tiles"], "walls": layout["walls"], "liquids": layout["liquids"], "frames": frames,
             "source": "Tools/art/gen_atlas.py"}
     with open(os.path.join(args.out, "tiles.atlas.json"), "w", encoding="utf-8", newline="\n") as fh:
         json.dump(meta, fh, indent=1)

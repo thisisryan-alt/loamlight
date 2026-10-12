@@ -230,3 +230,41 @@ The user asked for the whole game to be finished without milestone check-ins (20
 - Furniture can't be flipped (it always faces one way). Torches have a single frame and don't lean against the side they attach to.
 - The furnace and anvil chain can't be shown end to end in the scenario without ore hunting; the scenario gives the player one copper bar, and the chain is covered by recipe tests. M5 adds ore-tier scenarios.
 - There is no item tooltip for blocks in the world; the HUD names the held item.
+
+---
+
+## M3: Light and liquids (IN PROGRESS, paused 2026-10-12)
+
+### Done so far
+- Content: gravel (falls), obsidian (tier 2), mossy_stone (spreads onto stone, faint glow), glowcap (emissive decor); buckets (`ItemDef.bucket`), and a bucket recipe at the anvil.
+- Atlas art: gravel, obsidian, moss overlay with emission, glowcap, and water/lava frames (the `"liquids"` section in `tiles.atlas.json`: body and surface frames, with lava emissive).
+- `Loamlight.Liquids` assembly:
+  - Burst `LiquidFallJob` (per column) and `LiquidSpreadJob` (per row, alternating direction); water meeting lava makes obsidian;
+  - `FallingBlocksJob` and the data-driven `SpreadJob`;
+  - `SimulationRunner`: fixed 30/20/4 Hz ticks, camera region, chunk sleep. It is not wired into GameBootstrap yet.
+
+### Next steps (in order)
+1. **Liquid mesh layer.** The patch failed to apply: a heredoc problem; write it as a scratchpad Python script instead.
+   - `WorldAtlas.liquids` plus parsing it in `AtlasImport`.
+   - `WorldRenderData.WaterFrame` and `LavaFrame`.
+   - `ChunkMeshJob` gets 3 layers (wall, block, liquid) and a `BuildLiquids` pass.
+   - `ChunkRenderer` gets a third mesh on sorting layer `Liquid`.
+   - `ProjectSetup.SortingLayers` becomes `Sky, Background, Walls, World, Entities, Liquid, Foreground, Overlay`.
+   - The benchmark test needs the liquid fields.
+2. **Wire `SimulationRunner` into `GameBootstrap`.**
+3. **`WorldEdits.Place`** clears liquid where a solid block goes.
+4. **Push-out-of-solid** at the start of `TileCollision.Move`, so falling sand can't trap the player.
+5. **Worldgen:**
+   - gravel and sand pockets, settled per column;
+   - moss pass, then glowcap pass;
+   - single-threaded basin-fill water pools, and lava pools deep down.
+6. **Day/night** (Lighting): `DayNightCycle` drives the light map's sky intensity and colour, plus the camera background. `SkyBackdrop` adds a gradient, sun, moon, stars and parallax hills (Pillow `gen_sky.py`, unlit, sorting layer Sky).
+7. **Player:**
+   - swimming: `ICollisionGrid` gains liquid sampling; buoyancy and slow movement; splash SFX;
+   - bucket scoop and pour in `ToolUser`.
+8. **Tests and scenario `m3`.**
+   - Tests: liquid conservation, the obsidian reaction, falling sand, spread, the day curve.
+   - Scenario `m3`: pour water and watch it settle, lava meets water, sand falls, grass spreads, darkness and torches, night sky, swimming.
+9. Then M4 (combat, AI, boss pieces), M5 (biomes, structures, ore tiers, boss) and M6 (menus, settings, save UI, tutorial, release perf run), as planned in DESIGN.md.
+
+Verify everything with `./Tools/verify.ps1`.

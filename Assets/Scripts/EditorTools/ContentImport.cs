@@ -36,7 +36,7 @@ namespace Loamlight.EditorTools
         [Serializable] public class ItemJson
         {
             public string id, name, description, category = "Material", placesTile, placesWall, toolType = "None", weaponKind = "None",
-                projectile, ammo, summons;
+                projectile, ammo, summons, bucket;
             public int maxStack = 999, toolPower, damage, manaCost, heal, restoreMana;
             public float toolSpeed = 1f, useTime = 0.25f, reach = 5.5f, knockback, hitstop = 1f, shake = 1f, projectileSpeed;
         }
@@ -101,6 +101,7 @@ namespace Loamlight.EditorTools
                 d.reach = j.reach; d.weaponKind = Parse<WeaponKind>(j.weaponKind); d.damage = j.damage; d.knockback = j.knockback;
                 d.hitstop = j.hitstop; d.shake = j.shake; d.manaCost = j.manaCost; d.projectile = j.projectile ?? ""; d.ammo = j.ammo ?? "";
                 d.projectileSpeed = j.projectileSpeed; d.heal = j.heal; d.restoreMana = j.restoreMana; d.summons = j.summons ?? "";
+                d.bucket = j.bucket ?? "";
             })).ToArray();
             var recipes = recipesJ.Select(j => Upsert<RecipeDef>("Recipes", j.id, d =>
             {

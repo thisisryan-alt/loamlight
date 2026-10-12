@@ -1,0 +1,21 @@
+{
+    "name": "Loamlight.Liquids",
+    "rootNamespace": "Loamlight.Liquids",
+    "references": [
+        "Loamlight.Core",
+        "Loamlight.Content",
+        "Loamlight.World",
+        "Unity.Burst",
+        "Unity.Collections",
+        "Unity.Mathematics"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
