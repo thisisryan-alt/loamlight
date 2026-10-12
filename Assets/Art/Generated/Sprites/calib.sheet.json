@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "name": "calib",
+  "frameWidth": 64,
+  "frameHeight": 64,
+  "columns": 1,
+  "rows": 1,
+  "pixelsPerUnit": 16,
+  "pivot": [
+    0.5,
+    0.5
+  ],
+  "meshType": "Tight",
+  "normalMap": "calib_n.png",
+  "animations": [
+    {
+      "name": "still",
+      "fps": 1,
+      "loop": false,
+      "frames": [
+        0
+      ]
+    }
+  ],
+  "frames": [
+    {
+      "name": "calib_still_0",
+      "x": 0,
+      "y": 0,
+      "w": 64,
+      "h": 64
+    }
+  ],
+  "source": "Tools/blender/render_sprites.py + Tools/art/pack_sheets.py"
+}

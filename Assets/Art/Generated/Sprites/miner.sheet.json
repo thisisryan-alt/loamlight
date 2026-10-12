@@ -1,0 +1,199 @@
+{
+  "version": 1,
+  "name": "miner",
+  "frameWidth": 64,
+  "frameHeight": 64,
+  "columns": 8,
+  "rows": 3,
+  "pixelsPerUnit": 16,
+  "pivot": [
+    0.5,
+    0.03125
+  ],
+  "meshType": "Tight",
+  "normalMap": "miner_n.png",
+  "animations": [
+    {
+      "name": "idle",
+      "fps": 6,
+      "loop": true,
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "name": "walk",
+      "fps": 12,
+      "loop": true,
+      "frames": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ]
+    },
+    {
+      "name": "jump",
+      "fps": 1,
+      "loop": false,
+      "frames": [
+        12
+      ]
+    },
+    {
+      "name": "fall",
+      "fps": 1,
+      "loop": false,
+      "frames": [
+        13
+      ]
+    },
+    {
+      "name": "use",
+      "fps": 14,
+      "loop": false,
+      "frames": [
+        14,
+        15,
+        16,
+        17
+      ]
+    }
+  ],
+  "frames": [
+    {
+      "name": "miner_idle_0",
+      "x": 0,
+      "y": 128,
+      "w": 64,
+      "h": 64
+    },
+    {
+      "name": "miner_idle_1",
+      "x": 64,
+      "y": 128,
+      "w": 64,
+      "h": 64
+    },
+    {
+      "name": "miner_idle_2",
+      "x": 128,
+      "y": 128,
+      "w": 64,
+      "h": 64
+    },
+    {
+      "name": "miner_idle_3",
+      "x": 192,
+      "y": 128,
+      "w": 64,
+      "h": 64
+    },
+    {
+      "name": "miner_walk_0",
+      "x": 256,
+      "y": 128,
+      "w": 64,
+      "h": 64
+    },
+    {
+      "name": "miner_walk_1",
+      "x": 320,
+      "y": 128,
+      "w": 64,
+      "h": 64
+    },
+    {
+      "name": "miner_walk_2",
+      "x": 384,
+      "y": 128,
+      "w": 64,
+      "h": 64
+    },
+    {
+      "name": "miner_walk_3",
+      "x": 448,
+      "y": 128,
+      "w": 64,
+      "h": 64
+    },
+    {
+      "name": "miner_walk_4",
+      "x": 0,
+      "y": 64,
+      "w": 64,
+      "h": 64
+    },
+    {
+      "name": "miner_walk_5",
+      "x": 64,
+      "y": 64,
+      "w": 64,
+      "h": 64
+    },
+    {
+      "name": "miner_walk_6",
+      "x": 128,
+      "y": 64,
+      "w": 64,
+      "h": 64
+    },
+    {
+      "name": "miner_walk_7",
+      "x": 192,
+      "y": 64,
+      "w": 64,
+      "h": 64
+    },
+    {
+      "name": "miner_jump_0",
+      "x": 256,
+      "y": 64,
+      "w": 64,
+      "h": 64
+    },
+    {
+      "name": "miner_fall_0",
+      "x": 320,
+      "y": 64,
+      "w": 64,
+      "h": 64
+    },
+    {
+      "name": "miner_use_0",
+      "x": 384,
+      "y": 64,
+      "w": 64,
+      "h": 64
+    },
+    {
+      "name": "miner_use_1",
+      "x": 448,
+      "y": 64,
+      "w": 64,
+      "h": 64
+    },
+    {
+      "name": "miner_use_2",
+      "x": 0,
+      "y": 0,
+      "w": 64,
+      "h": 64
+    },
+    {
+      "name": "miner_use_3",
+      "x": 64,
+      "y": 0,
+      "w": 64,
+      "h": 64
+    }
+  ],
+  "source": "Tools/blender/render_sprites.py + Tools/art/pack_sheets.py"
+}

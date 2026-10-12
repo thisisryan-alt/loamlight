@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/PipelineDemo.unity
+    guid: 073d240c2f905fe4ca3119517fe5b40a
   m_configObjects: {}
