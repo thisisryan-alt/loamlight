@@ -108,10 +108,21 @@ namespace Loamlight.World
             {
                 case Placement.Floor:
                     for (int cx = 0; cx < def.size.x; cx++)
-                        if (!IsSolidTerrain(ox + cx, oy - 1) && !IsPlatform(ox + cx, oy - 1)) return false;
+                    {
+                        if (IsSolidTerrain(ox + cx, oy - 1) || IsPlatform(ox + cx, oy - 1)) continue;
+                        ushort below = World.GetBlock(ox + cx, oy - 1);
+                        if (def.kind == TileKind.Tree && below != 0 && _props[below].kind == (byte)TileKind.Tree) continue;
+                        return false;
+                    }
                     return true;
                 case Placement.WallOrSolid:
                     return World.GetWall(ox, oy) != 0 || IsSolidTerrain(ox - 1, oy) || IsSolidTerrain(ox + 1, oy) || IsSolidTerrain(ox, oy - 1);
+                case Placement.Trunk:
+                {
+                    // canopies sit on the trunk cell under their bottom-centre
+                    ushort below = World.GetBlock(ox + def.size.x / 2, oy - 1);
+                    return below != 0 && _props[below].kind == (byte)TileKind.Tree;
+                }
                 case Placement.Ceiling:
                     for (int cx = 0; cx < def.size.x; cx++)
                         if (!IsSolidTerrain(ox + cx, oy + def.size.y)) return false;
@@ -162,6 +173,63 @@ namespace Loamlight.World
             for (int cx = 0; cx < p.width; cx++)
                 World.SetBlock(ox + cx, oy + cy, id, p.width == 1 && p.height == 1 ? shape : TileShape.Full, (byte)(cx + cy * p.width));
         }
+
+        /// <summary>Ids of crafting-station tiles within <paramref name="radius"/> tiles of a point.</summary>
+        public HashSet<string> StationsNear(Vector2 center, int radius)
+        {
+            var set = new HashSet<string>();
+            int cx = Mathf.FloorToInt(center.x), cy = Mathf.FloorToInt(center.y);
+            for (int y = cy - radius; y <= cy + radius; y++)
+            for (int x = cx - radius; x <= cx + radius; x++)
+            {
+                ushort b = World.GetBlock(x, y);
+                if (b == 0) continue;
+                var def = Content.Tile(b);
+                if (def.isStation) set.Add(def.id);
+            }
+            return set;
+        }
+
+        /// <summary>Clears an object/tile without dropping anything (undo refunds the item instead).</summary>
+        public void ClearSilently(int x, int y)
+        {
+            ushort b = World.GetBlock(x, y);
+            if (b == 0) return;
+            var p = _props[b];
+            var o = ObjectOrigin(x, y);
+            for (int cy = 0; cy < p.height; cy++)
+            for (int cx = 0; cx < p.width; cx++)
+                if (World.GetBlock(o.x + cx, o.y + cy) == b) World.SetBlock(o.x + cx, o.y + cy, 0);
+            _drops.Clear();
+            for (int cy = -1; cy <= p.height; cy++)
+            for (int cx = -1; cx <= p.width; cx++)
+                BreakIfUnsupported(o.x + cx, o.y + cy);
+        }
+
+        /// <summary>Drops produced by the last <see cref="ClearSilently"/> cascade (things that lost support).</summary>
+        public IReadOnlyList<Drop> LastCascadeDrops => _drops;
+
+        /// <summary>Toggles a door's open bit on all its cells. Refuses to close on top of a blocked cell.</summary>
+        public bool ToggleDoor(int x, int y, System.Func<int, int, bool> blocked)
+        {
+            ushort b = World.GetBlock(x, y);
+            if (b == 0 || _props[b].kind != (byte)TileKind.Door) return false;
+            var o = ObjectOrigin(x, y);
+            var p = _props[b];
+            bool open = (World.GetFrame(o.x, o.y) & 0x80) != 0;
+            if (open && blocked != null)
+                for (int cy = 0; cy < p.height; cy++)
+                    if (blocked(o.x, o.y + cy)) return false;
+            for (int cy = 0; cy < p.height; cy++)
+            for (int cx = 0; cx < p.width; cx++)
+            {
+                byte f = World.GetFrame(o.x + cx, o.y + cy);
+                World.SetFrame(o.x + cx, o.y + cy, (byte)(open ? f & 0x7f : f | 0x80));
+            }
+            return true;
+        }
+
+        public bool IsDoorOpen(int x, int y) => (World.GetFrame(x, y) & 0x80) != 0;
 
         public bool CanPlaceWall(int x, int y) =>
             World.InBounds(x, y) && World.GetWall(x, y) == 0 &&

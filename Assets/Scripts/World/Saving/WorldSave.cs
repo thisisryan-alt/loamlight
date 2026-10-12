@@ -121,7 +121,15 @@ namespace Loamlight.World.Saving
             };
         }
 
-        public static WorldData Load(string path, ContentDatabase db, out SaveMeta meta)
+        public static WorldData Load(string path, ContentDatabase db, out SaveMeta meta) =>
+            Load(path, db, out meta, out _, out _, true);
+
+        /// <summary>
+        /// Loads a save. With <paramref name="remap"/> false the numeric ids are left exactly as stored (index into the
+        /// returned palettes) - used by tests that check the remapping itself.
+        /// </summary>
+        public static WorldData Load(string path, ContentDatabase db, out SaveMeta meta, out List<string> tilePalette,
+            out List<string> wallPalette, bool remap)
         {
             using var fs = File.OpenRead(path);
             using var br = new BinaryReader(fs);
@@ -135,12 +143,17 @@ namespace Loamlight.World.Saving
                 Rle.Read(br, world.Frames);
                 Rle.Read(br, world.Liquid);
                 Rle.Read(br, world.LiquidKind);
-                Remap(world.Blocks, (List<object>)header["tilePalette"], name => db.TryTileId(name, out var id) ? id : (ushort)0);
-                Remap(world.Walls, (List<object>)header["wallPalette"], name =>
+                tilePalette = ((List<object>)header["tilePalette"]).ConvertAll(o => (string)o);
+                wallPalette = ((List<object>)header["wallPalette"]).ConvertAll(o => (string)o);
+                if (remap)
                 {
-                    for (int i = 0; i < db.walls.Length; i++) if (db.walls[i].id == name) return (ushort)(i + 1);
-                    return 0;
-                });
+                    Remap(world.Blocks, (List<object>)header["tilePalette"], name => db.TryTileId(name, out var id) ? id : (ushort)0);
+                    Remap(world.Walls, (List<object>)header["wallPalette"], name =>
+                    {
+                        for (int i = 0; i < db.walls.Length; i++) if (db.walls[i].id == name) return (ushort)(i + 1);
+                        return 0;
+                    });
+                }
             }
             catch
             {

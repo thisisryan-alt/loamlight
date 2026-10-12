@@ -147,10 +147,58 @@ def ui_click(rng, v):
     return norm(sine(1400 + 200 * v, dur) * env(n, 0.0005, 0.012), 0.35)
 
 
+def door(rng, v, opening=True):
+    dur = 0.28
+    n = int(SR * dur)
+    creak_f = np.linspace(260, 420, n) if opening else np.linspace(420, 230, n)
+    creak = sine(creak_f, dur) * env(n, 0.02, 0.12) * (0.6 + 0.4 * np.sin(np.arange(n) / SR * 2 * np.pi * 38))
+    knock = sine(140, dur) * env(n, 0.001, 0.03)
+    thud = np.zeros(n)
+    if not opening:
+        k = int(SR * 0.2)
+        thud[k:] = (sine(90, dur)[: n - k] * env(n - k, 0.001, 0.05)) + bandpass(noise(rng, n - k), 200, 900) * env(n - k, 0.001, 0.03) * 0.5
+    return norm(creak * 0.35 + knock * (0.6 if opening else 0.2) + thud)
+
+
+def chest(rng, v, opening=True):
+    dur = 0.22
+    n = int(SR * dur)
+    latch = highpass(noise(rng, n), 2000) * env(n, 0.0005, 0.006)
+    wood = sine(180 if opening else 150, dur) * env(n, 0.001, 0.05)
+    clink = sine(1900, dur) * env(n, 0.001, 0.03)
+    return norm(latch * 0.6 + wood + clink * 0.25, 0.6)
+
+
+def craft(rng, v):
+    dur = 0.35
+    n = int(SR * dur)
+    hits = np.zeros(n)
+    for k, f in ((0.0, 1500), (0.09, 1850), (0.18, 2250)):
+        i = int(SR * k)
+        m = n - i
+        hits[i:] += (sine(f, m / SR) * 0.5 + sine(f * 1.5, m / SR) * 0.25)[:m] * env(m, 0.001, 0.05)
+    return norm(hits + bandpass(noise(rng, n), 1500, 5000) * env(n, 0.001, 0.02) * 0.3, 0.55)
+
+
+def ui_open(rng, v):
+    dur = 0.1
+    n = int(SR * dur)
+    return norm(sine(np.linspace(500, 900, n), dur) * env(n, 0.002, 0.04), 0.3)
+
+
+def ui_close(rng, v):
+    dur = 0.1
+    n = int(SR * dur)
+    return norm(sine(np.linspace(900, 500, n), dur) * env(n, 0.002, 0.04), 0.3)
+
+
 SOUNDS = {
     "dig_soft": (dig_soft, 3), "dig_hard": (dig_hard, 3), "dig_wood": (dig_wood, 3), "dig": (dig_soft, 2),
     "place": (place, 2), "step": (step, 4), "jump": (jump, 1), "land": (land, 2), "cant": (cant, 1),
     "pickup": (pickup, 2), "swing": (swing, 3), "ui_click": (ui_click, 2),
+    "door_open": (lambda r, v: door(r, v, True), 1), "door_close": (lambda r, v: door(r, v, False), 1),
+    "chest_open": (lambda r, v: chest(r, v, True), 1), "chest_close": (lambda r, v: chest(r, v, False), 1),
+    "craft": (craft, 1), "ui_open": (ui_open, 1), "ui_close": (ui_close, 1),
 }
 
 

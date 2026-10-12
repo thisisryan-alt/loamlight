@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Loamlight.Core;
+using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -108,8 +109,26 @@ namespace Loamlight.Game.DebugTools
             }
         }
 
+        /// <summary>Unity Profiler markers sampled during the timing window (Profiler numbers in every report).</summary>
+        static readonly (ProfilerCategory cat, string name)[] Markers =
+        {
+            (ProfilerCategory.Internal, "Main Thread"),
+            (ProfilerCategory.Scripts, "Update.ScriptRunBehaviourUpdate"),
+            (ProfilerCategory.Scripts, "PreLateUpdate.ScriptRunBehaviourLateUpdate"),
+            (ProfilerCategory.Scripts, "Loamlight.ChunkRebuild"),
+            (ProfilerCategory.Scripts, "Loamlight.LightTick"),
+            (ProfilerCategory.Gui, "PostLateUpdate.PlayerUpdateCanvases"),
+            (ProfilerCategory.Gui, "UGUI.Rendering.UpdateBatches"),
+            (ProfilerCategory.Gui, "EventSystem.Update"),
+            (ProfilerCategory.Render, "Camera.Render"),
+            (ProfilerCategory.Render, "Gfx.WaitForPresentOnGfxThread"),
+            (ProfilerCategory.Memory, "GC Allocated In Frame"),
+        };
+
         IEnumerator MeasureFrames()
         {
+            var recorders = new List<(string name, ProfilerRecorder rec)>();
+            foreach (var (cat, name) in Markers) recorders.Add((name, ProfilerRecorder.StartNew(cat, name, TimingFrames)));
             var cpu = new List<double>();
             var gpu = new List<double>();
             var frame = new List<float>();
@@ -135,6 +154,24 @@ namespace Loamlight.Game.DebugTools
                 _report.Add($"FrameTimingManager avg: cpu {Avg(cpu):0.00} ms, gpu {Avg(gpu):0.00} ms ({cpu.Count} samples)");
             else
                 _report.Add("FrameTimingManager: no data (frame timing stats disabled or unsupported)");
+
+            var parts = new List<string>();
+            foreach (var (name, rec) in recorders)
+            {
+                if (rec.Valid && rec.Count > 0)
+                {
+                    var samples = new List<ProfilerRecorderSample>(rec.Count);
+                    rec.CopyTo(samples);
+                    double sum = 0, max = 0;
+                    foreach (var smp in samples) { sum += smp.Value; max = System.Math.Max(max, smp.Value); }
+                    double mean = sum / samples.Count;
+                    parts.Add(rec.UnitType == ProfilerMarkerDataUnit.Bytes
+                        ? $"{name} avg {mean / 1024:0.0} KB max {max / 1024:0.0} KB"
+                        : $"{name} avg {mean * 1e-6:0.000} ms max {max * 1e-6:0.00} ms");
+                }
+                rec.Dispose();
+            }
+            if (parts.Count > 0) _report.Add("profiler: " + string.Join(" | ", parts));
         }
 
         static double Avg(List<double> v)

@@ -24,6 +24,7 @@ namespace Loamlight.Game.Scenarios
             In = new ScriptedPlayerInput();
             G.Player.Input = In;
             G.Tools.Input = In;
+            if (G.Interactor != null) G.Interactor.Input = In;
             if (G.HumanInput != null) G.HumanInput.Enabled = false;
         }
 
@@ -120,13 +121,15 @@ namespace Loamlight.Game.Scenarios
             for (int x = Mathf.FloorToInt(b.Left + 0.01f); x <= Mathf.FloorToInt(b.Right - 0.01f); x++) yield return x;
         }
 
-        /// <summary>An empty tile near the player that a block could legally be placed on (anchored, not inside the body).</summary>
+        /// <summary>The nearest empty tile within 5 tiles that a block could legally go on (anchored, and not
+        /// inside the player's body unless <paramref name="allowBodyOverlap"/>).</summary>
         protected Vector2Int? FindPlaceSpot(System.Func<Vector2Int, bool> extra = null, bool allowBodyOverlap = false)
         {
             var c = FeetTile;
-            for (int r = allowBodyOverlap ? 0 : 2; r <= 4; r++)
-            for (int dy = -1; dy <= 3; dy++)
-            foreach (int dx in r == 0 ? new[] { 0 } : new[] { r, -r })
+            Vector2Int? best = null;
+            float bestD = float.MaxValue;
+            for (int dy = -2; dy <= 5; dy++)
+            for (int dx = -5; dx <= 5; dx++)
             {
                 var t = new Vector2Int(c.x + dx, c.y + dy);
                 if (G.World.GetBlock(t.x, t.y) != 0) continue;
@@ -134,39 +137,15 @@ namespace Loamlight.Game.Scenarios
                                 G.World.GetBlock(t.x + 1, t.y) != 0 || G.World.GetWall(t.x, t.y) != 0;
                 if (!anchored || (!allowBodyOverlap && Loamlight.World.Collision.TileCollision.Overlaps(G.Player.Body, t.x, t.y))) continue;
                 if (extra != null && !extra(t)) continue;
-                return t;
+                float d = Vector2.Distance(G.Player.Center, t + Vector2.one * 0.5f);
+                if (d > 5f || d >= bestD) continue;
+                bestD = d;
+                best = t;
             }
-            return null;
+            return best;
         }
 
         protected Vector2Int FeetTile => new Vector2Int(Mathf.FloorToInt(Feet.x), Mathf.FloorToInt(Feet.y + 0.01f));
     }
 
-    /// <summary>Lives in the Game scene; when launched with -llCapture it runs the scenario named by -llScenario.</summary>
-    public sealed class GameScenarioDirector : MonoBehaviour, ICaptureDirector, ICaptureVerifier
-    {
-        Scenario _scenario;
-
-        public IEnumerator CaptureScript()
-        {
-            var g = GameBootstrap.Current;
-            while (g == null || !g.Ready) { yield return null; g = GameBootstrap.Current; }
-            string name = LaunchArgs.Get("-llScenario", "m1");
-            _scenario = name switch
-            {
-                "perf" => new PerfScenario(),
-                _ => new M1Scenario(),
-            };
-            _scenario.Attach(g);
-            Debug.Log($"[Scenario] running '{name}'");
-            var run = _scenario.Run();
-            while (run.MoveNext()) yield return run.Current;
-        }
-
-        public bool VerifyShot(string shotName, Texture2D frame, out string detail)
-        {
-            if (_scenario == null) { detail = "no scenario"; return true; }
-            return _scenario.Drain(out detail);
-        }
-    }
 }

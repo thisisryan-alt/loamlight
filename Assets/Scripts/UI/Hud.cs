@@ -46,6 +46,7 @@ namespace Loamlight.UI
             canvas.pixelPerfect = true;
             var scaler = go.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ConstantPixelSize;
+            scaler.referencePixelsPerUnit = 16;   // sprite borders (16 PPU) map 1:1 to canvas pixels
             go.AddComponent<IntegerUiScale>();
             go.AddComponent<GraphicRaycaster>();
             return canvas;
@@ -94,22 +95,6 @@ namespace Loamlight.UI
         }
     }
 
-    /// <summary>Keeps the canvas at an integer scale of a 640x360 virtual screen, so UI pixels stay square.</summary>
-    [RequireComponent(typeof(CanvasScaler))]
-    public sealed class IntegerUiScale : MonoBehaviour
-    {
-        public static int ExtraScale;
-        CanvasScaler _scaler;
-
-        void Awake() => _scaler = GetComponent<CanvasScaler>();
-
-        void Update()
-        {
-            int s = Mathf.Max(1, Mathf.Min(Screen.width / 640, Screen.height / 360) + ExtraScale);
-            if (!Mathf.Approximately(_scaler.scaleFactor, s)) _scaler.scaleFactor = s;
-        }
-    }
-
     /// <summary>Top-left hotbar: 10 slots with icon, count and selection frame, plus the held item's name.</summary>
     public sealed class Hud : MonoBehaviour
     {
@@ -117,6 +102,8 @@ namespace Loamlight.UI
 
         ItemContainer _inventory;
         ContentDatabase _db;
+        RectTransform _hotbarRoot;
+        Sprite _slot, _slotHot;
         Image[] _frames, _icons;
         Text[] _counts;
         Text _itemName;
@@ -133,25 +120,54 @@ namespace Loamlight.UI
             return hud;
         }
 
+        public void SetHotbarVisible(bool visible) => _hotbarRoot.gameObject.SetActive(visible);
+
+        Text _toast;
+        float _toastTime;
+
+        /// <summary>Short message in the middle-top of the screen that fades out.</summary>
+        public void Toast(string text, float seconds = 2.5f)
+        {
+            if (_toast == null)
+                _toast = UiKit.Label("Toast", transform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0, -60), new Vector2(300, 10), "", 8,
+                    TextAnchor.MiddleCenter, new Color(1f, 0.92f, 0.7f));
+            _toast.text = text;
+            _toastTime = seconds;
+            LastToast = text;
+        }
+
+        public string LastToast { get; private set; }
+
+        void Update()
+        {
+            if (_toast == null) return;
+            _toastTime -= Time.unscaledDeltaTime;
+            var c = _toast.color;
+            c.a = Mathf.Clamp01(_toastTime / 0.6f);
+            _toast.color = c;
+        }
+
         void Build(Transform root)
         {
+            _slot = UiSprites.Get("ui_slot");
+            _slotHot = UiSprites.Get("ui_slot_hot");
+            _hotbarRoot = UiKit.Rect("Hotbar", root, new Vector2(0, 1), new Vector2(0, 1), Vector2.zero, new Vector2(240, 40));
+            root = _hotbarRoot;
             _frames = new Image[ItemContainer.HotbarSize];
             _icons = new Image[ItemContainer.HotbarSize];
             _counts = new Text[ItemContainer.HotbarSize];
             for (int i = 0; i < ItemContainer.HotbarSize; i++)
             {
                 var pos = new Vector2(6 + i * (Slot + Gap), -6);
-                _frames[i] = UiKit.Panel($"Slot {i}", root, new Vector2(0, 1), new Vector2(0, 1), pos, new Vector2(Slot, Slot), new Color(0.1f, 0.12f, 0.18f, 0.75f));
-                var inner = UiKit.Panel("Inner", _frames[i].transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero,
-                    new Vector2(Slot - 2, Slot - 2), new Color(0.2f, 0.24f, 0.33f, 0.85f));
-                _icons[i] = UiKit.Panel("Icon", inner.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(16, 16), Color.white);
+                _frames[i] = UiKit.Panel($"Slot {i}", root, new Vector2(0, 1), new Vector2(0, 1), pos, new Vector2(Slot, Slot), Color.white, _slot);
+                _icons[i] = UiKit.Panel("Icon", _frames[i].transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(16, 16), Color.white);
                 _icons[i].preserveAspect = true;
                 _counts[i] = UiKit.Label("Count", _frames[i].transform, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-1, 0), new Vector2(18, 8), "",
                     8, TextAnchor.LowerRight);
                 UiKit.Label("Key", _frames[i].transform, new Vector2(0, 1), new Vector2(0, 1), new Vector2(2, -1), new Vector2(8, 8),
                     ((i + 1) % 10).ToString(), 8, TextAnchor.UpperLeft, new Color(0.8f, 0.8f, 0.85f, 0.7f));
             }
-            _itemName = UiKit.Label("Item name", root, new Vector2(0, 1), new Vector2(0, 1), new Vector2(6, -6 - Slot - 3), new Vector2(200, 10), "", 8);
+            _itemName = UiKit.Label("Item name", root, new Vector2(0, 1), new Vector2(0, 1), new Vector2(7, -6 - Slot - 2), new Vector2(200, 10), "", 8);
         }
 
         void LateUpdate()
@@ -165,8 +181,7 @@ namespace Loamlight.UI
                 _icons[i].enabled = def != null && def.icon != null;
                 if (def != null) _icons[i].sprite = def.icon;
                 _counts[i].text = stack.count > 1 ? stack.count.ToString() : "";
-                bool selected = i == _inventory.Selected;
-                _frames[i].color = selected ? new Color(1f, 0.82f, 0.35f, 1f) : new Color(0.1f, 0.12f, 0.18f, 0.75f);
+                _frames[i].sprite = i == _inventory.Selected ? _slotHot : _slot;
             }
             var sel = _inventory.SelectedStack;
             _itemName.text = sel.IsEmpty ? "" : _db.Item(sel.item)?.displayName ?? "";

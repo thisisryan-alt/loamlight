@@ -23,7 +23,7 @@ MonoBehaviour:
   toolType: 0
   toolPower: 0
   toolSpeed: 1
-  useTime: 0.25
+  useTime: 0.08
   reach: 5.5
   weaponKind: 0
   damage: 0

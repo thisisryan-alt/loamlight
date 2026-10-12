@@ -108,17 +108,49 @@ namespace Loamlight.Tests
             File.Delete(path);
         }
 
-        /// <summary>Saves written by version 1 must load in every later version (fixture committed in M1).</summary>
+        /// <summary>
+        /// Saves written by version 1 must load in every later version (fixture committed in M1). Content has grown
+        /// since, so numeric ids differ: the check is that every cell loads as the same tile *name* it was saved with,
+        /// and that the names hash to the value recorded when the fixture was written.
+        /// </summary>
         [Test]
         public void LoadsCommittedVersion1Fixture()
         {
-            Assert.That(File.Exists(FixtureV1), "fixture missing: run Loamlight.EditorTools.SaveFixtures.WriteV1 once");
-            using var w = WorldSave.Load(FixtureV1, ContentDatabase.Instance, out var meta);
+            Assert.That(File.Exists(FixtureV1), "fixture missing: run Loamlight.EditorTools.SaveFixtures.WriteCurrent once");
+            var db = ContentDatabase.Instance;
+            using var raw = WorldSave.Load(FixtureV1, db, out var meta, out var tilePal, out var wallPal, false);
+            using var w = WorldSave.Load(FixtureV1, db, out _);
             Assert.That(meta.name, Is.EqualTo("Fixture v1"));
             Assert.That(w.Width, Is.EqualTo(128));
-            var expected = File.ReadAllText(FixtureV1Hash).Trim();
-            Assert.That(WorldHash.Compute(w).ToString("x16"), Is.EqualTo(expected));
-            Assert.That(w.GetBlock(64, 2), Is.EqualTo(ContentDatabase.Instance.TileId("stone")), "known tile survives palette remap");
+            int mismatches = 0;
+            for (int y = 0; y < w.Height; y++)
+            for (int x = 0; x < w.Width; x++)
+            {
+                string saved = tilePal[raw.GetBlock(x, y)];
+                string now = w.GetBlock(x, y) == 0 ? "" : db.Tile(w.GetBlock(x, y)).id;
+                if (saved != now) mismatches++;
+                string savedWall = wallPal[raw.GetWall(x, y)];
+                string nowWall = w.GetWall(x, y) == 0 ? "" : db.Wall(w.GetWall(x, y)).id;
+                if (savedWall != nowWall) mismatches++;
+            }
+            Assert.That(mismatches, Is.Zero, "cells whose tile/wall name changed through the palette remap");
+            Assert.That(NameHash(raw, tilePal, wallPal).ToString("x16"), Is.EqualTo(File.ReadAllText(FixtureV1Hash).Trim()));
+            Assert.That(w.GetBlock(64, 2), Is.EqualTo(db.TileId("stone")), "known tile survives palette remap");
+            Assert.That(meta.gameJson, Does.Contain("copper_pickaxe*1"));
+        }
+
+        /// <summary>Content-independent hash: FNV over tile/wall names per cell.</summary>
+        public static ulong NameHash(WorldData w, List<string> tilePal, List<string> wallPal)
+        {
+            ulong h = 14695981039346656037UL;
+            void Mix(string s) { foreach (char c in s) { h ^= c; h *= 1099511628211UL; } h ^= 0xff; h *= 1099511628211UL; }
+            for (int y = 0; y < w.Height; y++)
+            for (int x = 0; x < w.Width; x++)
+            {
+                Mix(tilePal[w.GetBlock(x, y)]);
+                Mix(wallPal[w.GetWall(x, y)]);
+            }
+            return h;
         }
     }
 
@@ -227,6 +259,32 @@ namespace Loamlight.Tests
                 .Select(p => (string)((Dictionary<string, object>)MiniJson.Parse(File.ReadAllText(p)))["name"]).ToList();
             foreach (var required in new[] { "Loamlight.Core", "Loamlight.Content", "Loamlight.World", "Loamlight.Lighting", "Loamlight.Inventory", "Loamlight.Player", "Loamlight.UI" })
                 Assert.That(names, Does.Contain(required));
+        }
+    }
+}
+
+namespace Loamlight.Tests
+{
+    public class ScriptFileTests
+    {
+        /// <summary>Unity can only serialize references to MonoBehaviours / ScriptableObjects whose file is named after the class.</summary>
+        [Test]
+        public void SerializableTypesLiveInFilesNamedAfterThem()
+        {
+            var files = new System.Collections.Generic.HashSet<string>(
+                System.IO.Directory.GetFiles("Assets/Scripts", "*.cs", System.IO.SearchOption.AllDirectories).Select(System.IO.Path.GetFileNameWithoutExtension));
+            var bad = new System.Collections.Generic.List<string>();
+            foreach (var asm in System.AppDomain.CurrentDomain.GetAssemblies())
+            {
+                if (!asm.GetName().Name.StartsWith("Loamlight.") || asm.GetName().Name.StartsWith("Loamlight.Tests")) continue;
+                foreach (var t in asm.GetTypes())
+                {
+                    if (t.IsAbstract || t.IsNested) continue;
+                    bool unityObject = typeof(UnityEngine.MonoBehaviour).IsAssignableFrom(t) || typeof(UnityEngine.ScriptableObject).IsAssignableFrom(t);
+                    if (unityObject && !files.Contains(t.Name)) bad.Add(t.FullName);
+                }
+            }
+            Assert.That(bad, Is.Empty, "move these into <ClassName>.cs: " + string.Join(", ", bad));
         }
     }
 }

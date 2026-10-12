@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Loamlight.Content;
 using Loamlight.Core;
@@ -12,6 +13,8 @@ using Loamlight.World.Generation;
 using Loamlight.World.Rendering;
 using Loamlight.World.Saving;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 
 namespace Loamlight.Game
 {
@@ -33,7 +36,8 @@ namespace Loamlight.Game
 
     /// <summary>
     /// Composition root of the Game scene: builds or loads the world, then creates and wires every system
-    /// (chunk rendering, lighting, player, tools, HUD). Systems only know each other through what is passed here.
+    /// (chunk rendering, lighting, player, tools, pickups, interaction, UI). Systems only know each other through
+    /// what is passed here.
     /// </summary>
     public sealed class GameBootstrap : MonoBehaviour
     {
@@ -45,18 +49,25 @@ namespace Loamlight.Game
         public WorldData World { get; private set; }
         public WorldRenderData Render { get; private set; }
         public WorldEdits Edits { get; private set; }
+        public WorldCollisionGrid Grid { get; private set; }
         public ChunkRenderer Chunks { get; private set; }
         public LightMapSystem Light { get; private set; }
         public PlayerController Player { get; private set; }
         public ToolUser Tools { get; private set; }
+        public Interactor Interactor { get; private set; }
+        public PickupSystem Pickups { get; private set; }
         public ItemContainer Inventory { get; private set; }
+        public ChestStore Chests { get; private set; }
         public InputSystemPlayerInput HumanInput { get; private set; }
         public CameraFollow CameraFollow { get; private set; }
         public Hud Hud { get; private set; }
+        public InventoryScreen InventoryUi { get; private set; }
         public Camera Camera => cam;
         public GenReport GenReport { get; private set; }
         public double LoadMs { get; private set; }
         public SaveMeta Meta { get; private set; }
+        public Vector2 SpawnPointWorld { get; set; }
+        public bool HasBedSpawn { get; set; }
         public bool Ready { get; private set; }
 
         public event Action WorldReady;
@@ -70,7 +81,8 @@ namespace Loamlight.Game
             ApplyLaunchArgs();
             var sw = System.Diagnostics.Stopwatch.StartNew();
             Db = ContentDatabase.Instance;
-            Render = new WorldRenderData(Db, WorldAtlas.Load());
+            var atlas = WorldAtlas.Load();
+            Render = new WorldRenderData(Db, atlas);
 
             if (!string.IsNullOrEmpty(GameSession.LoadPath) && File.Exists(GameSession.LoadPath))
             {
@@ -80,6 +92,7 @@ namespace Loamlight.Game
             }
             else
             {
+                GameSession.LoadPath = null;
                 World = WorldGenerator.Generate(GameSession.Width, GameSession.Height, GameSession.Seed, GenIdsFor(Db), GenParams.Default, out var report);
                 GenReport = report;
                 Meta = new SaveMeta { name = GameSession.WorldName };
@@ -88,7 +101,8 @@ namespace Loamlight.Game
             LoadMs = sw.Elapsed.TotalMilliseconds;
 
             Edits = new WorldEdits(World, Db, Render.TileProps);
-            var grid = new WorldCollisionGrid(World, Render.TileProps);
+            Grid = new WorldCollisionGrid(World, Render.TileProps);
+            Chests = new ChestStore(Db);
 
             Chunks = new GameObject("World Chunks").AddComponent<ChunkRenderer>();
             Chunks.Init(World, Render, cam);
@@ -99,20 +113,45 @@ namespace Loamlight.Game
             var playerGo = new GameObject("Player");
             var sr = playerGo.AddComponent<SpriteRenderer>();
             sr.sortingLayerName = "Entities";
-            var anim = playerGo.AddComponent<SpriteAnimator>();
-            anim.Configure(SpriteSheetIndex.Get("miner"), "idle");
+            sr.sortingOrder = 10;
+            playerGo.AddComponent<SpriteAnimator>().Configure(SpriteSheetIndex.Get("miner"), "idle");
             Player = playerGo.AddComponent<PlayerController>();
-            Player.Grid = grid;
+            Player.Grid = Grid;
             Player.Input = HumanInput;
+
+            Pickups = new GameObject("Pickups").AddComponent<PickupSystem>();
+            Pickups.Db = Db;
+            Pickups.Grid = Grid;
+            Pickups.Player = Player;
+            Pickups.Inventory = Inventory;
+
             Tools = playerGo.AddComponent<ToolUser>();
             Tools.Input = HumanInput;
             Tools.Player = Player;
             Tools.Edits = Edits;
             Tools.Inventory = Inventory;
             Tools.Db = Db;
-            Tools.Drops = new InventoryDropSink(Inventory, Db);
-            Tools.Crack = CreateCrackOverlay();
+            Tools.Drops = Pickups;
+            Tools.Crack = CreateOverlay("Mining crack");
             Tools.CrackFrames = SpriteSheetIndex.Get("cracks")?.Find("crack")?.frames;
+            Tools.Atlas = new AtlasSprites(atlas, Db);
+            Tools.GhostMaterial = Resources.Load<Material>("Materials/SpriteUnlit");
+            Tools.CanRemove = origin =>
+            {
+                var def = Db.Tile(World.GetBlock(origin.x, origin.y));
+                return def == null || def.interact != "chest" || Chests.IsEmpty(origin);
+            };
+            Tools.Mined += (tile, id) =>
+            {
+                if (Db.Tile(id)?.interact == "chest") Chests.Remove(tile);
+            };
+
+            Interactor = playerGo.AddComponent<Interactor>();
+            Interactor.Input = HumanInput;
+            Interactor.Player = Player;
+            Interactor.Edits = Edits;
+            Interactor.Db = Db;
+
             var visual = playerGo.AddComponent<PlayerVisual>();
             visual.Controller = Player;
             visual.Tools = Tools;
@@ -122,9 +161,10 @@ namespace Loamlight.Game
                 if (ev.landed && ev.landingSpeed > 12f) Sfx.Play("land", Player.Feet, Mathf.Clamp01(ev.landingSpeed / 40f));
             };
 
-            Player.Teleport(SpawnPoint());
+            SpawnPointWorld = SpawnPoint();
+            Player.Teleport(SpawnPointWorld);
             GiveStartingItems();
-            if (!string.IsNullOrEmpty(GameSession.LoadPath)) PlayerState.Restore(this, Meta.gameJson);
+            if (!string.IsNullOrEmpty(GameSession.LoadPath)) GameState.Restore(this, Meta.gameJson);
 
             CameraFollow = cam.gameObject.GetComponent<CameraFollow>() ?? cam.gameObject.AddComponent<CameraFollow>();
             CameraFollow.target = Player;
@@ -134,7 +174,28 @@ namespace Loamlight.Game
             Light = new GameObject("Light Map").AddComponent<LightMapSystem>();
             Light.Init(World, Render.TileProps, cam);
 
+            // UI
+            if (FindAnyObjectByType<EventSystem>() == null)
+            {
+                var es = new GameObject("EventSystem");
+                es.AddComponent<EventSystem>();
+                es.AddComponent<InputSystemUIInputModule>();
+            }
             Hud = Hud.Create(Inventory, Db);
+            InventoryUi = InventoryScreen.Create(Inventory, Db, Hud);
+            InventoryUi.NearbyStations = () => Edits.StationsNear(Player.Center, 4);
+            InventoryUi.PlayerPosition = () => Player.Center;
+            InventoryUi.ChestFor = origin => Chests.Get(origin);
+            InventoryUi.DropOverflow = s => Pickups.Spawn(s.item, s.count, Player.Center, new Vector2(Player.Facing * 4f, 4f));
+            InventoryUi.OpenChanged += open => Tools.Enabled = !open;
+            Interactor.ChestOpened += origin => InventoryUi.OpenChest(origin);
+            Interactor.SpawnSet += origin =>
+            {
+                SpawnPointWorld = new Vector2(origin.x + 2f, origin.y);
+                HasBedSpawn = true;
+                Hud.Toast("Spawn point set");
+            };
+
             Chunks.BuildAllVisibleNow();
             Ready = true;
             WorldReady?.Invoke();
@@ -158,39 +219,49 @@ namespace Loamlight.Game
         public static GenIds GenIdsFor(ContentDatabase db) => new GenIds
         {
             dirt = db.TileId("dirt"), grass = db.TileId("grass"), stone = db.TileId("stone"), sand = db.TileId("sand"),
-            clay = db.TileId("clay"), dirtWall = db.WallId("dirt_wall"), stoneWall = db.WallId("stone_wall"),
+            clay = db.TileId("clay"), copperOre = db.TileId("copper_ore"), ironOre = db.TileId("iron_ore"),
+            treeTrunk = db.TileId("tree_trunk"), treeTop = db.TileId("tree_top"), grassDecor = db.TileId("grass_decor"),
+            dirtWall = db.WallId("dirt_wall"), stoneWall = db.WallId("stone_wall"),
         };
 
-        SpriteRenderer CreateCrackOverlay()
+        SpriteRenderer CreateOverlay(string name)
         {
-            var go = new GameObject("Mining crack");
+            var go = new GameObject(name);
             var sr = go.AddComponent<SpriteRenderer>();
             sr.sortingLayerName = "Foreground";
             sr.enabled = false;
             return sr;
         }
 
-        /// <summary>Middle of the world, standing on the surface.</summary>
+        /// <summary>Middle of the world, standing on solid surface ground with head room (not on a tree).</summary>
         public Vector2 SpawnPoint()
         {
-            int x = World.Width / 2;
-            for (int y = World.Height - 1; y > 0; y--)
+            for (int dx = 0; dx < 200; dx++)
             {
-                ushort b = World.GetBlock(x, y);
-                if (b != 0 && Render.TileProps[b].solid != 0) return new Vector2(x + 0.5f, y + 1);
+                int x = World.Width / 2 + (dx % 2 == 0 ? dx / 2 : -(dx / 2 + 1));
+                for (int y = World.Height - 1; y > 0; y--)
+                {
+                    ushort b = World.GetBlock(x, y);
+                    if (b == 0) continue;
+                    if (Render.TileProps[b].solid == 0) break;   // tree / decor column: try the next one
+                    if (TileCollision.Free(Grid, x + 0.5f - 0.7f, x + 0.5f + 0.7f, y + 1, y + 4)) return new Vector2(x + 0.5f, y + 1);
+                    break;
+                }
             }
-            return new Vector2(x + 0.5f, World.Height * 0.75f);
+            return new Vector2(World.Width / 2 + 0.5f, World.Height * 0.75f);
         }
 
         void GiveStartingItems()
         {
             Inventory.Add(Db.ItemId("copper_pickaxe"), 1);
+            Inventory.Add(Db.ItemId("copper_axe"), 1);
+            if (Db.TryItemId("copper_shortsword", out var sword)) Inventory.Add(sword, 1);
             Inventory.Add(Db.ItemId("torch"), 25);
         }
 
         public void SaveTo(string path)
         {
-            Meta.gameJson = MiniJson.Serialize(PlayerState.Capture(this));
+            Meta.gameJson = MiniJson.Serialize(GameState.Capture(this));
             WorldSave.Save(path, World, Meta, Db);
         }
 
@@ -203,45 +274,35 @@ namespace Loamlight.Game
         }
     }
 
-    /// <summary>Player + inventory snapshot stored in the save's game JSON.</summary>
-    public static class PlayerState
+    /// <summary>Player, inventory, chests and spawn point, stored in the save's game JSON.</summary>
+    public static class GameState
     {
-        public static System.Collections.Generic.Dictionary<string, object> Capture(GameBootstrap g)
+        public static Dictionary<string, object> Capture(GameBootstrap g) => new Dictionary<string, object>
         {
-            var slots = new System.Collections.Generic.List<object>();
-            for (int i = 0; i < g.Inventory.Size; i++)
+            ["player"] = new Dictionary<string, object>
             {
-                var s = g.Inventory[i];
-                slots.Add(s.IsEmpty ? "" : $"{g.Db.Item(s.item).id}*{s.count}");
-            }
-            return new System.Collections.Generic.Dictionary<string, object>
-            {
-                ["player"] = new System.Collections.Generic.Dictionary<string, object>
-                {
-                    ["x"] = (double)g.Player.Feet.x, ["y"] = (double)g.Player.Feet.y, ["selected"] = (double)g.Inventory.Selected,
-                    ["inventory"] = slots,
-                },
-            };
-        }
+                ["x"] = (double)g.Player.Feet.x, ["y"] = (double)g.Player.Feet.y, ["selected"] = (double)g.Inventory.Selected,
+                ["inventory"] = ContainerCodec.Capture(g.Inventory, g.Db),
+            },
+            ["spawn"] = new List<object> { (double)g.SpawnPointWorld.x, (double)g.SpawnPointWorld.y, g.HasBedSpawn },
+            ["chests"] = g.Chests.Capture(),
+        };
 
         public static void Restore(GameBootstrap g, string json)
         {
-            if (string.IsNullOrEmpty(json) || !(MiniJson.Parse(json) is System.Collections.Generic.Dictionary<string, object> root)) return;
-            if (!root.TryGetValue("player", out var p) || !(p is System.Collections.Generic.Dictionary<string, object> player)) return;
-            g.Player.Teleport(new Vector2((float)Convert.ToDouble(player["x"]), (float)Convert.ToDouble(player["y"])));
-            if (player.TryGetValue("inventory", out var inv) && inv is System.Collections.Generic.List<object> slots)
+            if (string.IsNullOrEmpty(json) || !(MiniJson.Parse(json) is Dictionary<string, object> root)) return;
+            if (root.TryGetValue("player", out var p) && p is Dictionary<string, object> player)
             {
-                g.Inventory.Clear();
-                for (int i = 0; i < slots.Count && i < g.Inventory.Size; i++)
-                {
-                    var s = (string)slots[i];
-                    if (string.IsNullOrEmpty(s)) continue;
-                    var parts = s.Split('*');
-                    if (parts.Length == 2 && g.Db.TryItemId(parts[0], out var id) && int.TryParse(parts[1], out var count))
-                        g.Inventory.Set(i, new ItemStack(id, count));
-                }
+                g.Player.Teleport(new Vector2((float)Convert.ToDouble(player["x"]), (float)Convert.ToDouble(player["y"])));
+                if (player.TryGetValue("inventory", out var inv)) ContainerCodec.Restore(g.Inventory, inv as List<object>, g.Db);
+                if (player.TryGetValue("selected", out var sel)) g.Inventory.Selected = (int)Convert.ToDouble(sel);
             }
-            if (player.TryGetValue("selected", out var sel)) g.Inventory.Selected = (int)Convert.ToDouble(sel);
+            if (root.TryGetValue("spawn", out var sp) && sp is List<object> spawn && spawn.Count >= 3)
+            {
+                g.SpawnPointWorld = new Vector2((float)Convert.ToDouble(spawn[0]), (float)Convert.ToDouble(spawn[1]));
+                g.HasBedSpawn = spawn[2] is bool b && b;
+            }
+            if (root.TryGetValue("chests", out var c)) g.Chests.Restore(c as List<object>);
         }
     }
 }

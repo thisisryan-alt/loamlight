@@ -29,6 +29,7 @@ namespace Loamlight.EditorTools
                 ArtImport.ImportAll();
                 AudioImport.ImportAll();
                 AtlasImport.ImportAll();
+                FontImport.ImportAll();
                 ContentImport.ImportAll();
                 SceneBuilder.BuildAll();
                 AssetDatabase.SaveAssets();

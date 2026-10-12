@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "recipes": [
+    { "id": "torch", "result": "torch", "resultCount": 3, "ingredients": [ { "item": "wood", "count": 1 } ] },
+    { "id": "workbench", "result": "workbench", "ingredients": [ { "item": "wood", "count": 10 } ] },
+
+    { "id": "wood_platform", "result": "wood_platform", "resultCount": 2, "station": "workbench", "ingredients": [ { "item": "wood", "count": 1 } ] },
+    { "id": "wood_wall", "result": "wood_wall", "resultCount": 4, "station": "workbench", "ingredients": [ { "item": "wood", "count": 1 } ] },
+    { "id": "table", "result": "table", "station": "workbench", "ingredients": [ { "item": "wood", "count": 8 } ] },
+    { "id": "chair", "result": "chair", "station": "workbench", "ingredients": [ { "item": "wood", "count": 4 } ] },
+    { "id": "door", "result": "door", "station": "workbench", "ingredients": [ { "item": "wood", "count": 6 } ] },
+    { "id": "chest", "result": "chest", "station": "workbench", "ingredients": [ { "item": "wood", "count": 8 }, { "item": "copper_bar", "count": 1 } ] },
+    { "id": "bed", "result": "bed", "station": "workbench", "ingredients": [ { "item": "wood", "count": 15 } ] },
+    { "id": "wooden_hammer", "result": "wooden_hammer", "station": "workbench", "ingredients": [ { "item": "wood", "count": 8 } ] },
+    { "id": "furnace", "result": "furnace", "station": "workbench", "ingredients": [ { "item": "stone", "count": 20 }, { "item": "wood", "count": 4 }, { "item": "torch", "count": 3 } ] },
+    { "id": "stone_brick_wall", "result": "stone_brick_wall", "resultCount": 4, "station": "workbench", "ingredients": [ { "item": "stone_bricks", "count": 1 } ] },
+    { "id": "anvil", "result": "anvil", "station": "workbench", "ingredients": [ { "item": "iron_bar", "count": 5 } ] },
+
+    { "id": "copper_bar", "result": "copper_bar", "station": "furnace", "ingredients": [ { "item": "copper_ore", "count": 3 } ] },
+    { "id": "iron_bar", "result": "iron_bar", "station": "furnace", "ingredients": [ { "item": "iron_ore", "count": 3 } ] },
+    { "id": "stone_bricks", "result": "stone_bricks", "station": "furnace", "ingredients": [ { "item": "stone", "count": 2 } ] },
+
+    { "id": "iron_pickaxe", "result": "iron_pickaxe", "station": "anvil", "ingredients": [ { "item": "iron_bar", "count": 10 }, { "item": "wood", "count": 3 } ] },
+    { "id": "iron_axe", "result": "iron_axe", "station": "anvil", "ingredients": [ { "item": "iron_bar", "count": 8 }, { "item": "wood", "count": 3 } ] }
+  ]
+}

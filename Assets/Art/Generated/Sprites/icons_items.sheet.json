@@ -1,0 +1,147 @@
+{
+  "version": 1,
+  "name": "icons_items",
+  "frameWidth": 16,
+  "frameHeight": 16,
+  "columns": 15,
+  "rows": 1,
+  "pixelsPerUnit": 16,
+  "pivot": [
+    0.5,
+    0.5
+  ],
+  "meshType": "FullRect",
+  "normalMap": "icons_items_n.png",
+  "animations": [
+    {
+      "name": "all",
+      "fps": 1,
+      "loop": false,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ]
+    }
+  ],
+  "frames": [
+    {
+      "name": "icon_anvil",
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_bed",
+      "x": 16,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_chair",
+      "x": 32,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_chest",
+      "x": 48,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_copper_axe",
+      "x": 64,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_copper_bar",
+      "x": 80,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_copper_pickaxe",
+      "x": 96,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_door",
+      "x": 112,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_furnace",
+      "x": 128,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_iron_axe",
+      "x": 144,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_iron_bar",
+      "x": 160,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_iron_pickaxe",
+      "x": 176,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_table",
+      "x": 192,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_wooden_hammer",
+      "x": 208,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_workbench",
+      "x": 224,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    }
+  ],
+  "source": "Tools/art/gen_atlas.py"
+}

@@ -18,6 +18,7 @@ All commands are run from the repo root in PowerShell.
 | Screenshot capture on the dev build | `./Tools/unity.ps1 capture -Scene PipelineDemo` → `Screenshots/PipelineDemo/` |
 | Copy a capture into the docs | `& "$env:LOCALAPPDATA\Programs\Python\Python312-arm64\python.exe" Tools/docs_shots.py --capture Screenshots/PipelineDemo --milestone M0 --crop 300,80,980,620` |
 | Art determinism check | `./Tools/build_art.ps1 -CheckDeterminism` |
+| **Everything** (setup, tests, build, all captures) | `./Tools/verify.ps1` |
 
 `unity.ps1` scans every Unity or player log for errors afterwards and exits non-zero if it finds any. A zero exit code from Unity alone is not trusted.
 
@@ -159,7 +160,7 @@ The user asked for the whole game to be finished without milestone check-ins (20
 
 ---
 
-## M2: Build and craft (in progress)
+## M2: Build and craft (done 2026-10-12)
 
 ### Plan
 1. Item pickups: drops spawn magnetised pickup entities; inventory overflow stays on the ground.
@@ -177,3 +178,55 @@ The user asked for the whole game to be finished without milestone check-ins (20
 5. Doors (toggle with Interact, solid when closed), platforms (one-way), furniture (table, chair, chest with storage, bed sets the spawn point), trees and wood (axe), ores and bars (copper and iron) so the recipes have inputs.
 6. Blender item and furniture art: tool, weapon and item icons, furniture renders sliced into atlas cells.
 7. Scenario `m2`: pick up drops, craft a workbench → table and chair, build a house by line and rectangle, hammer slopes, undo, open a door, store items in a chest, save and reload with the chest contents intact.
+
+### Done
+- **Content.**
+  - 23 tiles: ores, trees and canopies, grass decor, platforms, a workbench, furnace, anvil, table, chair, chest, door and bed.
+  - 27 items: copper and iron tools, a hammer, bars, furniture.
+  - 18 recipes.
+  - All in JSON, validated on import.
+- **Blender `render_objects.py`.** Furniture, stations, doors (closed and open) and tree canopies get albedo, normal and emission passes, sliced into atlas cells; the furnace fire glows. Item icons are rendered from the low-poly models. Pillow adds bark, platform and grass-decor styles. Generated in Python: a 5×7 bitmap pixel font (95 glyphs, imported as a Unity Font) and a 9-slice UI kit.
+- **Worldgen.** Copper and iron veins in depth bands, plus 252 trees and tall grass on the default seed. Decoration runs single-threaded, so it stays deterministic.
+- **Item pickups (`PickupSystem`).** Drops pop out, fall, settle, merge, and are magnetised within 4.5 tiles if there is room. The rest stays on the ground for 10 minutes.
+- **Crafting (`Loamlight.Crafting`).** `CraftingBook` is pure logic. It offers recipes whose station is within 4 tiles, crafts all-or-nothing, and handles batch crafting with Shift (×10).
+- **Building (pillar 3, `ToolUser`).**
+  - Ghost preview: green when valid, red when not, and objects show every cell.
+  - Click places one tile, drag places a Bresenham line, Shift-drag fills a rectangle. Releasing commits exactly the previewed tiles.
+  - Batches of up to 400 tiles.
+  - Ctrl+Z undoes the last 20 batches and refunds the items, provided the tiles are untouched.
+  - The hammer cycles full → half → slope right → slope left, and on an empty tile it knocks the wall down.
+  - Axes fell trees: the whole trunk and canopy cascade, 2 wood per trunk cell.
+- **Doors, chests and beds.**
+  - Doors open with right-click. The collision grid treats an open door as passable, and a door won't close on the player.
+  - Chests hold 30 slots, open with right-click, support shift-click quick-move, can't be broken while full, and are saved.
+  - Beds set the spawn point (saved).
+- **UI.**
+  - HUD hotbar using the UI kit, plus toasts.
+  - Inventory screen (E or Tab): 50 slots, trash, tooltips, a cursor stack, a chest panel, and a crafting panel with ingredient have/need. The item logic is a separate `InventoryModel`, unit-tested.
+- **SFX.** Doors, chests, crafting, UI open and close, pickups. 19 groups, 35 clips.
+- **Save game JSON** now holds the player, inventory, spawn point and chests. The save format is still v1.
+
+### Verified
+- **EditMode: 90 tests.** New ones cover:
+  - crafting: stations, all-or-nothing, multi-output, and progression reachability (every recipe reachable from world resources);
+  - the inventory model: pick, merge, swap, split, quick-move, return;
+  - world edits: tree felling cascade, object support, doors, stations, torch support;
+  - a script-file naming guard;
+  - the v1 save fixture, now checked by tile name.
+- **PlayMode: 5 tests.**
+- **`capture -Scene Game -Scenario m2`, all green in the dev player.**
+  - Fell an 11-tall tree and its canopy; 22 wood picked up via pickups.
+  - Craft a workbench by hand, place it, and see the workbench recipes appear.
+  - Craft walls, a door, table, chair, hammer, bed, platforms and a chest.
+  - Shift-drag a 10×6 wall rectangle (60/60 placed, 60 items used); drag-line the pillars and roof.
+  - Undo a 5-block line with a full refund; hammer a block to half, then to a slope.
+  - Toggle the door (collision checked); place the table, chair and a torch on the back wall.
+  - Chest: open it, shift-click 20 dirt in, confirm it can't be broken.
+  - Set the spawn at the bed; stand on a platform and drop through.
+  - Save, then confirm the chest, spawn point, door and slope are in the save.
+- The `m1`, `TileLab` and `PipelineDemo` captures still pass. Idle frame p95 is about 3 ms.
+
+### Rough
+- Furniture can't be flipped (it always faces one way). Torches have a single frame and don't lean against the side they attach to.
+- The furnace and anvil chain can't be shown end to end in the scenario without ore hunting; the scenario gives the player one copper bar, and the chain is covered by recipe tests. M5 adds ore-tier scenarios.
+- There is no item tooltip for blocks in the world; the HUD names the held item.

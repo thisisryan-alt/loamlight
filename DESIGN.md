@@ -253,3 +253,12 @@ Performance is measured on the full world in a **release** build, in the worst c
 
 - **Player body:** 1.25 × 2.6 tiles. It can straddle three tile columns, which matters for digging down.
 - **Scenario waits are time-based, never frame counts.** The game runs at 900–1000 fps, where two frames are 2 ms.
+
+### M2
+- **Building** commits exactly the tiles that were previewed, so a modifier released on the same frame can't change the shape. It fills bottom-up, which lets each row anchor on the row below.
+- **Undo** refunds the items, but only for tiles still as placed. It never removes something the player has changed since.
+- **Furniture belongs to the tile grid.** Each piece is a multi-tile object: the frame byte's low 7 bits are the cell index, and bit 7 is an alternate state (door open). Atlas entries for doors hold the closed cells, then the open cells.
+- **Chests are stored in `ChestStore`**, keyed by origin and saved in the game JSON as `item*count` strings. That keeps them readable, and they survive content ID changes.
+- **The UI is built in uGUI from code.** The canvas has `referencePixelsPerUnit = 16`, so the 16-PPU 9-slice borders map 1:1, and scaling is integer, based on a 640×360 virtual screen. The font is generated (`Tools/art/gen_font.py`) and imported as a bitmap `Font` (fontSize 8, pixel-exact).
+- **Save fixtures are checked by tile name, not numeric ID.** Content grows, so numeric IDs move; the remap is correct if every cell loads with the same *name* it was saved with.
+- **Every MonoBehaviour or ScriptableObject lives in a file named after its class.** Scene references break otherwise; a test enforces this.

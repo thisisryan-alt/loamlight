@@ -17,7 +17,9 @@
         "Loamlight.Lighting",
         "Unity.Mathematics",
         "Unity.Collections",
-        "Unity.Burst"
+        "Unity.Burst",
+        "Loamlight.Crafting",
+        "Loamlight.UI"
     ],
     "includePlatforms": [
         "Editor"

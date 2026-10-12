@@ -55,6 +55,14 @@ namespace Loamlight.EditorTools
                 if (QualitySettings.renderPipeline != pipeline) QualitySettings.renderPipeline = pipeline;
             }
             QualitySettings.SetQualityLevel(current, false);
+            // unlit sprite material (placement ghosts, UI-like world markers); in Resources so the shader ships
+            AssetFolders.Ensure("Assets/Resources/Materials");
+            const string unlitPath = "Assets/Resources/Materials/SpriteUnlit.mat";
+            if (AssetDatabase.LoadAssetAtPath<Material>(unlitPath) == null)
+            {
+                var unlit = AssetDatabase.LoadAssetAtPath<Material>(UrpPackage + "/Runtime/Materials/Sprite-Unlit-Default.mat");
+                AssetDatabase.CreateAsset(new Material(unlit) { name = "SpriteUnlit" }, unlitPath);
+            }
             AssetDatabase.SaveAssets();
             Debug.Log($"[Setup] URP 2D renderer active: {PipelinePath}");
         }

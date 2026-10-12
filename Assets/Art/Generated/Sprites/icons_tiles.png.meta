@@ -122,7 +122,7 @@ TextureImporter:
       name: icon_dirt
       rect:
         serializedVersion: 2
-        x: 16
+        x: 32
         y: 0
         width: 16
         height: 16
@@ -144,7 +144,7 @@ TextureImporter:
       name: icon_sand
       rect:
         serializedVersion: 2
-        x: 32
+        x: 64
         y: 0
         width: 16
         height: 16
@@ -166,7 +166,7 @@ TextureImporter:
       name: icon_stone
       rect:
         serializedVersion: 2
-        x: 48
+        x: 80
         y: 0
         width: 16
         height: 16
@@ -188,7 +188,7 @@ TextureImporter:
       name: icon_stone_bricks
       rect:
         serializedVersion: 2
-        x: 64
+        x: 96
         y: 0
         width: 16
         height: 16
@@ -210,7 +210,7 @@ TextureImporter:
       name: icon_torch
       rect:
         serializedVersion: 2
-        x: 80
+        x: 112
         y: 0
         width: 16
         height: 16
@@ -229,32 +229,10 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: icon_wood_planks
-      rect:
-        serializedVersion: 2
-        x: 96
-        y: 0
-        width: 16
-        height: 16
-      alignment: 9
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 21ba7f23d82a8bc64b22f9ebc5c76c2c
-      internalID: 346842143
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: icon_stone_brick_wall
       rect:
         serializedVersion: 2
-        x: 112
+        x: 160
         y: 0
         width: 16
         height: 16
@@ -276,7 +254,7 @@ TextureImporter:
       name: icon_wood_wall
       rect:
         serializedVersion: 2
-        x: 128
+        x: 176
         y: 0
         width: 16
         height: 16
@@ -290,6 +268,94 @@ TextureImporter:
       bones: []
       spriteID: db9a0ee6d7720e45dcdbf2b3cf52008f
       internalID: -818167687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_copper_ore
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 0
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c8eaf61fcfbef9721a92386f42665010
+      internalID: 1036631913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_iron_ore
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 0
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d840dde1a8faa1bc308209992479139d
+      internalID: 1974185782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_wood
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 281a62e94188ae3742c08b18247cb304
+      internalID: 797988520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_wood_platform
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 0
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eee0e2992aa5f848b3b8d02c390405e9
+      internalID: -1813270656
       vertices: []
       indices: 
       edges: []
@@ -311,13 +377,16 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       icon_clay: -1870674132
+      icon_copper_ore: 1036631913
       icon_dirt: -1443467524
+      icon_iron_ore: 1974185782
       icon_sand: -1659341413
       icon_stone: -1019700118
       icon_stone_brick_wall: -377150393
       icon_stone_bricks: -911803985
       icon_torch: 352726445
-      icon_wood_planks: 346842143
+      icon_wood: 797988520
+      icon_wood_platform: -1813270656
       icon_wood_wall: -818167687
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0

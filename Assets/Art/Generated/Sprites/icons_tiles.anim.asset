@@ -19,11 +19,14 @@ MonoBehaviour:
     loop: 0
     frames:
     - {fileID: -1870674132, guid: 392814965977ae64d8b77971d9812c3d, type: 3}
+    - {fileID: 1036631913, guid: 392814965977ae64d8b77971d9812c3d, type: 3}
     - {fileID: -1443467524, guid: 392814965977ae64d8b77971d9812c3d, type: 3}
+    - {fileID: 1974185782, guid: 392814965977ae64d8b77971d9812c3d, type: 3}
     - {fileID: -1659341413, guid: 392814965977ae64d8b77971d9812c3d, type: 3}
     - {fileID: -1019700118, guid: 392814965977ae64d8b77971d9812c3d, type: 3}
     - {fileID: -911803985, guid: 392814965977ae64d8b77971d9812c3d, type: 3}
     - {fileID: 352726445, guid: 392814965977ae64d8b77971d9812c3d, type: 3}
-    - {fileID: 346842143, guid: 392814965977ae64d8b77971d9812c3d, type: 3}
+    - {fileID: 797988520, guid: 392814965977ae64d8b77971d9812c3d, type: 3}
+    - {fileID: -1813270656, guid: 392814965977ae64d8b77971d9812c3d, type: 3}
     - {fileID: -377150393, guid: 392814965977ae64d8b77971d9812c3d, type: 3}
     - {fileID: -818167687, guid: 392814965977ae64d8b77971d9812c3d, type: 3}

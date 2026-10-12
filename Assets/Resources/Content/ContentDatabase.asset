@@ -13,31 +13,80 @@ MonoBehaviour:
   m_Name: ContentDatabase
   m_EditorClassIdentifier: Loamlight.Content::Loamlight.Content.ContentDatabase
   tiles:
+  - {fileID: 11400000, guid: be63a3e554767f947b6658b401c628a0, type: 2}
+  - {fileID: 11400000, guid: 02ef22ed1a714774da0a079d2e23ab29, type: 2}
+  - {fileID: 11400000, guid: 3645ef2e63802f4438cd1d5174848b39, type: 2}
+  - {fileID: 11400000, guid: 37aa087e946cae6449dda0e733065987, type: 2}
   - {fileID: 11400000, guid: e55678e69e399834a85d59e1fa9c3c66, type: 2}
+  - {fileID: 11400000, guid: d08403a3fe6870945a4649059dae9598, type: 2}
   - {fileID: 11400000, guid: 04528fdfd14f2e041971fff49dc35db6, type: 2}
   - {fileID: 11400000, guid: 20640b04f3fefd543b87d99dd53a79fa, type: 2}
+  - {fileID: 11400000, guid: 9167c3fe11504984689e4b43c1cf1e87, type: 2}
+  - {fileID: 11400000, guid: dfd71a8a532d879478ea434f988430d7, type: 2}
   - {fileID: 11400000, guid: 11287a1fa337c484eae6769d8586ef4e, type: 2}
+  - {fileID: 11400000, guid: a10edd1fb313ec0429fa5e80aa1423c5, type: 2}
+  - {fileID: 11400000, guid: 9bd5f1b9eccbec3429f20d7fed029d99, type: 2}
   - {fileID: 11400000, guid: 9cb0f31a82e3ca441bb2ea5671d3caca, type: 2}
   - {fileID: 11400000, guid: 4c5e0bab05e26214eacba558cc708808, type: 2}
   - {fileID: 11400000, guid: f5e26230bb424b645b814040ef0eaeb7, type: 2}
+  - {fileID: 11400000, guid: a2e76b513222a6048b17de56e9c4df9d, type: 2}
   - {fileID: 11400000, guid: bb23b9eddc18e964ab0232c3c3ca09a3, type: 2}
+  - {fileID: 11400000, guid: e4743810df5a149429c5fa35c96df3e8, type: 2}
+  - {fileID: 11400000, guid: 3e6d552b88d5cd443b9ed514b165ed69, type: 2}
   - {fileID: 11400000, guid: 938d166f78a0ed049904242b002b400e, type: 2}
+  - {fileID: 11400000, guid: 94e4bbcf49ada5247abbd0cf162e81f4, type: 2}
+  - {fileID: 11400000, guid: 5aa88243cf5df054988bc1c11d2ceae8, type: 2}
   walls:
   - {fileID: 11400000, guid: 9e387d6629249374d838210b8e6933f3, type: 2}
   - {fileID: 11400000, guid: c736a847920e16c4489c410084b763dc, type: 2}
   - {fileID: 11400000, guid: eb5d9e2ab6a0e4a419d5250ed9dbf9be, type: 2}
   - {fileID: 11400000, guid: d846cf4e21101df4c96387d1b45e1c64, type: 2}
   items:
+  - {fileID: 11400000, guid: fee7e4c33b660394499d27de2d69f701, type: 2}
+  - {fileID: 11400000, guid: 111fba76c9dc70445bfe38ac5d43ad2b, type: 2}
+  - {fileID: 11400000, guid: ca47e5cfb19b1b04b9016c7bd0e22a64, type: 2}
+  - {fileID: 11400000, guid: 7744607b2d7222b4d9d72444a5c8294d, type: 2}
   - {fileID: 11400000, guid: b5d6d7c10ef6da84fa32535518827eee, type: 2}
+  - {fileID: 11400000, guid: 1f3a8b618349d18469876502b02a365c, type: 2}
+  - {fileID: 11400000, guid: 54adee73fe0b29343be615a53321f568, type: 2}
+  - {fileID: 11400000, guid: 2e803befbf671f94d9efa2c91830a048, type: 2}
   - {fileID: 11400000, guid: 4f71fbd9a8e4a934ab89ac01ec3fe92b, type: 2}
   - {fileID: 11400000, guid: 637968c6359ff7e4e8dcc46afed4f418, type: 2}
+  - {fileID: 11400000, guid: 8831b77b2e733004bbefb487e3619084, type: 2}
+  - {fileID: 11400000, guid: ba8e2d36ca47d5649b1ad73f7754d814, type: 2}
+  - {fileID: 11400000, guid: 3abf8f1a8c252174e8cfadca2c0cad51, type: 2}
+  - {fileID: 11400000, guid: 70fa8385f3d2f8f40838f18589afa4ed, type: 2}
+  - {fileID: 11400000, guid: 9fc06d84db1e32a48b2cc63dca4cf81e, type: 2}
+  - {fileID: 11400000, guid: 91530bf8bd4f5f14cb8ea8e181842b1a, type: 2}
   - {fileID: 11400000, guid: 1bfac52e855c9614281f11fd2b661738, type: 2}
   - {fileID: 11400000, guid: 4a96e6ee1e6f53040999941b6175a6eb, type: 2}
   - {fileID: 11400000, guid: 271cf202c9db0ea4e99157093c24d5e0, type: 2}
   - {fileID: 11400000, guid: eecf77dfebe3f794a9117aa59a880ec3, type: 2}
+  - {fileID: 11400000, guid: 99dfdfb3154bc434cba527f019b686f1, type: 2}
   - {fileID: 11400000, guid: 6eebf31401e524147b214255c3826e5b, type: 2}
-  - {fileID: 11400000, guid: 6d671055a7f81e845b2cdee110c8ca12, type: 2}
+  - {fileID: 11400000, guid: 421e3208cfba7184bb3bf0ecbe9877fa, type: 2}
+  - {fileID: 11400000, guid: 233c3d1d2ad51f54385ab3b91d109d24, type: 2}
   - {fileID: 11400000, guid: 5ebf7c4265d8c66429d246741062b239, type: 2}
-  recipes: []
+  - {fileID: 11400000, guid: b7bf7e432d158c1448c6b500ded818dc, type: 2}
+  - {fileID: 11400000, guid: 93c353ad8452d56499913610cb6fb588, type: 2}
+  recipes:
+  - {fileID: 11400000, guid: 8404383956ab1b64ea65dfe26c7ab3dd, type: 2}
+  - {fileID: 11400000, guid: b0045f27f670f1c4f83fea2d97df8c38, type: 2}
+  - {fileID: 11400000, guid: ebbdff9e68d953949a91e4515be80900, type: 2}
+  - {fileID: 11400000, guid: 4f64185414ded2b46a1b84a3f9d2163f, type: 2}
+  - {fileID: 11400000, guid: 5224bdc98ab15c3499aab9668a27c0dc, type: 2}
+  - {fileID: 11400000, guid: 9fc0db6edc7a0934e96aea88a8a47c1a, type: 2}
+  - {fileID: 11400000, guid: 68a1ca81fb5646946841392678d55df8, type: 2}
+  - {fileID: 11400000, guid: 2a6cdcc6c64320d4094d7146dd4d9f68, type: 2}
+  - {fileID: 11400000, guid: 70ffb3cdf874eeb49b179093abd06e90, type: 2}
+  - {fileID: 11400000, guid: cec3d63b5440b90459376500555e23fc, type: 2}
+  - {fileID: 11400000, guid: 9127633e87051d64eb4b3758fc58617e, type: 2}
+  - {fileID: 11400000, guid: f23a16ed5a8775c44853d2fa008923ee, type: 2}
+  - {fileID: 11400000, guid: bfd51db36ee17864d8d6aee9dfaf652a, type: 2}
+  - {fileID: 11400000, guid: ab7c37a1be40fc34699ffefc2df9b9ad, type: 2}
+  - {fileID: 11400000, guid: 8428972da27e66542bf0cdf0c2cdf24f, type: 2}
+  - {fileID: 11400000, guid: 2ff3e039c5944b14c9d31ecfb7adb3a1, type: 2}
+  - {fileID: 11400000, guid: 789fb2044c2e6244db4deedc367eaeeb, type: 2}
+  - {fileID: 11400000, guid: d3db652da9ab5c14c8e175b4153e5208, type: 2}
   enemies: []
   lootTables: []

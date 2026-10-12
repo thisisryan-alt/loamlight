@@ -16,7 +16,7 @@ namespace Loamlight.Content
 
     public enum ToolType : byte { None = 0, Pickaxe = 1, Axe = 2, Hammer = 3 }
 
-    public enum Placement : byte { Any = 0, Floor = 1, WallOrSolid = 2, Ceiling = 3 }
+    public enum Placement : byte { Any = 0, Floor = 1, WallOrSolid = 2, Ceiling = 3, Trunk = 4 }
 
     public enum ItemCategory : byte { Material = 0, Block = 1, Wall = 2, Tool = 3, Weapon = 4, Placeable = 5, Consumable = 6, Ammo = 7, Summon = 8 }
 

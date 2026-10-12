@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Loamlight.Content::Loamlight.Content.ItemDef
   id: copper_pickaxe
   displayName: Copper Pickaxe
-  description: Bites through dirt and stone.
+  description: Bites through dirt, stone and common ore.
   category: 3
   maxStack: 1
-  icon: {fileID: 0}
+  icon: {fileID: 1369605695, guid: ff9fde52dd552614d881cf88a587fdc8, type: 3}
   placesTile: 
   placesWall: 
   toolType: 1

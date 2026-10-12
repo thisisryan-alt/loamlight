@@ -187,6 +187,75 @@ def style_ore(art, rng):
     return rgb, height
 
 
+def style_bark(art, rng):
+    pal = palette(art)
+    rgb = np.zeros((CELL, CELL, 3))
+    height = np.zeros((CELL, CELL))
+    alpha = np.zeros((CELL, CELL))
+    x0, x1 = 3, 13                                    # trunk is 10 px wide, centred
+    for x in range(x0, x1):
+        stripe = (x * 7 + int(rng.integers(0, 3))) % 4
+        tone = pal[2] if stripe else pal[1]
+        for y in range(CELL):
+            rgb[y, x] = tone * (0.9 + 0.15 * rng.random())
+            alpha[y, x] = 1
+            height[y, x] = 0.6 + 0.3 * np.sin((x - x0) / (x1 - x0) * np.pi)
+    for _ in range(rng.integers(1, 3)):              # knots
+        y, x = rng.integers(2, CELL - 3), rng.integers(x0 + 2, x1 - 2)
+        rgb[y:y + 2, x:x + 2] = pal[0]
+        height[y:y + 2, x:x + 2] = 0.3
+    rgb[:, x0] = pal[1] * 0.8
+    rgb[:, x1 - 1] = pal[1] * 0.7
+    return rgb, height, alpha
+
+
+def style_platform(art, rng):
+    pal = palette(art)
+    rgb = np.zeros((CELL, CELL, 3))
+    height = np.zeros((CELL, CELL))
+    alpha = np.zeros((CELL, CELL))
+    for y in range(0, 5):                            # a thick board at the top of the tile
+        for x in range(CELL):
+            rgb[y, x] = (pal[3] if y == 0 else pal[2] if y < 4 else pal[1]) * (0.92 + 0.1 * rng.random())
+            alpha[y, x] = 1
+            height[y, x] = 0.8 if 0 < y < 4 else 0.4
+    for x in (2, 13):                                # brackets
+        for y in range(5, 9):
+            rgb[y, x] = pal[1]
+            alpha[y, x] = 1
+            height[y, x] = 0.5
+    rgb[2, int(rng.integers(3, 12))] = pal[0]
+    return rgb, height, alpha
+
+
+def style_grass_decor(art, rng):
+    top = [hex_rgb(art[k]) for k in ("topDark", "top", "topLight")]
+    rgb = np.zeros((CELL, CELL, 3))
+    height = np.zeros((CELL, CELL))
+    alpha = np.zeros((CELL, CELL))
+    for _ in range(rng.integers(4, 8)):
+        x = int(rng.integers(1, CELL - 1))
+        h = int(rng.integers(3, 9))
+        lean = rng.choice([-1, 0, 0, 1])
+        for i in range(h):
+            y = CELL - 1 - i
+            xx = int(np.clip(x + (lean if i > h // 2 else 0), 0, CELL - 1))
+            rgb[y, xx] = top[2] if i == h - 1 else top[1] if i > 1 else top[0]
+            alpha[y, xx] = 1
+            height[y, xx] = 0.5 + 0.05 * i
+    if rng.random() < 0.4:                           # a little flower
+        x = int(rng.integers(3, 13))
+        y = CELL - 1 - int(rng.integers(5, 8))
+        c = hex_rgb(rng.choice(["#f2e266", "#e88ab0", "#f4f0e8", "#9ab8f0"]))
+        for dx, dy in ((0, 0), (1, 0), (-1, 0), (0, 1), (0, -1)):
+            rgb[y + dy, x + dx] = c if (dx, dy) != (0, 0) else hex_rgb("#f2c844")
+            alpha[y + dy, x + dx] = 1
+            height[y + dy, x + dx] = 0.8
+    return rgb, height, alpha
+
+
+SHAPED = {"bark": style_bark, "platform": style_platform, "grass_decor": style_grass_decor}
+
 STYLES = {"earth": style_earth, "stone": style_stone, "sand": style_sand, "planks": style_planks,
           "bricks": style_bricks, "grass": style_grass, "ore": style_ore}
 
@@ -307,6 +376,26 @@ def sheet_frame_cells(sheet_dir, sheet, frame, w, h):
     return cells
 
 
+def load_object_cells(cache, name, w, h):
+    """Slice a Blender object render (w*16 x h*16) into cells; cell index = cx + cy * w, cy from the bottom."""
+    a = np.array(Image.open(os.path.join(cache, name + "_albedo.png")).convert("RGBA"))
+    n = np.array(Image.open(os.path.join(cache, name + "_normal.png")).convert("RGBA"))
+    e = np.array(Image.open(os.path.join(cache, name + "_emission.png")).convert("RGB"))
+    if a.shape[:2] != (h * CELL, w * CELL):
+        raise SystemExit(f"[gen_atlas] object {name}: render is {a.shape[1]}x{a.shape[0]}, expected {w * CELL}x{h * CELL}")
+    opaque = a[..., 3] > 0
+    a[..., 3] = np.where(opaque, 255, 0)
+    a[~opaque, :3] = 0
+    n[~opaque, :3] = (128, 128, 255)
+    cells = []
+    for cy in range(h):
+        for cx in range(w):
+            y0 = (h - 1 - cy) * CELL
+            sl = (slice(y0, y0 + CELL), slice(cx * CELL, (cx + 1) * CELL))
+            cells.append((a[sl].copy(), n[sl][..., :3].copy(), e[sl].copy()))
+    return cells
+
+
 def crack_frames():
     frames = []
     rng = rng_for("cracks")
@@ -360,6 +449,16 @@ class Atlas:
         return A, N, E, frames
 
 
+def add_outline_rgba(a):
+    """1 px dark outline around an icon's silhouette (pixel-art readability on any background)."""
+    opaque = a[..., 3] > 0
+    ring = np.zeros_like(opaque)
+    for dy, dx in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+        ring |= np.roll(np.roll(opaque, dy, axis=0), dx, axis=1)
+    ring &= ~opaque
+    a[ring] = (24, 18, 16, 255)
+
+
 def write_sheet(out_dir, name, frames_rgba, names, animations=None, normal=None):
     cols = min(16, len(frames_rgba))
     rows = int(math.ceil(len(frames_rgba) / cols))
@@ -394,6 +493,8 @@ def main():
     ap.add_argument("--content", required=True)
     ap.add_argument("--sprites", required=True)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--objects", default="Tools/.cache/objects")
+    ap.add_argument("--icons", default="Tools/.cache/icons")
     args = ap.parse_args()
 
     tiles = json.load(open(os.path.join(args.content, "tiles.json"), encoding="utf-8"))["tiles"]
@@ -427,6 +528,26 @@ def main():
             layout["tiles"][t["id"]] = {"layout": "single", "start": i, "count": 1}
             icons.append(to_rgba(rgb, alpha)); icon_normals.append(normals_from_height(height, alpha, 1.5))
             icon_names.append(t["id"])
+        elif style in SHAPED:
+            start = None
+            count = 1 if style == "platform" else VARIANTS
+            for v in range(count):
+                rgb, height, alpha = SHAPED[style](art, rng_for(t["id"], v))
+                i = atlas.add(to_rgba(rgb, alpha), normals_from_height(height, alpha, 1.8))
+                start = i if start is None else start
+            layout["tiles"][t["id"]] = {"layout": "variants", "start": start, "count": count}
+            if style == "platform":
+                icons.append(to_rgba(rgb, alpha)); icon_normals.append(normals_from_height(height, alpha, 1.8))
+                icon_names.append(t["id"])
+        elif style == "object":
+            w, h = t.get("size", [1, 1])
+            names = [art["object"]] + ([art["openObject"]] if art.get("openObject") else [])
+            start = None
+            for obj in names:
+                for a, n, e in load_object_cells(args.objects, obj, w, h):
+                    i = atlas.add(a, n, e)
+                    start = i if start is None else start
+            layout["tiles"][t["id"]] = {"layout": "object", "start": start, "count": w * h * len(names), "w": w, "h": h}
         elif style == "sheet":
             w, h = t.get("size", [1, 1])
             cells = sheet_frame_cells(args.sprites, art["sheet"], art["frame"], w, h)
@@ -477,6 +598,23 @@ def main():
             sheet_frames.append(icon); sheet_normals.append(nrm); sheet_names.append("icon_" + item_id)
     if sheet_frames:
         write_sheet(args.sprites, "icons_tiles", sheet_frames, sheet_names, normal=sheet_normals)
+    # item icons rendered in Blender (tools, bars, furniture)
+    item_ids = {it["id"] for it in items}
+    rendered = json.load(open(os.path.join(args.icons, "manifest.json"), encoding="utf-8")) if os.path.exists(
+        os.path.join(args.icons, "manifest.json")) else []
+    rendered = [r for r in rendered if r in item_ids and "icon_" + r not in sheet_names]
+    if rendered:
+        frames_i, normals_i = [], []
+        for r in rendered:
+            a = np.array(Image.open(os.path.join(args.icons, r + "_albedo.png")).convert("RGBA"))
+            n = np.array(Image.open(os.path.join(args.icons, r + "_normal.png")).convert("RGB"))
+            opaque = a[..., 3] > 0
+            a[..., 3] = np.where(opaque, 255, 0)
+            a[~opaque, :3] = 0
+            n[~opaque] = (128, 128, 255)
+            add_outline_rgba(a)
+            frames_i.append(a); normals_i.append(n)
+        write_sheet(args.sprites, "icons_items", frames_i, ["icon_" + r for r in rendered], normal=normals_i)
     write_sheet(args.sprites, "cracks", crack_frames(), [f"cracks_{i}" for i in range(4)],
                 animations=[{"name": "crack", "fps": 1, "loop": False, "frames": [0, 1, 2, 3]}])
     print(f"[gen_atlas] {len(frames)} frames, atlas {A.shape[1]}x{A.shape[0]}, {len(layout['tiles'])} tiles, "

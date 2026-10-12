@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Loamlight.Content::Loamlight.Content.ItemDef
   id: wood_wall
   displayName: Wood Wall
-  description: A backdrop of boards.
+  description: A backdrop of boards. Keeps the sky out.
   category: 2
   maxStack: 999
   icon: {fileID: -818167687, guid: 392814965977ae64d8b77971d9812c3d, type: 3}
@@ -23,7 +23,7 @@ MonoBehaviour:
   toolType: 0
   toolPower: 0
   toolSpeed: 1
-  useTime: 0.25
+  useTime: 0.08
   reach: 5.5
   weaponKind: 0
   damage: 0

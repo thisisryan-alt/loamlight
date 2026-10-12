@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c5611a55476ef34b844cb8114efeb5a, type: 3}
+  m_Name: icons_items.anim
+  m_EditorClassIdentifier: Loamlight.Core::Loamlight.Core.SpriteAnimationSet
+  sheetName: icons_items
+  clips:
+  - name: all
+    fps: 1
+    loop: 0
+    frames:
+    - {fileID: 127707247, guid: ff9fde52dd552614d881cf88a587fdc8, type: 3}
+    - {fileID: -1058637884, guid: ff9fde52dd552614d881cf88a587fdc8, type: 3}
+    - {fileID: 1288113972, guid: ff9fde52dd552614d881cf88a587fdc8, type: 3}
+    - {fileID: 57434722, guid: ff9fde52dd552614d881cf88a587fdc8, type: 3}
+    - {fileID: -531738543, guid: ff9fde52dd552614d881cf88a587fdc8, type: 3}
+    - {fileID: 1449577731, guid: ff9fde52dd552614d881cf88a587fdc8, type: 3}
+    - {fileID: 1369605695, guid: ff9fde52dd552614d881cf88a587fdc8, type: 3}
+    - {fileID: -1473425453, guid: ff9fde52dd552614d881cf88a587fdc8, type: 3}
+    - {fileID: 759613216, guid: ff9fde52dd552614d881cf88a587fdc8, type: 3}
+    - {fileID: -1660465365, guid: ff9fde52dd552614d881cf88a587fdc8, type: 3}
+    - {fileID: -1696839487, guid: ff9fde52dd552614d881cf88a587fdc8, type: 3}
+    - {fileID: 2104570212, guid: ff9fde52dd552614d881cf88a587fdc8, type: 3}
+    - {fileID: 1897060876, guid: ff9fde52dd552614d881cf88a587fdc8, type: 3}
+    - {fileID: -562145489, guid: ff9fde52dd552614d881cf88a587fdc8, type: 3}
+    - {fileID: 1842744750, guid: ff9fde52dd552614d881cf88a587fdc8, type: 3}

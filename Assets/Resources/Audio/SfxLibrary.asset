@@ -17,6 +17,18 @@ MonoBehaviour:
     clips:
     - {fileID: 8300000, guid: cc502c5b6883c0243abc1aa06b2c6e8b, type: 3}
     volume: 1
+  - name: chest_close
+    clips:
+    - {fileID: 8300000, guid: 66a2ba449501d8a4bace988252632c10, type: 3}
+    volume: 1
+  - name: chest_open
+    clips:
+    - {fileID: 8300000, guid: ce581496c1a92bd438cbeef43c074b12, type: 3}
+    volume: 1
+  - name: craft
+    clips:
+    - {fileID: 8300000, guid: da6e204ac823e1544979ff09815f0403, type: 3}
+    volume: 1
   - name: dig
     clips:
     - {fileID: 8300000, guid: 7ea44b0c09ea2c242aa5d079c1580b72, type: 3}
@@ -39,6 +51,14 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 11e7bbfc4d5037941b8924bfbd487280, type: 3}
     - {fileID: 8300000, guid: 71c78821e0f42a4439c456563cc29025, type: 3}
     - {fileID: 8300000, guid: 4ae8f7962b60bfb4e82bd94532d011da, type: 3}
+    volume: 1
+  - name: door_close
+    clips:
+    - {fileID: 8300000, guid: df891cb07e1206b46bfd61eb3b6540c7, type: 3}
+    volume: 1
+  - name: door_open
+    clips:
+    - {fileID: 8300000, guid: ac6ba465e972d7942a8ae52ed7fa25f4, type: 3}
     volume: 1
   - name: jump
     clips:
@@ -76,5 +96,13 @@ MonoBehaviour:
     clips:
     - {fileID: 8300000, guid: 5feef9f408674c948aa3adf09f8d0da7, type: 3}
     - {fileID: 8300000, guid: 255e9b3710dfe8e4284450ee51aadf1e, type: 3}
+    volume: 1
+  - name: ui_close
+    clips:
+    - {fileID: 8300000, guid: c7fbba121bcd642478b1e8478c17d8e9, type: 3}
+    volume: 1
+  - name: ui_open
+    clips:
+    - {fileID: 8300000, guid: 2425c08f707e49246805cd6284942ee1, type: 3}
     volume: 1
   music: []

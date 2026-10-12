@@ -32,7 +32,7 @@ namespace Loamlight.EditorTools
             public FrameJson[] frames;
         }
         [Serializable] public sealed class AnimJson { public string name; public float fps; public bool loop; public int[] frames; }
-        [Serializable] public sealed class FrameJson { public string name; public int x, y, w, h; }
+        [Serializable] public sealed class FrameJson { public string name; public int x, y, w, h; public int[] border; }
 #pragma warning restore 0649
 
         public static IEnumerable<string> SidecarPaths() =>
@@ -152,7 +152,7 @@ namespace Loamlight.EditorTools
                 rect = new Rect(f.x, f.y, f.w, f.h),
                 alignment = SpriteAlignment.Custom,
                 pivot = pivot,
-                border = Vector4.zero,
+                border = f.border != null && f.border.Length == 4 ? new Vector4(f.border[0], f.border[1], f.border[2], f.border[3]) : Vector4.zero,
                 spriteID = StableIds.Guid($"sprite/{sheet.name}/{f.name}"),
             }).ToArray();
             provider.SetSpriteRects(rects);

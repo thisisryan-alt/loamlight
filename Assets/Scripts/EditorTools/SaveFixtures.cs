@@ -16,6 +16,28 @@ namespace Loamlight.EditorTools
     {
         public const string Folder = "Assets/Tests/Fixtures";
 
+        /// <summary>Records the content-independent name hash of a fixture (derived from the file alone).</summary>
+        public static void WriteNameHash(string path)
+        {
+            using var raw = WorldSave.Load(path, ContentDatabase.Instance, out _, out var tiles, out var walls, false);
+            ulong h = 14695981039346656037UL;
+            void Mix(string s) { foreach (char c in s) { h ^= c; h *= 1099511628211UL; } h ^= 0xff; h *= 1099511628211UL; }
+            for (int y = 0; y < raw.Height; y++)
+            for (int x = 0; x < raw.Width; x++)
+            {
+                Mix(tiles[raw.GetBlock(x, y)]);
+                Mix(walls[raw.GetWall(x, y)]);
+            }
+            File.WriteAllText(Path.ChangeExtension(path, null) + ".hash.txt", h.ToString("x16") + "\n");
+        }
+
+        [MenuItem("Loamlight/Tests/Rehash Save Fixtures (name hash)")]
+        public static void RehashAll()
+        {
+            foreach (var f in Directory.GetFiles(Folder, "*.lmw")) WriteNameHash(f.Replace('\\', '/'));
+            AssetDatabase.Refresh();
+        }
+
         [MenuItem("Loamlight/Tests/Write Save Fixture (current version)")]
         public static void WriteCurrent()
         {
@@ -36,7 +58,7 @@ namespace Loamlight.EditorTools
                 createdUtc = "2026-10-12T00:00:00.0000000Z",
                 gameJson = "{\"player\":{\"x\":64.5,\"y\":100,\"selected\":0,\"inventory\":[\"copper_pickaxe*1\",\"torch*10\"]}}",
             }, db);
-            File.WriteAllText($"{Folder}/world_v{WorldSave.Version}.hash.txt", WorldHash.Compute(w).ToString("x16") + "\n");
+            WriteNameHash(path);
             AssetDatabase.Refresh();
             Debug.Log($"[SaveFixtures] wrote {path}");
         }

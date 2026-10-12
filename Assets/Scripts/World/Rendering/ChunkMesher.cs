@@ -106,7 +106,15 @@ namespace Loamlight.World.Rendering
                         f = t.start + mask * t.variants + (int)(Hash(x, y) % t.variants);
                         break;
                     case AtlasLayout.Object:
-                        f = t.start + math.min(frames[idx], t.count - 1);
+                    {
+                        // low 7 bits: cell index; bit 7: alternate state (open door) stored after the first w*h cells
+                        int cell = frames[idx] & 0x7f;
+                        if ((frames[idx] & 0x80) != 0) cell += t.w * t.h;
+                        f = t.start + math.min(cell, t.count - 1);
+                        break;
+                    }
+                    case AtlasLayout.Variants:
+                        f = t.start + (int)(Hash(x, y) % (uint)math.max(1, t.count));
                         break;
                     default:
                         f = t.start + math.min(frames[idx], math.max(0, t.count - 1));

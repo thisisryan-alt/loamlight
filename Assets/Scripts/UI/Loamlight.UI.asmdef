@@ -7,7 +7,8 @@
         "Loamlight.Inventory",
         "Loamlight.Player",
         "UnityEngine.UI",
-        "Unity.InputSystem"
+        "Unity.InputSystem",
+        "Loamlight.Crafting"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

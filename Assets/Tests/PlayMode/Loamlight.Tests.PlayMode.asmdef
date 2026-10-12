@@ -17,7 +17,8 @@
         "Loamlight.UI",
         "Unity.Mathematics",
         "Unity.Collections",
-        "Unity.Burst"
+        "Unity.Burst",
+        "Loamlight.Crafting"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

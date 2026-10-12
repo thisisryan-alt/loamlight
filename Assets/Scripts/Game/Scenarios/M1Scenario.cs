@@ -48,6 +48,7 @@ namespace Loamlight.Game.Scenarios
             int before = string.IsNullOrEmpty(dropId) ? 0 : G.Inventory.Count(G.Db.ItemId(dropId));
             yield return MineTile(below);
             Check(G.World.GetBlock(below.x, below.y) == 0, $"mined {minedDef?.id ?? "nothing"} at {below}");
+            yield return Seconds(1.0f);   // the drop pops out as a pickup and flies into the inventory
             if (!string.IsNullOrEmpty(dropId))
                 Check(G.Inventory.Count(G.Db.ItemId(dropId)) == before + 1, $"{dropId} added to inventory ({before} -> {G.Inventory.Count(G.Db.ItemId(dropId))})");
             Check(Sfx.PlayLog.Contains(minedDef?.sound ?? "dig"), "mining played its dig sound");

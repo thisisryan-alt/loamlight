@@ -17,7 +17,8 @@
         "Unity.Burst",
         "Loamlight.Inventory",
         "Loamlight.Player",
-        "Loamlight.UI"
+        "Loamlight.UI",
+        "Loamlight.Crafting"
     ],
     "includePlatforms": [
         "Editor"

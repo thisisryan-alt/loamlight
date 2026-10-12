@@ -19,7 +19,7 @@ MonoBehaviour:
   hardness: 0.4
   tier: 0
   tool: 1
-  drop: wood_planks
+  drop: wood
   dropCount: 1
   mapColor: {r: 0.6039216, g: 0.41568628, b: 0.23529412, a: 1}
   light: {r: 0, g: 0, b: 0, a: 1}

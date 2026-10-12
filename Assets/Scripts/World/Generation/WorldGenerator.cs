@@ -11,6 +11,8 @@ namespace Loamlight.World.Generation
     public struct GenIds
     {
         public ushort dirt, grass, stone, sand, clay;
+        public ushort copperOre, ironOre;
+        public ushort treeTrunk, treeTop, grassDecor;
         public ushort dirtWall, stoneWall;
     }
 
@@ -30,9 +32,10 @@ namespace Loamlight.World.Generation
 
     public sealed class GenReport
     {
-        public double ColumnsMs, FillMs, SurfaceMs, TotalMs;
+        public double ColumnsMs, FillMs, SurfaceMs, DecorateMs, TotalMs;
+        public int Trees;
         public override string ToString() =>
-            $"columns {ColumnsMs:0.0} ms, fill {FillMs:0.0} ms, surface {SurfaceMs:0.0} ms, total {TotalMs:0.0} ms";
+            $"columns {ColumnsMs:0.0} ms, fill {FillMs:0.0} ms, surface {SurfaceMs:0.0} ms, decorate {DecorateMs:0.0} ms ({Trees} trees), total {TotalMs:0.0} ms";
     }
 
     /// <summary>
@@ -72,6 +75,11 @@ namespace Loamlight.World.Generation
                     layout = world.Layout, seed = seed, ids = ids, surface = surface, blocks = world.Blocks,
                 }.Schedule(width, 64).Complete();
                 report.SurfaceMs = sw.Elapsed.TotalMilliseconds;
+
+                // cross-chunk writes: single-threaded, fixed order, seeded RNG only
+                sw.Restart();
+                report.Trees = Decorate(world, ids, surface, seed);
+                report.DecorateMs = sw.Elapsed.TotalMilliseconds;
             }
             finally
             {
@@ -84,6 +92,65 @@ namespace Loamlight.World.Generation
         }
 
         public static int SurfaceLevel(int height, GenParams p) => (int)(height * p.surfaceFrac);
+
+        /// <summary>Trees and tall grass on exposed grass. Writes across chunks, so it runs on one thread in x order.</summary>
+        static int Decorate(WorldData w, GenIds ids, NativeArray<int> surface, uint seed)
+        {
+            if (ids.treeTrunk == 0) return 0;
+            var rng = new Unity.Mathematics.Random(seed * 2654435761u + 17u);
+            var layout = w.Layout;
+            int trees = 0;
+            int nextTree = 4 + rng.NextInt(0, 6);
+            for (int x = 3; x < w.Width - 3; x++)
+            {
+                int top = TopSolid(w, x, math.min(w.Height - 1, surface[x] + 3));
+                if (top < 0 || w.Blocks[layout.Index(x, top)] != ids.grass) continue;
+                if (x >= nextTree && CanGrowTree(w, ids, x, top))
+                {
+                    int height = 6 + rng.NextInt(0, 7);
+                    for (int i = 1; i <= height; i++) w.Blocks[layout.Index(x, top + i)] = ids.treeTrunk;
+                    // canopy: 5x4 object centred on the trunk, cell index = cx + cy * 5
+                    int ox = x - 2, oy = top + height + 1;
+                    if (oy + 4 < w.Height)
+                        for (int cy = 0; cy < 4; cy++)
+                        for (int cx = 0; cx < 5; cx++)
+                        {
+                            int i = layout.Index(ox + cx, oy + cy);
+                            if (w.Blocks[i] != 0) continue;
+                            w.Blocks[i] = ids.treeTop;
+                            w.Frames[i] = (byte)(cx + cy * 5);
+                        }
+                    trees++;
+                    nextTree = x + 5 + rng.NextInt(0, 9);
+                    continue;
+                }
+                int above = layout.Index(x, top + 1);
+                if (ids.grassDecor != 0 && w.Blocks[above] == 0 && rng.NextFloat() < 0.4f) w.Blocks[above] = ids.grassDecor;
+            }
+            return trees;
+        }
+
+        static int TopSolid(WorldData w, int x, int fromY)
+        {
+            for (int y = fromY; y > 0; y--)
+            {
+                ushort b = w.Blocks[w.Layout.Index(x, y)];
+                if (b != 0) return y;
+            }
+            return -1;
+        }
+
+        static bool CanGrowTree(WorldData w, GenIds ids, int x, int top)
+        {
+            // flat-ish ground and clear air for trunk + canopy
+            for (int dx = -2; dx <= 2; dx++)
+            for (int dy = 1; dy <= 18; dy++)
+            {
+                if (!w.InBounds(x + dx, top + dy)) return false;
+                if (w.Blocks[w.Layout.Index(x + dx, top + dy)] != 0) return false;
+            }
+            return w.Blocks[w.Layout.Index(x - 1, top)] != 0 && w.Blocks[w.Layout.Index(x + 1, top)] != 0;
+        }
 
         [BurstCompile(CompileSynchronously = true)]
         struct ColumnsJob : IJobParallelFor
@@ -121,7 +188,7 @@ namespace Loamlight.World.Generation
                 int cx = chunk % layout.ChunksX, cy = chunk / layout.ChunksX;
                 float2 oTunnelA = Noise2.Offset(seed, 10), oTunnelB = Noise2.Offset(seed, 11), oCavern = Noise2.Offset(seed, 12);
                 float2 oPocket = Noise2.Offset(seed, 13), oEntrance = Noise2.Offset(seed, 14), oMix = Noise2.Offset(seed, 15);
-                float2 oClay = Noise2.Offset(seed, 16);
+                float2 oClay = Noise2.Offset(seed, 16), oCopper = Noise2.Offset(seed, 20), oIron = Noise2.Offset(seed, 21);
                 int cavernY = (int)(layout.Height * p.cavernFrac);
                 int baseIndex = chunk << 10;
 
@@ -145,6 +212,12 @@ namespace Loamlight.World.Generation
                     else if (y > cavernY) block = mix > 0.45f ? ids.dirt : ids.stone;
                     else block = mix > 0.62f ? ids.dirt : ids.stone;
                     if (block == ids.dirt && depth > 4 && Noise2.Fbm(pos * 0.06f + oClay, 2) > 0.6f) block = ids.clay;
+                    // ore veins: small noise blobs inside depth bands (copper shallow, iron deeper)
+                    if (depth > 6 && block != 0)
+                    {
+                        if (ids.copperOre != 0 && depth < 260 && noise.snoise(pos * 0.11f + oCopper) > 0.82f) block = ids.copperOre;
+                        else if (ids.ironOre != 0 && depth > 45 && depth < 420 && noise.snoise(pos * 0.1f + oIron) > 0.84f) block = ids.ironOre;
+                    }
 
                     // background walls start a few tiles under the surface, so sky light reaches the topsoil
                     ushort wall = depth > 3 ? (dirtLayer || block == ids.dirt ? ids.dirtWall : ids.stoneWall) : (ushort)0;

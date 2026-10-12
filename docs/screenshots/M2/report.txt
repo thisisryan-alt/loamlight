@@ -1,0 +1,21 @@
+scene: Game
+resolution: 1280x720, device: Qualcomm(R) Adreno(TM) X1-85 GPU (Direct3D12)
+cpu: Snapdragon(R) X 10-core X1P64100 @ 3.40 GHz, 10 threads, build: development
+frame ms over 240 frames: avg 1.13 (884 fps), p50 0.79, p95 3.22, max 6.40
+FrameTimingManager avg: cpu 1.13 ms, gpu 0.54 ms (240 samples)
+profiler: Main Thread avg 1.114 ms max 6.40 ms | Update.ScriptRunBehaviourUpdate avg 0.039 ms max 0.94 ms | PreLateUpdate.ScriptRunBehaviourLateUpdate avg 0.009 ms max 0.09 ms | Loamlight.ChunkRebuild avg 0.000 ms max 0.00 ms | Loamlight.LightTick avg 0.018 ms max 0.90 ms | PostLateUpdate.PlayerUpdateCanvases avg 0.008 ms max 0.03 ms | UGUI.Rendering.UpdateBatches avg 0.005 ms max 0.01 ms | Camera.Render avg 0.000 ms max 0.00 ms | Gfx.WaitForPresentOnGfxThread avg 0.001 ms max 0.01 ms | GC Allocated In Frame avg 0.4 KB max 5.5 KB
+shot 00_tree_felled.png: 1280x720, luminance mean 92.8, variance 4735.0
+  verify: ok ok: found a tree near spawn | ok: copper axe in the starting kit | ok: felling the base removed the whole 11-tall tree and its canopy | ok: wood dropped as pickups (11 on the ground)
+shot 01_crafting_ui.png: 1280x720, luminance mean 69.8, variance 5765.1
+  verify: ok ok: picked up 22 wood (expected ~22) | ok: pickups make a sound | note: gave 98 wood: topped up for the build (one tree is not enough for a house) | note: levelled a 20-wide building site at x=2100, ground y=868 | ok: have 14 tiles of flat ground to build on | ok: without a workbench, tables are not offered | ok: crafted a workbench by hand from 10 wood
+shot 02_drag_preview.png: 1280x720, luminance mean 84.9, variance 4898.5
+  verify: ok ok: workbench placed at (2110, 869) | ok: standing next to the workbench enables it | ok: crafted wood_wall x20 | ok: crafted door x1 | ok: crafted table x1 | ok: crafted chair x1 | ok: crafted wooden_hammer x1 | ok: crafted bed x1 | ok: crafted wood_platform x3 | note: gave 1 copper_bar: a copper bar for the chest (smelting is covered by the furnace recipe test) | ok: crafted a chest (wood + copper bar) | ok: wood walls ready | ok: Shift-drag previews a filled 10x6 rectangle (60 ghost tiles)
+shot 03_chest_open.png: 1280x720, luminance mean 52.5, variance 3192.4
+  verify: ok ok: wall rectangle placed: 60 of 60 tiles | ok: each wall tile consumed one item (60) | ok: roof line placed (10/10) | ok: pillar lines placed | ok: placed a 5-block line on the roof | ok: Ctrl+Z removed the line and refunded all 5 wood | ok: hammer turns a block into a half block | ok: second hit makes a slope | ok: door placed in the left wall | ok: a closed door blocks the way | ok: right-click opens the door (passable) | ok: right-click again closes it | ok: table placed | ok: chair placed | ok: torch on the back wall | ok: chest placed | ok: right-click opens the chest UI | note: gave 20 dirt: some dirt to store | ok: shift-click moved 20 dirt into the chest
+shot 04_house_built.png: 1280x720, luminance mean 87.2, variance 4856.8
+  verify: ok ok: a chest with items in it cannot be broken | ok: bed placed outside | ok: right-click on the bed sets the spawn point | ok: platform line placed inside the house | ok: stands on the platform (feet 872.00, top 872) | ok: holding Down drops through it (feet 869.00)
+shot 05_after_save.png: 1280x720, luminance mean 87.2, variance 4852.7
+  verify: ok ok: chest contents are in the save | ok: bed spawn point is in the save | ok: house (door, hammered slope) survives save/load
+shot 06_end.png: 1280x720, luminance mean 87.2, variance 4851.5
+  verify: ok (no checks)
+result: ok
