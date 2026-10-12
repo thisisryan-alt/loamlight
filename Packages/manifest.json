@@ -20,8 +20,5 @@
     "com.unity.modules.tilemap": "1.0.0",
     "com.unity.modules.ui": "1.0.0",
     "com.unity.modules.uielements": "1.0.0"
-  },
-  "testables": [
-    "com.unity.inputsystem"
-  ]
+  }
 }

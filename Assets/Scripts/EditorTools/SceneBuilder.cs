@@ -84,32 +84,34 @@ namespace Loamlight.EditorTools
             Tiled("Back Wall", wall, new Vector2(48, 26), new Vector3(0, -1.5f, 0), "Walls", new Color(0.62f, 0.60f, 0.68f));
             Tiled("Floor", wall, new Vector2(48, 2), new Vector3(0, -7.5f, 0), "World", Color.white);
 
-            // subjects: the same sphere with / without the normal map, and flipped by scale (must light identically)
+            // subjects: the same sphere with / without the normal map, and mirrored with SpriteRenderer.flipX, which
+            // must light identically (URP negates normal XY for flipX; a negative scale.x would invert normal Y instead)
             var subjects = new (string name, Sprite sprite, Vector3 pos, bool flip)[]
             {
                 ("Sphere (normal map)", calib, new Vector3(-8f, 2.5f, 0f), false),
                 ("Sphere (no normal map)", calibFlat, new Vector3(0f, 2.5f, 0f), false),
-                ("Sphere (normal map, scale.x = -1)", calib, new Vector3(8f, 2.5f, 0f), true),
+                ("Sphere (normal map, flipX)", calib, new Vector3(8f, 2.5f, 0f), true),
             };
             var orbitCenters = subjects.Select(s => (Vector2)s.pos).ToList();
-            foreach (var s in subjects)
+            var spheres = subjects.Select(s =>
             {
                 var sr = NewSprite(s.name, s.sprite, s.pos, "Entities");
-                if (s.flip) sr.transform.localScale = new Vector3(-1f, 1f, 1f);
-            }
+                sr.flipX = s.flip;
+                return sr.transform;
+            }).ToArray();
 
             var walker = NewSprite("Miner (walk)", minerSet.Find("walk").frames[0], new Vector3(-4f, -6.5f, 0f), "Entities");
             walker.gameObject.AddComponent<SpriteAnimator>().Configure(minerSet, "walk");
-            var swinger = NewSprite("Miner (use, scale.x = -1)", minerSet.Find("use").frames[0], new Vector3(4f, -6.5f, 0f), "Entities");
-            swinger.transform.localScale = new Vector3(-1f, 1f, 1f);
+            var swinger = NewSprite("Miner (use, flipX)", minerSet.Find("use").frames[0], new Vector3(4f, -6.5f, 0f), "Entities");
+            swinger.flipX = true;
             swinger.gameObject.AddComponent<SpriteAnimator>().Configure(minerSet, "use", 0.6f, loopAlways: true);
             orbitCenters.Add(new Vector2(-4f, -5.1f));
             orbitCenters.Add(new Vector2(4f, -5.1f));
 
             // one torch per subject, orbiting in sync (see PipelineDemoDirector)
             var lights = orbitCenters.Select((c, i) =>
-                NewLight($"Torch {i}", Light2D.LightType.Point, TorchColor, 1.5f, new Vector3(c.x, c.y, 0f),
-                         outerRadius: 3.4f, innerRadius: 0.15f, falloff: 0.6f, normalMaps: true).transform).ToArray();
+                NewLight($"Torch {i}", Light2D.LightType.Point, TorchColor, 1.8f, new Vector3(c.x, c.y, 0f),
+                         outerRadius: 4.2f, innerRadius: 0.15f, falloff: 0.6f, normalMaps: true).transform).ToArray();
 
             // a cool accent light far left (stand-in for a glowing ore vein) to show colored mixing on the wall
             NewLight("Accent (teal)", Light2D.LightType.Point, new Color(0.25f, 0.95f, 0.85f), 1.2f, new Vector3(-15f, -4f, 0f),
@@ -118,13 +120,13 @@ namespace Loamlight.EditorTools
             var labels = BuildWorldCanvas(cam);
             Label(labels, "normal map", new Vector2(-8f, 0.6f));
             Label(labels, "no normal map (control)", new Vector2(0f, 0.6f));
-            Label(labels, "normal map, flipped by scale", new Vector2(8f, 0.6f));
+            Label(labels, "normal map, flipX", new Vector2(8f, 0.6f));
             Label(labels, "walk (normal map)", new Vector2(-4f, -9f));
-            Label(labels, "use, flipped by scale", new Vector2(4f, -9f));
+            Label(labels, "use, flipX", new Vector2(4f, -9f));
             var caption = Label(labels, "Loamlight M0 pipeline demo", new Vector2(0f, 6.4f), 22);
 
             var director = new GameObject("Pipeline Demo Director").AddComponent<PipelineDemoDirector>();
-            director.Configure(lights, orbitCenters.ToArray(), 1.9f, caption);
+            director.Configure(lights, orbitCenters.ToArray(), 1.9f, caption, spheres[0], spheres[1], spheres[2]);
 
             EditorSceneManager.SaveScene(scene, PipelineDemoPath);
         }

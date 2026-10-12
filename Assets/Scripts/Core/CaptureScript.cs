@@ -12,6 +12,13 @@ namespace Loamlight.Core
         IEnumerator CaptureScript();
     }
 
+    /// <summary>Optional: a capture director that can check each captured frame (e.g. compare regions).</summary>
+    public interface ICaptureVerifier
+    {
+        /// <returns>false if the frame is wrong; <paramref name="detail"/> goes into the capture report either way.</returns>
+        bool VerifyShot(string shotName, UnityEngine.Texture2D frame, out string detail);
+    }
+
     public sealed class CaptureShot
     {
         public readonly string Name;

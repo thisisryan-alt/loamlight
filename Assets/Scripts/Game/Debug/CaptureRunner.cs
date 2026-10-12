@@ -22,6 +22,7 @@ namespace Loamlight.Game.DebugTools
         string _scene;
         int _shotIndex;
         bool _failed;
+        ICaptureDirector _director;
         readonly List<string> _report = new List<string>();
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -59,11 +60,10 @@ namespace Loamlight.Game.DebugTools
             _report.Add($"cpu: {SystemInfo.processorType}, {SystemInfo.processorCount} threads, build: {(Debug.isDebugBuild ? "development" : "release")}");
             yield return MeasureFrames();
 
-            ICaptureDirector director = null;
             foreach (var mb in FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Exclude))
-                if (mb is ICaptureDirector d) { director = d; break; }
+                if (mb is ICaptureDirector d) { _director = d; break; }
 
-            var script = director != null ? director.CaptureScript() : DefaultScript();
+            var script = _director != null ? _director.CaptureScript() : DefaultScript();
             yield return Drive(script);
             Finish();
         }
@@ -154,6 +154,12 @@ namespace Loamlight.Game.DebugTools
             double mean = sum / n, variance = sumSq / n - mean * mean;
             _report.Add($"shot {Path.GetFileName(file)}: {tex.width}x{tex.height}, luminance mean {mean:0.0}, variance {variance:0.0}");
             if (variance < 4.0) Fail($"shot '{shotName}' looks blank (luminance variance {variance:0.00})");
+            if (_director is ICaptureVerifier verifier)
+            {
+                bool ok = verifier.VerifyShot(shotName, tex, out var detail);
+                _report.Add($"  verify: {(ok ? "ok" : "FAILED")} {detail}");
+                if (!ok) Fail($"shot '{shotName}' failed verification: {detail}");
+            }
             Destroy(tex);
             Debug.Log($"[Capture] {file}");
         }

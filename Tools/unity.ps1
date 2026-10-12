@@ -63,12 +63,12 @@ function Show-LogIssues([string]$log) {
     return 0
 }
 
-function Invoke-Exe([string]$exe, [string[]]$exeArgs, [string]$log) {
+function Invoke-Exe([string]$exe, [string[]]$exeArgs, [string]$log, [string]$windowStyle = "Hidden") {
     Write-Host "Run : $exe"
     Write-Host "Args: $($exeArgs -join ' ')"
     $sw = [Diagnostics.Stopwatch]::StartNew()
     # Start-Process -Wait hangs on Unity's child processes; wait on the process handle instead.
-    $proc = Start-Process -FilePath $exe -ArgumentList $exeArgs -PassThru -WindowStyle Hidden
+    $proc = Start-Process -FilePath $exe -ArgumentList $exeArgs -PassThru -WindowStyle $windowStyle
     if (-not $proc.WaitForExit($TimeoutMinutes * 60 * 1000)) {
         $proc.Kill()
         throw "Timed out after $TimeoutMinutes minutes (log: $log)"
@@ -86,7 +86,7 @@ if ($Task -eq "capture") {
     $log = "$project/Logs/player-capture-$Scene.log"
     # Windowed so it renders on any display; never -nographics (nothing would be drawn).
     $code = Invoke-Exe $playerExe @("-llCapture", "`"$Out`"", "-llScene", $Scene, "-screen-fullscreen", "0",
-        "-screen-width", "1280", "-screen-height", "720", "-logFile", "`"$log`"") $log
+        "-screen-width", "1280", "-screen-height", "720", "-logFile", "`"$log`"") $log "Normal"   # a hidden window may not render
     $n = Show-LogIssues $log
     $shots = Get-ChildItem $Out -Filter *.png -ErrorAction SilentlyContinue
     Write-Host ("Screenshots: {0} in {1}" -f @($shots).Count, $Out)

@@ -1,0 +1,14 @@
+scene: PipelineDemo
+resolution: 1280x720, device: Qualcomm(R) Adreno(TM) X1-85 GPU (Direct3D12)
+cpu: Snapdragon(R) X 10-core X1P64100 @ 3.40 GHz, 10 threads, build: development
+frame ms over 240 frames: avg 2.29 (437 fps), p50 1.98, p95 4.51, max 6.46
+FrameTimingManager avg: cpu 2.29 ms, gpu 1.29 ms (240 samples)
+shot 00_light_upper_left.png: 1280x720, luminance mean 14.8, variance 348.7
+  verify: ok light 135 deg: flipX vs original 0.0 (<3), normal-map effect 9.2 (>5), lit-side minus far-side vs control +16.9 (>8)
+shot 01_light_upper_right.png: 1280x720, luminance mean 14.9, variance 350.6
+  verify: ok light 45 deg: flipX vs original 0.0 (<3), normal-map effect 9.1 (>5), lit-side minus far-side vs control +17.0 (>8)
+shot 02_light_below.png: 1280x720, luminance mean 15.0, variance 369.0
+  verify: ok light 270 deg: flipX vs original 0.0 (<3), normal-map effect 9.2 (>5), lit-side minus far-side vs control +16.6 (>8)
+shot 03_light_left.png: 1280x720, luminance mean 14.9, variance 351.2
+  verify: ok light 180 deg: flipX vs original 0.0 (<3), normal-map effect 9.2 (>5), lit-side minus far-side vs control +16.6 (>8)
+result: ok
