@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "name": "cracks",
+  "frameWidth": 16,
+  "frameHeight": 16,
+  "columns": 4,
+  "rows": 1,
+  "pixelsPerUnit": 16,
+  "pivot": [
+    0.5,
+    0.5
+  ],
+  "meshType": "FullRect",
+  "normalMap": "",
+  "animations": [
+    {
+      "name": "crack",
+      "fps": 1,
+      "loop": false,
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ]
+    }
+  ],
+  "frames": [
+    {
+      "name": "cracks_0",
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "cracks_1",
+      "x": 16,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "cracks_2",
+      "x": 32,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "cracks_3",
+      "x": 48,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    }
+  ],
+  "source": "Tools/art/gen_atlas.py"
+}

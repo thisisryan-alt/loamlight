@@ -1,0 +1,14 @@
+scene: Game
+resolution: 1280x720, device: Qualcomm(R) Adreno(TM) X1-85 GPU (Direct3D12)
+cpu: Snapdragon(R) X 10-core X1P64100 @ 3.40 GHz, 10 threads, build: development
+frame ms over 240 frames: avg 1.09 (914 fps), p50 0.81, p95 2.88, max 4.15
+FrameTimingManager avg: cpu 1.10 ms, gpu 0.46 ms (240 samples)
+shot 00_spawn_surface.png: 1280x720, luminance mean 91.1, variance 4853.2
+  verify: ok ok: player spawns standing on the surface at (2100.50, 869.00) | note: world 4200x1200, setup 79 ms (columns 1.2 ms, fill 50.9 ms, surface 0.4 ms, total 57.7 ms)
+shot 01_dug_down.png: 1280x720, luminance mean 55.9, variance 4556.3
+  verify: ok ok: accelerates to running speed within 0.25 s (vx 9.5) | ok: walked right 18.9 tiles in 2 s (step-up keeps it moving over terrain) | ok: stops when input is released (vx 0.00) | ok: held jump reaches 5.12 tiles (expected ~5.5) | ok: tapped jump is a short hop: 1.95 tiles | ok: pickaxe is in the inventory | ok: mined grass at (2119, 871) | ok: dirt added to inventory (0 -> 1) | ok: mining played its dig sound | ok: dug down and fell 10.0 tiles
+shot 02_torch_in_shaft.png: 1280x720, luminance mean 56.2, variance 4538.0
+  verify: ok ok: have dirt to place | ok: found an anchored empty tile next to the shaft | ok: placed dirt at (2116, 863) | ok: placing consumed one dirt | ok: torches in the inventory | ok: found a dark, supported spot for a torch | ok: torch placed at (2119, 862) | ok: torch raises light at its tile from 0.35 to 1.00
+shot 03_after_save_load.png: 1280x720, luminance mean 56.2, variance 4538.3
+  verify: ok ok: save/load round trip preserves every tile (hash e8fa92a08735f479) | ok: player inventory stored in the save | note: save 83 ms, load 57 ms, 2016 KB on disk
+result: ok

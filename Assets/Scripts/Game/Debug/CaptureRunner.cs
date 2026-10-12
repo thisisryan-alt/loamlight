@@ -85,8 +85,17 @@ namespace Loamlight.Game.DebugTools
 
         IEnumerator Drive(IEnumerator script)
         {
-            while (script.MoveNext())
+            while (true)
             {
+                bool more;
+                try { more = script.MoveNext(); }
+                catch (System.Exception e)
+                {
+                    Debug.LogException(e);
+                    Fail($"capture script threw {e.GetType().Name}: {e.Message}");
+                    yield break;
+                }
+                if (!more) yield break;
                 if (script.Current is CaptureShot shot)
                 {
                     yield return new WaitForEndOfFrame();

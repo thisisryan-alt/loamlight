@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca157788125dce44abaa82a6ae9346ef, type: 3}
+  m_Name: ContentDatabase
+  m_EditorClassIdentifier: Loamlight.Content::Loamlight.Content.ContentDatabase
+  tiles:
+  - {fileID: 11400000, guid: e55678e69e399834a85d59e1fa9c3c66, type: 2}
+  - {fileID: 11400000, guid: 04528fdfd14f2e041971fff49dc35db6, type: 2}
+  - {fileID: 11400000, guid: 20640b04f3fefd543b87d99dd53a79fa, type: 2}
+  - {fileID: 11400000, guid: 11287a1fa337c484eae6769d8586ef4e, type: 2}
+  - {fileID: 11400000, guid: 9cb0f31a82e3ca441bb2ea5671d3caca, type: 2}
+  - {fileID: 11400000, guid: 4c5e0bab05e26214eacba558cc708808, type: 2}
+  - {fileID: 11400000, guid: f5e26230bb424b645b814040ef0eaeb7, type: 2}
+  - {fileID: 11400000, guid: bb23b9eddc18e964ab0232c3c3ca09a3, type: 2}
+  - {fileID: 11400000, guid: 938d166f78a0ed049904242b002b400e, type: 2}
+  walls:
+  - {fileID: 11400000, guid: 9e387d6629249374d838210b8e6933f3, type: 2}
+  - {fileID: 11400000, guid: c736a847920e16c4489c410084b763dc, type: 2}
+  - {fileID: 11400000, guid: eb5d9e2ab6a0e4a419d5250ed9dbf9be, type: 2}
+  - {fileID: 11400000, guid: d846cf4e21101df4c96387d1b45e1c64, type: 2}
+  items:
+  - {fileID: 11400000, guid: b5d6d7c10ef6da84fa32535518827eee, type: 2}
+  - {fileID: 11400000, guid: 4f71fbd9a8e4a934ab89ac01ec3fe92b, type: 2}
+  - {fileID: 11400000, guid: 637968c6359ff7e4e8dcc46afed4f418, type: 2}
+  - {fileID: 11400000, guid: 1bfac52e855c9614281f11fd2b661738, type: 2}
+  - {fileID: 11400000, guid: 4a96e6ee1e6f53040999941b6175a6eb, type: 2}
+  - {fileID: 11400000, guid: 271cf202c9db0ea4e99157093c24d5e0, type: 2}
+  - {fileID: 11400000, guid: eecf77dfebe3f794a9117aa59a880ec3, type: 2}
+  - {fileID: 11400000, guid: 6eebf31401e524147b214255c3826e5b, type: 2}
+  - {fileID: 11400000, guid: 6d671055a7f81e845b2cdee110c8ca12, type: 2}
+  - {fileID: 11400000, guid: 5ebf7c4265d8c66429d246741062b239, type: 2}
+  recipes: []
+  enemies: []
+  lootTables: []

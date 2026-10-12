@@ -23,6 +23,9 @@ namespace Loamlight.EditorTools
     {
         public const string SceneFolder = "Assets/Scenes";
         public const string PipelineDemoPath = SceneFolder + "/PipelineDemo.unity";
+        public const string TileLabPath = SceneFolder + "/TileLab.unity";
+        public const string GamePath = SceneFolder + "/Game.unity";
+        public static readonly Color SkyColor = new Color(0.43f, 0.62f, 0.86f);
 
         public static readonly Color TorchColor = new Color(1f, 0.70f, 0.40f);
         public static readonly Color AmbientColor = new Color(0.55f, 0.62f, 0.85f);
@@ -32,7 +35,13 @@ namespace Loamlight.EditorTools
         {
             AssetFolders.Ensure(SceneFolder);
             BuildIfChanged(PipelineDemoPath, BuildPipelineDemo);
-            var scenes = new[] { new EditorBuildSettingsScene(PipelineDemoPath, true) };
+            BuildIfChanged(TileLabPath, BuildTileLab);
+            BuildIfChanged(GamePath, BuildGame);
+            var scenes = new[]
+            {
+                new EditorBuildSettingsScene(GamePath, true), new EditorBuildSettingsScene(TileLabPath, true),
+                new EditorBuildSettingsScene(PipelineDemoPath, true),
+            };
             if (!EditorBuildSettings.scenes.Select(s => s.path).SequenceEqual(scenes.Select(s => s.path)))
                 EditorBuildSettings.scenes = scenes;
             Debug.Log("[SceneBuilder] scenes built: " + string.Join(", ", scenes.Select(s => s.path)));
@@ -129,6 +138,34 @@ namespace Loamlight.EditorTools
             director.Configure(lights, orbitCenters.ToArray(), 1.9f, caption, spheres[0], spheres[1], spheres[2]);
 
             EditorSceneManager.SaveScene(scene, PipelineDemoPath);
+        }
+
+        // ------------------------------------------------------------------------------------------ game
+        static void BuildGame()
+        {
+            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            var cam = BuildCamera(new Vector3(0f, 0f, -10f), 960, 540);
+            cam.backgroundColor = SkyColor;
+            var boot = new GameObject("Game Bootstrap").AddComponent<Loamlight.Game.GameBootstrap>();
+            boot.Configure(cam);
+            new GameObject("Scenario Director").AddComponent<Loamlight.Game.Scenarios.GameScenarioDirector>();
+            EditorSceneManager.SaveScene(scene, GamePath);
+        }
+
+        // ------------------------------------------------------------------------------------------ tile lab
+        static void BuildTileLab()
+        {
+            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            var calib = LoadSprite("calib", "calib_still_0");
+            var cam = BuildCamera(new Vector3(46f, 24f, -10f), 1280, 720);
+            var sphere = NewSprite("Calibration sphere (SpriteRenderer)", calib, new Vector3(58f, 32f, 0f), "Entities");
+            var meshLight = NewLight("Torch (mesh sphere)", Light2D.LightType.Point, TorchColor, 1.8f, new Vector3(36f, 34f, 0f),
+                outerRadius: 4.2f, innerRadius: 0.15f, falloff: 0.6f, normalMaps: true);
+            var spriteLight = NewLight("Torch (sprite sphere)", Light2D.LightType.Point, TorchColor, 1.8f, new Vector3(56f, 34f, 0f),
+                outerRadius: 4.2f, innerRadius: 0.15f, falloff: 0.6f, normalMaps: true);
+            var director = new GameObject("Tile Lab Director").AddComponent<TileLabDirector>();
+            director.Configure(cam, sphere, meshLight, spriteLight);
+            EditorSceneManager.SaveScene(scene, TileLabPath);
         }
 
         // ------------------------------------------------------------------------------------------ helpers

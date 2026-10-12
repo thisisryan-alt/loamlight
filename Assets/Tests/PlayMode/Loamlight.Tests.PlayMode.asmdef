@@ -8,7 +8,16 @@
         "Loamlight.Game",
         "Unity.RenderPipelines.Core.Runtime",
         "Unity.RenderPipelines.Universal.Runtime",
-        "Unity.RenderPipelines.Universal.2D.Runtime"
+        "Unity.RenderPipelines.Universal.2D.Runtime",
+        "Loamlight.Content",
+        "Loamlight.World",
+        "Loamlight.Inventory",
+        "Loamlight.Player",
+        "Loamlight.Lighting",
+        "Loamlight.UI",
+        "Unity.Mathematics",
+        "Unity.Collections",
+        "Unity.Burst"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

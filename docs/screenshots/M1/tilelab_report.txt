@@ -1,0 +1,18 @@
+scene: TileLab
+resolution: 1280x720, device: Qualcomm(R) Adreno(TM) X1-85 GPU (Direct3D12)
+cpu: Snapdragon(R) X 10-core X1P64100 @ 3.40 GHz, 10 threads, build: development
+frame ms over 240 frames: avg 2.10 (475 fps), p50 2.06, p95 4.36, max 7.24
+FrameTimingManager avg: cpu 2.12 ms, gpu 0.71 ms (240 samples)
+shot 00_burst_on.png: 1280x720, luminance mean 2.2, variance 46.1
+  verify: ok jobs run Burst-compiled in this player
+shot 01_normals_135.png: 1280x720, luminance mean 2.2, variance 46.1
+  verify: ok mesh vs sprite sphere mean diff 0.0 (<6), mesh lit-side contrast 83.1 (>12)
+shot 02_normals_300.png: 1280x720, luminance mean 2.2, variance 45.8
+  verify: ok mesh vs sprite sphere mean diff 0.0 (<6), mesh lit-side contrast 80.6 (>12)
+shot 03_cookie_color.png: 1280x720, luminance mean 22.1, variance 507.5
+  verify: ok red-lit tile RGBA(91, 15, 7, 255), blue-lit tile RGBA(26, 25, 39, 255), unlit RGBA(0, 0, 0, 255)
+shot 04_cookie_align.png: 1280x720, luminance mean 1.9, variance 35.7
+  verify: ok lit tile 46, left 3, right 0, below 0, above 3
+shot 05_propagate.png: 1280x720, luminance mean 15.2, variance 310.0
+  verify: ok sky-lit 69, torch-lit cave 36, deep rock 2
+result: ok

@@ -54,8 +54,26 @@ namespace Loamlight.EditorTools
                 ImportSheet(path);
                 count++;
             }
+            BuildSheetIndex();
             AssetDatabase.SaveAssets();
             Debug.Log($"[ArtImport] {count} sheets imported from {SpriteRoot}");
+        }
+
+        public const string SheetIndexPath = "Assets/Resources/Sprites/SpriteSheetIndex.asset";
+
+        /// <summary>Resources index of every animation set, so the player build includes them all.</summary>
+        static void BuildSheetIndex()
+        {
+            var sets = SidecarPaths().Select(p => AssetDatabase.LoadAssetAtPath<SpriteAnimationSet>(AnimationSetPath(ReadSidecar(p))))
+                .Where(s => s != null).ToArray();
+            AssetFolders.Ensure("Assets/Resources/Sprites");
+            var idx = AssetDatabase.LoadAssetAtPath<SpriteSheetIndex>(SheetIndexPath);
+            bool created = idx == null;
+            if (created) idx = ScriptableObject.CreateInstance<SpriteSheetIndex>();
+            var before = created ? null : EditorJsonUtility.ToJson(idx);
+            idx.sheets = sets;
+            if (created) AssetDatabase.CreateAsset(idx, SheetIndexPath);
+            else if (EditorJsonUtility.ToJson(idx) != before) EditorUtility.SetDirty(idx);
         }
 
         public static void ImportSheet(string sidecarPath)

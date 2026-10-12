@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "name": "icons_tiles",
+  "frameWidth": 16,
+  "frameHeight": 16,
+  "columns": 9,
+  "rows": 1,
+  "pixelsPerUnit": 16,
+  "pivot": [
+    0.5,
+    0.5
+  ],
+  "meshType": "FullRect",
+  "normalMap": "icons_tiles_n.png",
+  "animations": [
+    {
+      "name": "all",
+      "fps": 1,
+      "loop": false,
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ]
+    }
+  ],
+  "frames": [
+    {
+      "name": "icon_clay",
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_dirt",
+      "x": 16,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_sand",
+      "x": 32,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_stone",
+      "x": 48,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_stone_bricks",
+      "x": 64,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_torch",
+      "x": 80,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_wood_planks",
+      "x": 96,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_stone_brick_wall",
+      "x": 112,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_wood_wall",
+      "x": 128,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    }
+  ],
+  "source": "Tools/art/gen_atlas.py"
+}

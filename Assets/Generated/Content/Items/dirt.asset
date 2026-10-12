@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0f7c85c7224f6942b4ccc9c01864b7a, type: 3}
+  m_Name: dirt
+  m_EditorClassIdentifier: Loamlight.Content::Loamlight.Content.ItemDef
+  id: dirt
+  displayName: Dirt
+  description: Soft and plentiful.
+  category: 1
+  maxStack: 999
+  icon: {fileID: -1443467524, guid: 392814965977ae64d8b77971d9812c3d, type: 3}
+  placesTile: dirt
+  placesWall: 
+  toolType: 0
+  toolPower: 0
+  toolSpeed: 1
+  useTime: 0.25
+  reach: 5.5
+  weaponKind: 0
+  damage: 0
+  knockback: 0
+  hitstop: 1
+  shake: 1
+  manaCost: 0
+  projectile: 
+  ammo: 
+  projectileSpeed: 0
+  heal: 0
+  restoreMana: 0
+  summons: 

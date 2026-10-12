@@ -77,7 +77,7 @@ Environment: Unity 6000.4.11f1 (arm64 editor, "Supported" stream; the user chose
 
 ---
 
-## M1: Dig and move (in progress)
+## M1: Dig and move (done 2026-10-12)
 
 The user asked for the whole game to be finished without milestone check-ins (2026-10-12). Each milestone is still finished, verified and committed before the next.
 
@@ -98,3 +98,82 @@ The user asked for the whole game to be finished without milestone check-ins (20
 9. **Light map v1**: sky and the cookie Sprite Light2D, plus a torch emitter so caves are dark.
 10. **Save v1**: world plus player position. Round trip and a committed fixture.
 11. **Game scene**, scenario capture and full-world perf capture. Update DESIGN.md and PROGRESS.md.
+
+### Done
+- **Spikes, all verified in the ARM64 dev player (`capture -Scene TileLab`, 6 pixel-checked shots).**
+  - Burst runs compiled in the player.
+  - The chunk-mesh calibration sphere shades identically to the SpriteRenderer sphere: mean difference 0.0.
+  - The cookie Sprite Light2D carries colour, is aligned to tiles and leaves unlit tiles black.
+  - Propagation works: sky light enters from above, a torch lights its cave, deep rock stays black.
+- **Content pipeline.** `Assets/Content/Data/{tiles,walls,items}.json` → `ContentImport` (validated: unknown references fail the import) → one ScriptableObject per definition plus `ContentDatabase` in Resources. Numeric IDs follow sorted names; saves remap by name.
+- **WorldData.** Chunk-major SoA NativeArrays (32×32 chunks) with dirty flags that also mark neighbour chunks used for autotiling.
+- **Worldgen (Burst, seeded):**
+  - surface hills, dirt over stone with pockets, clay seams;
+  - worm tunnels, caverns that open up with depth, small pockets, and only a few cave mouths at the surface;
+  - background walls, grass.
+  - The full 4200×1200 world generates in about 60 ms in the editor and about 75 ms in the player.
+- **Tile atlas (`Tools/art/gen_atlas.py`).** Autotiling with 16 air masks × 3 variants, bevelled height normals, outlines and rounded corners, an emission atlas, item icons and crack frames. The calibration object is sliced from the Blender sheet.
+- **`Loamlight/Tile Lit` shader.** URP 2D lit path without sprite-only per-draw data, plus emission.
+- **Chunk rendering.** Burst `ChunkMeshJob` into `Mesh.MeshData`, two meshes per chunk (walls and blocks). The streaming `ChunkRenderer` keeps only visible chunks (pooled), rebuilds dirty ones under a budget, nearest first.
+- **Collision.** Tile height-field (full, half, slopes) with 1-tile step-up, one-way platforms, ceiling stops and sub-stepping (no tunnelling).
+- **Movement.** Pure `PlayerMotor`: acceleration and deceleration, variable jump (cut on release), apex hang, coyote time 0.1 s, jump buffer 0.12 s. Fixed 60 Hz step with interpolation.
+- **Player.** Input System actions built in code behind `IPlayerInput`; `ScriptedPlayerInput` for scenarios.
+- **Mining and placing.**
+  - `ToolUser`: reach, hardness and tier gating, a crack overlay, hit and break SFX.
+  - `WorldEdits`: anchoring rules, multi-tile objects, and breaking anything left unsupported.
+  - Block, wall and torch placement.
+- **Light map** (`LightMapSystem`): 20 Hz Burst flood fill (sky columns plus emitters, solids attenuate) into a cookie Sprite Light2D, plus pooled normal-mapped highlight point lights on nearby emitters.
+- **Inventory.** `ItemContainer` with 50 slots, the first 10 as the hotbar; HUD hotbar with icons and counts.
+- **SFX.** `Tools/audio/synth_sfx.py` (12 sounds, 28 variants) → `AudioImport` → `SfxLibrary`. `Sfx` plays them with panning and rate limiting.
+- **Save v1.** Header, name palettes and RLE arrays. Deflate is unusable because the ARM64 player lacks MonoPosixHelper. Write-then-copy. A committed fixture, `Assets/Tests/Fixtures/world_v1.lmw`, must load forever.
+- **Game scene.** `GameBootstrap` composition root plus `GameScenarioDirector`. Launch flags: `-llSeed`, `-llWorldSize WxH`, `-llLoad <path>`, `-llScenario m1|perf`.
+
+### Verified
+- **EditMode, 67 tests:**
+  - layout and dirty flags;
+  - worldgen determinism, layers and timing;
+  - collision (falls, tunnelling, step-up, slopes, half blocks, platforms, ceilings);
+  - motor (run speed, jump heights, coyote time, buffer, fall distance);
+  - inventory;
+  - saves (round trip, garbage rejection, v1 fixture);
+  - MiniJson, content validation, atlas coverage, icons;
+  - the assembly graph.
+- **PlayMode, 5 tests:** the Game scene boots and the player stands, a mesh-vs-Tilemap benchmark, and the PipelineDemo tests.
+- **`capture -Scene Game -Scenario m1`**, in the dev player, all checks green:
+  - spawn on the surface;
+  - full running speed within 0.25 s, then 19 tiles walked in 2 s over terrain, then a clean stop;
+  - held jump 5.1 tiles versus a 2.0-tile tap;
+  - mining (with drop and sound), digging 10 tiles down, placing a block (consumes one) and a torch (light 0.35 → 1.00);
+  - save and load round trip with the same hash: save 83 ms, load 57 ms, 2.0 MB.
+- **`capture -Scene Game -Scenario perf`** (full 4200×1200 world, dev build): generation and setup 83 ms; 15k frames p50 0.63 ms, p95 1.78 ms, max 25 ms (a teleport frame); dig storm of 48 edits per frame p95 2.13 ms; light tick 0.77 ms. `perf.raw` (Unity Profiler) is written next to the screenshots.
+
+### Rough
+- The pickaxe has no icon yet; Blender item icons arrive in M2.
+- The surface is a stair-step outline with no natural slopes. A smoothing pass that places slope tiles is planned for M5.
+- The light map is diamond-shaped (directional sweeps); bilinear filtering softens it, but it shows on open sky edges.
+- Mined items go straight into the inventory (`InventoryDropSink`). M2 adds item pickups.
+
+### Known bugs / caveats
+- Mining aims at the tile under the cursor but doesn't require line of sight, so a player can mine through a 1-tile wall. Terraria behaves the same way; noted as a design choice.
+- Frame times come from a development build at 1280×720. The release-build perf run is part of M6.
+
+---
+
+## M2: Build and craft (in progress)
+
+### Plan
+1. Item pickups: drops spawn magnetised pickup entities; inventory overflow stays on the ground.
+2. Inventory UI: Esc/E opens a 50-slot grid with drag and drop, a trash slot and tooltips. Pixel font generated from Python glyphs, plus pixel-art UI sprites.
+3. Crafting:
+   - stations are tile objects (workbench, furnace, anvil);
+   - recipes in `recipes.json`, with stations required within 4 tiles;
+   - a crafting panel listing what can be made;
+   - a `Crafting` assembly holding the pure logic and tests.
+4. Building tools (pillar 3):
+   - ghost preview (green or red);
+   - drag places a line, Shift-drag fills a rectangle;
+   - hammer: block shapes cycle full → half → slope right → slope left, and it removes walls;
+   - Ctrl+Z undoes the last 20 placement batches, refunding the items.
+5. Doors (toggle with Interact, solid when closed), platforms (one-way), furniture (table, chair, chest with storage, bed sets the spawn point), trees and wood (axe), ores and bars (copper and iron) so the recipes have inputs.
+6. Blender item and furniture art: tool, weapon and item icons, furniture renders sliced into atlas cells.
+7. Scenario `m2`: pick up drops, craft a workbench → table and chair, build a house by line and rectangle, hammer slopes, undo, open a door, store items in a chest, save and reload with the chest contents intact.

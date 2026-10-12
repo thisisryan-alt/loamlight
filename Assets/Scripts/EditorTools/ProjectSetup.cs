@@ -27,6 +27,9 @@ namespace Loamlight.EditorTools
                 ConfigureSortingLayers();
                 RenderPipelineSetup.Run();
                 ArtImport.ImportAll();
+                AudioImport.ImportAll();
+                AtlasImport.ImportAll();
+                ContentImport.ImportAll();
                 SceneBuilder.BuildAll();
                 AssetDatabase.SaveAssets();
                 Debug.Log("[Setup] complete");

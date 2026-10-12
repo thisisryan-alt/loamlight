@@ -1,0 +1,177 @@
+using Loamlight.Content;
+using Loamlight.Inventory;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace Loamlight.UI
+{
+    /// <summary>Shared helpers for building pixel-art uGUI from code with integer scaling.</summary>
+    public static class UiKit
+    {
+        static Sprite _white;
+        static Font _font;
+
+        public static Sprite White
+        {
+            get
+            {
+                if (_white == null)
+                {
+                    var t = new Texture2D(2, 2) { filterMode = FilterMode.Point };
+                    var w = new Color32(255, 255, 255, 255);
+                    t.SetPixels32(new[] { w, w, w, w });
+                    t.Apply();
+                    _white = Sprite.Create(t, new Rect(0, 0, 2, 2), Vector2.one * 0.5f, 100f);
+                }
+                return _white;
+            }
+        }
+
+        public static Font Font
+        {
+            get
+            {
+                if (_font == null) _font = Resources.Load<Font>("UI/PixelFont");
+                if (_font == null) _font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+                return _font;
+            }
+        }
+
+        public static Canvas CreateCanvas(string name, int sortOrder)
+        {
+            var go = new GameObject(name);
+            var canvas = go.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = sortOrder;
+            canvas.pixelPerfect = true;
+            var scaler = go.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ConstantPixelSize;
+            go.AddComponent<IntegerUiScale>();
+            go.AddComponent<GraphicRaycaster>();
+            return canvas;
+        }
+
+        public static RectTransform Rect(string name, Transform parent, Vector2 anchor, Vector2 pivot, Vector2 pos, Vector2 size)
+        {
+            var go = new GameObject(name, typeof(RectTransform));
+            var rt = (RectTransform)go.transform;
+            rt.SetParent(parent, false);
+            rt.anchorMin = rt.anchorMax = anchor;
+            rt.pivot = pivot;
+            rt.anchoredPosition = pos;
+            rt.sizeDelta = size;
+            return rt;
+        }
+
+        public static Image Panel(string name, Transform parent, Vector2 anchor, Vector2 pivot, Vector2 pos, Vector2 size, Color color, Sprite sprite = null)
+        {
+            var rt = Rect(name, parent, anchor, pivot, pos, size);
+            var img = rt.gameObject.AddComponent<Image>();
+            img.sprite = sprite != null ? sprite : White;
+            img.type = sprite != null && sprite.border != Vector4.zero ? Image.Type.Sliced : Image.Type.Simple;
+            img.color = color;
+            img.raycastTarget = false;
+            return img;
+        }
+
+        public static Text Label(string name, Transform parent, Vector2 anchor, Vector2 pivot, Vector2 pos, Vector2 size, string text,
+            int fontSize = 8, TextAnchor align = TextAnchor.MiddleLeft, Color? color = null)
+        {
+            var rt = Rect(name, parent, anchor, pivot, pos, size);
+            var t = rt.gameObject.AddComponent<Text>();
+            t.font = Font;
+            t.fontSize = fontSize;
+            t.alignment = align;
+            t.color = color ?? new Color(0.95f, 0.93f, 0.88f);
+            t.text = text;
+            t.raycastTarget = false;
+            t.horizontalOverflow = HorizontalWrapMode.Overflow;
+            t.verticalOverflow = VerticalWrapMode.Overflow;
+            var shadow = rt.gameObject.AddComponent<Shadow>();
+            shadow.effectColor = new Color(0f, 0f, 0f, 0.85f);
+            shadow.effectDistance = new Vector2(1f, -1f);
+            return t;
+        }
+    }
+
+    /// <summary>Keeps the canvas at an integer scale of a 640x360 virtual screen, so UI pixels stay square.</summary>
+    [RequireComponent(typeof(CanvasScaler))]
+    public sealed class IntegerUiScale : MonoBehaviour
+    {
+        public static int ExtraScale;
+        CanvasScaler _scaler;
+
+        void Awake() => _scaler = GetComponent<CanvasScaler>();
+
+        void Update()
+        {
+            int s = Mathf.Max(1, Mathf.Min(Screen.width / 640, Screen.height / 360) + ExtraScale);
+            if (!Mathf.Approximately(_scaler.scaleFactor, s)) _scaler.scaleFactor = s;
+        }
+    }
+
+    /// <summary>Top-left hotbar: 10 slots with icon, count and selection frame, plus the held item's name.</summary>
+    public sealed class Hud : MonoBehaviour
+    {
+        const int Slot = 20, Gap = 2;
+
+        ItemContainer _inventory;
+        ContentDatabase _db;
+        Image[] _frames, _icons;
+        Text[] _counts;
+        Text _itemName;
+        bool _dirty = true;
+
+        public static Hud Create(ItemContainer inventory, ContentDatabase db)
+        {
+            var canvas = UiKit.CreateCanvas("HUD", 10);
+            var hud = canvas.gameObject.AddComponent<Hud>();
+            hud._inventory = inventory;
+            hud._db = db;
+            hud.Build(canvas.transform);
+            inventory.Changed += () => hud._dirty = true;
+            return hud;
+        }
+
+        void Build(Transform root)
+        {
+            _frames = new Image[ItemContainer.HotbarSize];
+            _icons = new Image[ItemContainer.HotbarSize];
+            _counts = new Text[ItemContainer.HotbarSize];
+            for (int i = 0; i < ItemContainer.HotbarSize; i++)
+            {
+                var pos = new Vector2(6 + i * (Slot + Gap), -6);
+                _frames[i] = UiKit.Panel($"Slot {i}", root, new Vector2(0, 1), new Vector2(0, 1), pos, new Vector2(Slot, Slot), new Color(0.1f, 0.12f, 0.18f, 0.75f));
+                var inner = UiKit.Panel("Inner", _frames[i].transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero,
+                    new Vector2(Slot - 2, Slot - 2), new Color(0.2f, 0.24f, 0.33f, 0.85f));
+                _icons[i] = UiKit.Panel("Icon", inner.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(16, 16), Color.white);
+                _icons[i].preserveAspect = true;
+                _counts[i] = UiKit.Label("Count", _frames[i].transform, new Vector2(1, 0), new Vector2(1, 0), new Vector2(-1, 0), new Vector2(18, 8), "",
+                    8, TextAnchor.LowerRight);
+                UiKit.Label("Key", _frames[i].transform, new Vector2(0, 1), new Vector2(0, 1), new Vector2(2, -1), new Vector2(8, 8),
+                    ((i + 1) % 10).ToString(), 8, TextAnchor.UpperLeft, new Color(0.8f, 0.8f, 0.85f, 0.7f));
+            }
+            _itemName = UiKit.Label("Item name", root, new Vector2(0, 1), new Vector2(0, 1), new Vector2(6, -6 - Slot - 3), new Vector2(200, 10), "", 8);
+        }
+
+        void LateUpdate()
+        {
+            if (!_dirty) return;
+            _dirty = false;
+            for (int i = 0; i < ItemContainer.HotbarSize; i++)
+            {
+                var stack = _inventory[i];
+                var def = stack.IsEmpty ? null : _db.Item(stack.item);
+                _icons[i].enabled = def != null && def.icon != null;
+                if (def != null) _icons[i].sprite = def.icon;
+                _counts[i].text = stack.count > 1 ? stack.count.ToString() : "";
+                bool selected = i == _inventory.Selected;
+                _frames[i].color = selected ? new Color(1f, 0.82f, 0.35f, 1f) : new Color(0.1f, 0.12f, 0.18f, 0.75f);
+            }
+            var sel = _inventory.SelectedStack;
+            _itemName.text = sel.IsEmpty ? "" : _db.Item(sel.item)?.displayName ?? "";
+        }
+
+        public void MarkDirty() => _dirty = true;
+    }
+}

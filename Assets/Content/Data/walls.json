@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "walls": [
+    { "id": "dirt_wall", "name": "Dirt Wall", "drop": "", "mapColor": "#3e2a1b",
+      "art": { "style": "earth", "base": "#4a3322", "dark": "#38261a", "light": "#5a3f2a", "speck": "#2c1e14" } },
+    { "id": "stone_wall", "name": "Stone Wall", "drop": "", "mapColor": "#36353b",
+      "art": { "style": "stone", "base": "#3f3e45", "dark": "#2f2e34", "light": "#4d4c54", "speck": "#25242a" } },
+    { "id": "wood_wall", "name": "Wood Wall", "drop": "wood_wall", "mapColor": "#4f3620",
+      "art": { "style": "planks", "base": "#5c4026", "dark": "#45301c", "light": "#6e4e30", "speck": "#33230f" } },
+    { "id": "stone_brick_wall", "name": "Stone Brick Wall", "drop": "stone_brick_wall", "mapColor": "#46454c",
+      "art": { "style": "bricks", "base": "#4c4b52", "dark": "#36353b", "light": "#5c5b63", "speck": "#2a292e" } }
+  ]
+}

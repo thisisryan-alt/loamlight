@@ -50,10 +50,12 @@ function Build-All {
     Invoke-Step "blender render" { & $BlenderPath @bArgs 2>&1 | Where-Object { "$_" -match "render_sprites|Error|Traceback|error" -and "$_" -notmatch "DeprecationWarning" } | ForEach-Object { Write-Host "  $_" } }
     Invoke-Step "pack sheets" { & $PythonPath "$root/Tools/art/pack_sheets.py" --frames $frames --out $out }
     Invoke-Step "tiles" { & $PythonPath "$root/Tools/art/gen_tiles.py" --out $out }
+    Invoke-Step "audio" { & $PythonPath "$root/Tools/audio/synth_sfx.py" --out "$root/Assets/Audio/Generated" }
+    Invoke-Step "atlas" { & $PythonPath "$root/Tools/art/gen_atlas.py" --content "$root/Assets/Content/Data" --sprites $out --out "$root/Assets/Art/Generated/Atlas" }
 }
 
 function Get-OutputHashes {
-    Get-ChildItem $out -File | Where-Object { $_.Extension -ne ".meta" } | Sort-Object Name |
+    Get-ChildItem $out, "$root/Assets/Art/Generated/Atlas", "$root/Assets/Audio/Generated" -File -ErrorAction SilentlyContinue | Where-Object { $_.Extension -ne ".meta" } | Sort-Object Name |
         ForEach-Object { "{0}  {1}" -f (Get-FileHash $_.FullName -Algorithm SHA256).Hash.Substring(0, 16), $_.Name }
 }
 

@@ -1,0 +1,17 @@
+{
+    "name": "Loamlight.Inventory",
+    "rootNamespace": "Loamlight.Inventory",
+    "references": [
+        "Loamlight.Core",
+        "Loamlight.Content"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "items": [
+    { "id": "dirt", "name": "Dirt", "category": "Block", "maxStack": 999, "placesTile": "dirt", "description": "Soft and plentiful." },
+    { "id": "stone", "name": "Stone", "category": "Block", "maxStack": 999, "placesTile": "stone", "description": "The bones of the world." },
+    { "id": "sand", "name": "Sand", "category": "Block", "maxStack": 999, "placesTile": "sand", "description": "Falls when nothing holds it up." },
+    { "id": "clay", "name": "Clay", "category": "Block", "maxStack": 999, "placesTile": "clay", "description": "Dense, red earth." },
+    { "id": "wood_planks", "name": "Wood Planks", "category": "Block", "maxStack": 999, "placesTile": "wood_planks", "description": "Sawn boards." },
+    { "id": "stone_bricks", "name": "Stone Bricks", "category": "Block", "maxStack": 999, "placesTile": "stone_bricks", "description": "Dressed stone." },
+    { "id": "wood_wall", "name": "Wood Wall", "category": "Wall", "maxStack": 999, "placesWall": "wood_wall", "description": "A backdrop of boards." },
+    { "id": "stone_brick_wall", "name": "Stone Brick Wall", "category": "Wall", "maxStack": 999, "placesWall": "stone_brick_wall", "description": "A backdrop of masonry." },
+    { "id": "torch", "name": "Torch", "category": "Placeable", "maxStack": 999, "placesTile": "torch", "description": "Push back the dark." },
+    { "id": "copper_pickaxe", "name": "Copper Pickaxe", "category": "Tool", "maxStack": 1, "toolType": "Pickaxe", "toolPower": 1,
+      "toolSpeed": 1.0, "useTime": 0.22, "reach": 5.5, "damage": 4, "knockback": 2, "description": "Bites through dirt and stone." }
+  ]
+}

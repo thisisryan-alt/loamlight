@@ -8,7 +8,16 @@
         "Unity.RenderPipelines.Universal.Runtime",
         "Unity.RenderPipelines.Universal.2D.Runtime",
         "Unity.2D.Sprite.Editor",
-        "UnityEngine.UI"
+        "UnityEngine.UI",
+        "Loamlight.Content",
+        "Loamlight.World",
+        "Loamlight.Lighting",
+        "Unity.Collections",
+        "Unity.Mathematics",
+        "Unity.Burst",
+        "Loamlight.Inventory",
+        "Loamlight.Player",
+        "Loamlight.UI"
     ],
     "includePlatforms": [
         "Editor"

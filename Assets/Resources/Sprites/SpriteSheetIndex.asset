@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58f34bb3c9564234e886bddc1f18902d, type: 3}
+  m_Name: SpriteSheetIndex
+  m_EditorClassIdentifier: Loamlight.Core::Loamlight.Core.SpriteSheetIndex
+  sheets:
+  - {fileID: 11400000, guid: 0c686abe6e413ea4bb2cae15340723bd, type: 2}
+  - {fileID: 11400000, guid: 284689f36f39418459fe1553290aaafa, type: 2}
+  - {fileID: 11400000, guid: effd339f3f9e757429858b8f02f37b6c, type: 2}
+  - {fileID: 11400000, guid: f193d000324d8874f87fcf4de20d94ec, type: 2}
+  - {fileID: 11400000, guid: a8ae2e1917db699428d877f11cb305a7, type: 2}
+  - {fileID: 11400000, guid: f0ecb11e058b33d419288485c5c2dcc7, type: 2}

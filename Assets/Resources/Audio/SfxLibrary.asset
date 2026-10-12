@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fa421270c89873408fd464230ae514d, type: 3}
+  m_Name: SfxLibrary
+  m_EditorClassIdentifier: Loamlight.Core::Loamlight.Core.SfxLibrary
+  groups:
+  - name: cant
+    clips:
+    - {fileID: 8300000, guid: cc502c5b6883c0243abc1aa06b2c6e8b, type: 3}
+    volume: 1
+  - name: dig
+    clips:
+    - {fileID: 8300000, guid: 7ea44b0c09ea2c242aa5d079c1580b72, type: 3}
+    - {fileID: 8300000, guid: 11b05ae25ab67014b99f93418edd4b95, type: 3}
+    volume: 1
+  - name: dig_hard
+    clips:
+    - {fileID: 8300000, guid: 2171c89826dfa9246b3b2498a08f0798, type: 3}
+    - {fileID: 8300000, guid: 4a89118c5ca962f4ba45779667c27226, type: 3}
+    - {fileID: 8300000, guid: b2bc5cde5c7e23649a5582dc0f73da92, type: 3}
+    volume: 1
+  - name: dig_soft
+    clips:
+    - {fileID: 8300000, guid: 5e77fdd5bc8fa444eb62febdf507d9c1, type: 3}
+    - {fileID: 8300000, guid: 25e80fb499da7f14eb3cfd3c61de72ee, type: 3}
+    - {fileID: 8300000, guid: f6fffe78e175f674893ac691ae37d9bb, type: 3}
+    volume: 1
+  - name: dig_wood
+    clips:
+    - {fileID: 8300000, guid: 11e7bbfc4d5037941b8924bfbd487280, type: 3}
+    - {fileID: 8300000, guid: 71c78821e0f42a4439c456563cc29025, type: 3}
+    - {fileID: 8300000, guid: 4ae8f7962b60bfb4e82bd94532d011da, type: 3}
+    volume: 1
+  - name: jump
+    clips:
+    - {fileID: 8300000, guid: f03b17f103c390843a373df435ed3839, type: 3}
+    volume: 1
+  - name: land
+    clips:
+    - {fileID: 8300000, guid: 10477f1aff9d3d24e9a9fffd4b6dfcdc, type: 3}
+    - {fileID: 8300000, guid: a0e2ae590e3617748adc03ee13c0493d, type: 3}
+    volume: 1
+  - name: pickup
+    clips:
+    - {fileID: 8300000, guid: 2f8db24212d47094a97d2d1ae9717039, type: 3}
+    - {fileID: 8300000, guid: dfe0b52fba39a2247bf2decb8924f373, type: 3}
+    volume: 1
+  - name: place
+    clips:
+    - {fileID: 8300000, guid: 3d576feb0447cf14db9f9b3e02142f78, type: 3}
+    - {fileID: 8300000, guid: 90bac47dc5f4eb34d9342f22c4c5e4b5, type: 3}
+    volume: 1
+  - name: step
+    clips:
+    - {fileID: 8300000, guid: 0120fb1027471e943b2db7d3d518e36c, type: 3}
+    - {fileID: 8300000, guid: 00fbc0dbb6f022f408cc87c0953edaff, type: 3}
+    - {fileID: 8300000, guid: c676634463dcef04385d6949673bc84d, type: 3}
+    - {fileID: 8300000, guid: e3760d9446bea124ab354b4d802747a4, type: 3}
+    volume: 1
+  - name: swing
+    clips:
+    - {fileID: 8300000, guid: 1da0e86a459af4043a852ba46d001f38, type: 3}
+    - {fileID: 8300000, guid: c7abba1e7ecc0774bb21ce4795cd1713, type: 3}
+    - {fileID: 8300000, guid: 741d2bf08e282474aa9555dd0e4e5ec5, type: 3}
+    volume: 1
+  - name: ui_click
+    clips:
+    - {fileID: 8300000, guid: 5feef9f408674c948aa3adf09f8d0da7, type: 3}
+    - {fileID: 8300000, guid: 255e9b3710dfe8e4284450ee51aadf1e, type: 3}
+    volume: 1
+  music: []

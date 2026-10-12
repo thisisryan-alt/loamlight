@@ -228,3 +228,28 @@ Performance is measured on the full world in a **release** build, in the worst c
 
 ## Decision log (by milestone)
 - **M0:** see the sections above.
+
+### M1
+- **Chunk rendering is a Burst-built mesh, not a Tilemap.** Rebuilding 16 chunks took 0.64 ms with the mesh job and 2.82 ms with `Tilemap.SetTilesBlock`, in the PlayMode benchmark `ChunkRenderBenchmark`. The Tilemap number also excludes autotiling and normal maps.
+- **Tiles use a custom `Loamlight/Tile Lit` shader.** URP's Sprite-Lit-Default reads `unity_SpriteColor` and `unity_SpriteProps`, which only SpriteRenderers fill reliably. Its normals pass multiplies by the sprite flip, which would zero normals on a MeshRenderer. The custom shader keeps URP's 2D lighting includes and adds an emission map.
+- **Light is a hybrid.**
+  - A tile light map (flood fill, with occlusion) applied through a Sprite Light2D cookie decides where it is dark.
+  - Normal-mapped point lights on the nearest emitters add the per-pixel shape.
+  - The global light is off, so caves are truly black.
+- **Saves use RLE, not Deflate.** System.IO.Compression's DeflateStream needs MonoPosixHelper, which the Windows ARM64 player doesn't ship. The tile arrays are run-heavy anyway: a full world is 2 MB.
+- **Movement numbers:**
+
+  | Parameter | Value |
+  |---|---|
+  | run speed | 9.5 tiles/s |
+  | ground acceleration | 75 tiles/s² |
+  | gravity | 82 tiles/s² |
+  | jump speed | 29.5 tiles/s (5.1–5.5 tile jump) |
+  | jump cut | ×0.42 |
+  | apex gravity | ×0.55 while held and under 4 tiles/s |
+  | coyote time | 0.1 s |
+  | jump buffer | 0.12 s |
+  | step-up | 1.05 tiles |
+
+- **Player body:** 1.25 × 2.6 tiles. It can straddle three tile columns, which matters for digging down.
+- **Scenario waits are time-based, never frame counts.** The game runs at 900–1000 fps, where two frames are 2 ms.

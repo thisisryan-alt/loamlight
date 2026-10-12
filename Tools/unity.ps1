@@ -11,6 +11,7 @@
   ./Tools/unity.ps1 test -Platform PlayMode
   ./Tools/unity.ps1 player                          # development build -> Builds/Windows/Loamlight.exe
   ./Tools/unity.ps1 capture -Scene PipelineDemo     # run the dev build with -llCapture, screenshots -> Screenshots/<Scene>/
+  ./Tools/unity.ps1 capture -Scene Game -Scenario m1  # scripted play-through of the real game (Screenshots/Game-m1/)
 #>
 param(
     [Parameter(Mandatory = $true, Position = 0)]
@@ -20,6 +21,8 @@ param(
     [ValidateSet("EditMode", "PlayMode")]
     [string]$Platform = "EditMode",
     [string]$Scene = "PipelineDemo",
+    [string]$Scenario = "",
+    [string[]]$Extra = @(),
     [string]$Out = "",
     [string]$UnityPath = $env:UNITY_EDITOR,
     [int]$TimeoutMinutes = 30
@@ -35,8 +38,10 @@ if (-not $UnityPath) {
         "C:/Program Files/Unity/Hub/Editor/$version-arm64/Editor/Unity.exe",
         "C:/Program Files/Unity/Hub/Editor/$version/Editor/Unity.exe"
     )
-    # prefer the native editor for this machine's architecture
-    if ($env:PROCESSOR_ARCHITECTURE -ne "ARM64") { [array]::Reverse($candidates) }
+    # prefer the native editor for this machine's architecture (PROCESSOR_ARCHITECTURE lies under x64 emulation,
+    # e.g. when launched from Git Bash, so ask the OS)
+    $osArch = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString()
+    if ($osArch -ne "Arm64") { [array]::Reverse($candidates) }
     $UnityPath = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
     if (-not $UnityPath) { throw "Unity $version not found; set UNITY_EDITOR" }
 }
@@ -48,7 +53,7 @@ $ignore = "Curl error|DisplayProgressbar|Licensing|\[Licensing|Unable to listen|
           "EditorUpdateCheck|failed to query info queue|Analytics|UnityConnect|Cancelling DisplayDialog|Error_Unknown|Trusted CA|warning CS"
 $errorPattern = "error CS\d+|Shader error|Compilation failed|Exception:|\[Error\]|^ERROR|Assertion failed|" +
                 "NullReferenceException|MissingReferenceException|Failed to|failed to|Script attached to .* is missing|" +
-                "The referenced script .* is missing|\[LL-ERROR\]"
+                "The referenced script .* is missing|\[LL-ERROR\]|error BC\d+|has not been disposed|Leak Detected"
 
 function Show-LogIssues([string]$log) {
     if (-not (Test-Path $log)) { Write-Host "!! log not found: $log"; return 1 }
@@ -80,13 +85,17 @@ function Invoke-Exe([string]$exe, [string[]]$exeArgs, [string]$log, [string]$win
 
 if ($Task -eq "capture") {
     if (-not (Test-Path $playerExe)) { throw "No player build at $playerExe; run ./Tools/unity.ps1 player first" }
-    if (-not $Out) { $Out = "$project/Screenshots/$Scene" }
+    $tag = if ($Scenario) { "$Scene-$Scenario" } else { $Scene }
+    if (-not $Out) { $Out = "$project/Screenshots/$tag" }
     if (Test-Path $Out) { Remove-Item -Recurse -Force $Out }
     New-Item -ItemType Directory -Force $Out | Out-Null
-    $log = "$project/Logs/player-capture-$Scene.log"
-    # Windowed so it renders on any display; never -nographics (nothing would be drawn).
-    $code = Invoke-Exe $playerExe @("-llCapture", "`"$Out`"", "-llScene", $Scene, "-screen-fullscreen", "0",
-        "-screen-width", "1280", "-screen-height", "720", "-logFile", "`"$log`"") $log "Normal"   # a hidden window may not render
+    $log = "$project/Logs/player-capture-$tag.log"
+    $pargs = @("-llCapture", "`"$Out`"", "-llScene", $Scene, "-screen-fullscreen", "0",
+        "-screen-width", "1280", "-screen-height", "720", "-logFile", "`"$log`"")
+    if ($Scenario) { $pargs += @("-llScenario", $Scenario) }
+    $pargs += $Extra
+    # Windowed so it renders on any display; never -nographics (nothing would be drawn); a hidden window may not render.
+    $code = Invoke-Exe $playerExe $pargs $log "Normal"
     $n = Show-LogIssues $log
     $shots = Get-ChildItem $Out -Filter *.png -ErrorAction SilentlyContinue
     Write-Host ("Screenshots: {0} in {1}" -f @($shots).Count, $Out)
