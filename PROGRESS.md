@@ -77,5 +77,24 @@ Environment: Unity 6000.4.11f1 (arm64 editor, "Supported" stream; the user chose
 
 ---
 
-## M1: Dig and move (next)
-Plan to be written here before starting: seeded worldgen (surface, dirt, stone, caves) as Burst jobs into chunked NativeArrays, chunk mesh vs Tilemap profiling, chunk streaming, the player controller (coyote time, jump buffering, variable jump height), mining and placing, the first data-driven tile JSON, and a versioned save format with round-trip tests.
+## M1: Dig and move (in progress)
+
+The user asked for the whole game to be finished without milestone check-ins (2026-10-12). Each milestone is still finished, verified and committed before the next.
+
+### Plan
+0. **Spikes.**
+   - Burst runs Burst-compiled in the ARM64 player.
+   - A chunk MeshRenderer with Sprite-Lit-Default and the normal atlas passes the pixel verifier.
+   - A Sprite Light2D whose cookie texture is updated at runtime lights tiles in color, aligned to the tiles.
+   - `unity.ps1` also scans logs for Burst errors and leaks.
+1. **Assemblies.** Core, Content, World, Player, plus a test that enforces the assembly graph. Content JSON (`tiles.json`, `walls.json`) goes through the importer into ScriptableObjects and the ContentDatabase.
+2. **WorldData.** Chunk-major SoA NativeArrays with accessors.
+3. **Worldgen**, Burst and seeded: surface, dirt, stone, caves, background walls, grass. Plus a determinism test and timing.
+4. **Tile atlas** with autotile masks and variants (Pillow), normal atlas and an importer.
+5. **Chunk mesher** (Burst, MeshData), streaming and a pooled renderer for chunks in view. Mesh-vs-Tilemap rebuild benchmark.
+6. **Tile collision** and a pure `PlayerMotor`: acceleration, variable jump, coyote time, jump buffer, step-up. EditMode tests.
+7. **Player** with Input System actions behind `IPlayerInput`, a camera follow and the sprite animator.
+8. **Mining and placing** with reach, progress and cracks. Basic SFX from the Python synth.
+9. **Light map v1**: sky and the cookie Sprite Light2D, plus a torch emitter so caves are dark.
+10. **Save v1**: world plus player position. Round trip and a committed fixture.
+11. **Game scene**, scenario capture and full-world perf capture. Update DESIGN.md and PROGRESS.md.
