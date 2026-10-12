@@ -16,7 +16,7 @@ All commands are run from the repo root in PowerShell.
 | Tests | `./Tools/unity.ps1 test -Platform EditMode` / `-Platform PlayMode` |
 | Development player build | `./Tools/unity.ps1 player` → `Builds/Windows/Loamlight.exe` |
 | Screenshot capture on the dev build | `./Tools/unity.ps1 capture -Scene PipelineDemo` → `Screenshots/PipelineDemo/` |
-| Copy a capture into the docs | `python Tools/docs_shots.py --capture Screenshots/PipelineDemo --milestone M0 --crop 300,80,980,620` |
+| Copy a capture into the docs | `& "$env:LOCALAPPDATA\Programs\Python\Python312-arm64\python.exe" Tools/docs_shots.py --capture Screenshots/PipelineDemo --milestone M0 --crop 300,80,980,620` |
 | Art determinism check | `./Tools/build_art.ps1 -CheckDeterminism` |
 
 `unity.ps1` scans every Unity or player log for errors afterwards and exits non-zero if it finds any. A zero exit code from Unity alone is not trusted.
