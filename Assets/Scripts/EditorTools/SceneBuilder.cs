@@ -1,4 +1,7 @@
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using Loamlight.Core;
 using Loamlight.Game.Demo;
 using UnityEditor;
@@ -10,7 +13,12 @@ using UnityEngine.UI;
 
 namespace Loamlight.EditorTools
 {
-    /// <summary>Builds every scene from code. Scenes are outputs: change this file, never the .unity YAML.</summary>
+    /// <summary>
+    /// Builds every scene from code. Scenes are outputs: change this file, never the .unity YAML.
+    /// Unity gives new objects random local file IDs, so a rebuilt scene always differs byte-wise. To keep
+    /// setup idempotent a scene is only rebuilt when its inputs (all scripts + sheet sidecars) changed, tracked
+    /// by a fingerprint file Unity ignores (leading dot). Pass -llForceScenes to rebuild regardless.
+    /// </summary>
     public static class SceneBuilder
     {
         public const string SceneFolder = "Assets/Scenes";
@@ -23,11 +31,38 @@ namespace Loamlight.EditorTools
         public static void BuildAll()
         {
             AssetFolders.Ensure(SceneFolder);
-            BuildPipelineDemo();
+            BuildIfChanged(PipelineDemoPath, BuildPipelineDemo);
             var scenes = new[] { new EditorBuildSettingsScene(PipelineDemoPath, true) };
             if (!EditorBuildSettings.scenes.Select(s => s.path).SequenceEqual(scenes.Select(s => s.path)))
                 EditorBuildSettings.scenes = scenes;
             Debug.Log("[SceneBuilder] scenes built: " + string.Join(", ", scenes.Select(s => s.path)));
+        }
+
+        static void BuildIfChanged(string scenePath, System.Action build)
+        {
+            var fingerprintPath = Path.Combine(Path.GetDirectoryName(scenePath), "." + Path.GetFileNameWithoutExtension(scenePath) + ".fingerprint");
+            var fingerprint = InputsFingerprint();
+            bool force = LaunchArgs.Has("-llForceScenes");
+            if (!force && File.Exists(scenePath) && File.Exists(fingerprintPath) && File.ReadAllText(fingerprintPath).Trim() == fingerprint)
+            {
+                Debug.Log($"[SceneBuilder] {scenePath} up to date");
+                return;
+            }
+            build();
+            File.WriteAllText(fingerprintPath, fingerprint + "\n");
+        }
+
+        /// <summary>Hash of everything a generated scene depends on (line endings normalised).</summary>
+        public static string InputsFingerprint()
+        {
+            var files = Directory.GetFiles("Assets/Scripts", "*.cs", SearchOption.AllDirectories)
+                .Concat(Directory.GetFiles(ArtImport.SpriteRoot, "*.sheet.json"))
+                .Select(f => f.Replace('\\', '/')).OrderBy(f => f, System.StringComparer.Ordinal);
+            using var sha = SHA256.Create();
+            var sb = new StringBuilder(Application.unityVersion);
+            foreach (var f in files)
+                sb.Append('\n').Append(f).Append('\n').Append(File.ReadAllText(f).Replace("\r\n", "\n"));
+            return System.BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(sb.ToString()))).Replace("-", "").Substring(0, 32);
         }
 
         // ------------------------------------------------------------------------------------------ demo
