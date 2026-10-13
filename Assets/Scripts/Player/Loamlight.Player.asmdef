@@ -8,7 +8,8 @@
         "Loamlight.Inventory",
         "Unity.InputSystem",
         "Unity.Mathematics",
-        "Unity.Collections"
+        "Unity.Collections",
+        "Loamlight.Combat"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

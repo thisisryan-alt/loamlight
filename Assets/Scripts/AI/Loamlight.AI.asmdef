@@ -1,0 +1,21 @@
+{
+    "name": "Loamlight.AI",
+    "rootNamespace": "Loamlight.AI",
+    "references": [
+        "Loamlight.Core",
+        "Loamlight.Content",
+        "Loamlight.World",
+        "Loamlight.Combat",
+        "Unity.Mathematics",
+        "Unity.Collections"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

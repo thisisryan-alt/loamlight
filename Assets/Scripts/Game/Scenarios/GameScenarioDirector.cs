@@ -17,11 +17,19 @@ namespace Loamlight.Game.Scenarios
             _scenario = name switch
             {
                 "perf" => new PerfScenario(),
+                "m1" => new M1Scenario(),
                 "m2" => new M2Scenario(),
                 "m3" => new M3Scenario(),
-                _ => new M1Scenario(),
+                "m4" => new M4Scenario(),
+                _ => null,
             };
+            if (_scenario == null)
+            {
+                Debug.LogError($"[LL-ERROR] unknown scenario '{name}'");
+                yield break;
+            }
             _scenario.Attach(g);
+            g.SetPeaceful(_scenario.Peaceful);
             Debug.Log($"[Scenario] running '{name}'");
             var run = _scenario.Run();
             while (run.MoveNext()) yield return run.Current;

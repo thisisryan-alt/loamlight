@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c5611a55476ef34b844cb8114efeb5a, type: 3}
+  m_Name: gloop.anim
+  m_EditorClassIdentifier: Loamlight.Core::Loamlight.Core.SpriteAnimationSet
+  sheetName: gloop
+  clips:
+  - name: idle
+    fps: 6
+    loop: 1
+    frames:
+    - {fileID: -1392241585, guid: ac9b5b5d5e1d9384db634e8f7d31b570, type: 3}
+    - {fileID: 27895844, guid: ac9b5b5d5e1d9384db634e8f7d31b570, type: 3}
+    - {fileID: 1855020289, guid: ac9b5b5d5e1d9384db634e8f7d31b570, type: 3}
+    - {fileID: 88397861, guid: ac9b5b5d5e1d9384db634e8f7d31b570, type: 3}
+  - name: squash
+    fps: 8
+    loop: 0
+    frames:
+    - {fileID: -1600659481, guid: ac9b5b5d5e1d9384db634e8f7d31b570, type: 3}
+    - {fileID: 75176992, guid: ac9b5b5d5e1d9384db634e8f7d31b570, type: 3}
+  - name: jump
+    fps: 1
+    loop: 0
+    frames:
+    - {fileID: 1449705867, guid: ac9b5b5d5e1d9384db634e8f7d31b570, type: 3}
+  - name: fall
+    fps: 1
+    loop: 0
+    frames:
+    - {fileID: -383170237, guid: ac9b5b5d5e1d9384db634e8f7d31b570, type: 3}

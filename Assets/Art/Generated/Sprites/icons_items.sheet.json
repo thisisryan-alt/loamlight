@@ -34,7 +34,21 @@
         13,
         14,
         15,
-        16
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30
       ]
     }
   ],
@@ -47,113 +61,211 @@
       "h": 16
     },
     {
-      "name": "icon_bed",
+      "name": "icon_bat_wing",
       "x": 16,
       "y": 16,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_chair",
+      "name": "icon_bed",
       "x": 32,
       "y": 16,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_chest",
+      "name": "icon_chair",
       "x": 48,
       "y": 16,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_cinderite_bar",
+      "name": "icon_chest",
       "x": 64,
       "y": 16,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_copper_axe",
+      "name": "icon_cinderite_bar",
       "x": 80,
       "y": 16,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_copper_bar",
+      "name": "icon_cinderite_pickaxe",
       "x": 96,
       "y": 16,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_copper_pickaxe",
+      "name": "icon_copper_axe",
       "x": 112,
       "y": 16,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_door",
+      "name": "icon_copper_bar",
       "x": 128,
       "y": 16,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_furnace",
+      "name": "icon_copper_pickaxe",
       "x": 144,
       "y": 16,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_iron_axe",
+      "name": "icon_copper_shortsword",
       "x": 160,
       "y": 16,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_iron_bar",
+      "name": "icon_door",
       "x": 176,
       "y": 16,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_iron_pickaxe",
+      "name": "icon_ember_core",
       "x": 192,
       "y": 16,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_lumite_bar",
+      "name": "icon_ember_staff",
       "x": 208,
       "y": 16,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_table",
+      "name": "icon_furnace",
       "x": 224,
       "y": 16,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_wooden_hammer",
+      "name": "icon_gloop_gel",
       "x": 240,
       "y": 16,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_workbench",
+      "name": "icon_glowcap_brew",
       "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_heartroot",
+      "x": 16,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_husk_cloth",
+      "x": 32,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_iron_axe",
+      "x": 48,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_iron_bar",
+      "x": 64,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_iron_broadsword",
+      "x": 80,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_iron_pickaxe",
+      "x": 96,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_lumite_bar",
+      "x": 112,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_lumite_glaive",
+      "x": 128,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_lumite_pickaxe",
+      "x": 144,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_table",
+      "x": 160,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_wooden_arrow",
+      "x": 176,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_wooden_bow",
+      "x": 192,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_wooden_hammer",
+      "x": 208,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_workbench",
+      "x": 224,
       "y": 0,
       "w": 16,
       "h": 16

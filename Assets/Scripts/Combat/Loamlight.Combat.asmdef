@@ -1,0 +1,20 @@
+{
+    "name": "Loamlight.Combat",
+    "rootNamespace": "Loamlight.Combat",
+    "references": [
+        "Loamlight.Core",
+        "Loamlight.Content",
+        "Loamlight.World",
+        "Unity.Mathematics",
+        "Unity.Collections"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

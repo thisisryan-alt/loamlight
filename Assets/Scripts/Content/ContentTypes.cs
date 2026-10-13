@@ -20,9 +20,9 @@ namespace Loamlight.Content
 
     public enum ItemCategory : byte { Material = 0, Block = 1, Wall = 2, Tool = 3, Weapon = 4, Placeable = 5, Consumable = 6, Ammo = 7, Summon = 8 }
 
-    public enum WeaponKind : byte { None = 0, Shortsword = 1, Broadsword = 2, Bow = 3, Staff = 4, Thrown = 5 }
+    public enum WeaponKind : byte { None = 0, Shortsword = 1, Broadsword = 2, Bow = 3, Staff = 4, Thrown = 5, Spear = 6 }
 
-    public enum AiKind : byte { Hopper = 0, Flyer = 1, Thrower = 2, Caster = 3, Boss = 4 }
+    public enum AiKind : byte { Hopper = 0, Flyer = 1, Thrower = 2, Caster = 3, Boss = 4, Walker = 5 }
 
     [Serializable]
     public struct ItemAmount

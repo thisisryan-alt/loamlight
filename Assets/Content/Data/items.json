@@ -55,6 +55,20 @@
     { "id": "lumite_bar", "name": "Lumite Bar", "category": "Material", "maxStack": 99, "description": "Light, strong, softly glowing metal." },
     { "id": "cinderite_bar", "name": "Cinderite Bar", "category": "Material", "maxStack": 99, "description": "Metal forged in the deep fire." },
     { "id": "cactus", "name": "Cactus", "category": "Material", "maxStack": 999, "description": "Prickly pulp from the dunes." },
-    { "id": "sandstone_wall", "name": "Sandstone Wall", "category": "Wall", "placesWall": "sandstone_wall", "useTime": 0.08, "description": "A striped desert backdrop." }
+    { "id": "sandstone_wall", "name": "Sandstone Wall", "category": "Wall", "placesWall": "sandstone_wall", "useTime": 0.08, "description": "A striped desert backdrop." },
+    { "id": "copper_shortsword", "name": "Copper Shortsword", "category": "Weapon", "maxStack": 1, "weaponKind": "Shortsword", "damage": 9, "knockback": 3, "useTime": 0.24, "reach": 2.2, "hitstop": 0.8, "shake": 0.6, "description": "Quick jabs. Point it where you want it." },
+    { "id": "iron_broadsword", "name": "Iron Broadsword", "category": "Weapon", "maxStack": 1, "weaponKind": "Broadsword", "damage": 19, "knockback": 7, "useTime": 0.42, "reach": 2.6, "hitstop": 1.6, "shake": 1.6, "description": "A wide overhead arc that sends things flying." },
+    { "id": "wooden_bow", "name": "Wooden Bow", "category": "Weapon", "maxStack": 1, "weaponKind": "Bow", "damage": 5, "knockback": 1.5, "useTime": 0.45, "ammo": "wooden_arrow", "projectileSpeed": 26, "description": "Shoots wooden arrows. Aim a little high." },
+    { "id": "wooden_arrow", "name": "Wooden Arrow", "category": "Ammo", "maxStack": 999, "damage": 4, "projectile": "arrow", "description": "Ammunition for bows." },
+    { "id": "lumite_glaive", "name": "Lumite Glaive", "category": "Weapon", "maxStack": 1, "weaponKind": "Spear", "damage": 27, "knockback": 5, "useTime": 0.36, "reach": 3.6, "hitstop": 1.2, "shake": 1.0, "description": "A long glowing blade on a pole. Keeps trouble at arm's length." },
+    { "id": "ember_staff", "name": "Ember Staff", "category": "Weapon", "maxStack": 1, "weaponKind": "Staff", "damage": 34, "knockback": 6, "useTime": 0.6, "projectile": "fireball", "projectileSpeed": 18, "description": "Hurls a fireball that bursts on impact and lights the way." },
+    { "id": "lumite_pickaxe", "name": "Lumite Pickaxe", "category": "Tool", "maxStack": 1, "toolType": "Pickaxe", "toolPower": 3, "toolSpeed": 1.9, "useTime": 0.18, "reach": 6.5, "damage": 9, "knockback": 2, "description": "Cuts through cinderite and anything softer." },
+    { "id": "cinderite_pickaxe", "name": "Cinderite Pickaxe", "category": "Tool", "maxStack": 1, "toolType": "Pickaxe", "toolPower": 4, "toolSpeed": 2.5, "useTime": 0.15, "reach": 7, "damage": 12, "knockback": 2, "description": "Hot to the touch, and nothing holds against it." },
+    { "id": "gloop_gel", "name": "Gloop Gel", "category": "Material", "maxStack": 999, "description": "Sticky and faintly sweet. Burns well." },
+    { "id": "bat_wing", "name": "Bat Wing", "category": "Material", "maxStack": 999, "description": "Leathery and light." },
+    { "id": "husk_cloth", "name": "Husk Cloth", "category": "Material", "maxStack": 999, "description": "Rags from something that walked at night." },
+    { "id": "ember_core", "name": "Ember Core", "category": "Material", "maxStack": 99, "description": "A heart of living fire from the Emberdeep." },
+    { "id": "glowcap_brew", "name": "Glowcap Brew", "category": "Consumable", "maxStack": 30, "heal": 50, "useTime": 0.5, "description": "Restores 50 life. Tastes blue." },
+    { "id": "heartroot", "name": "Heartroot", "category": "Consumable", "maxStack": 10, "maxLifeUp": 20, "useTime": 0.5, "description": "Eat it to raise your maximum life by 20 (up to 200)." }
   ]
 }

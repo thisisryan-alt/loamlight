@@ -26,8 +26,15 @@ MonoBehaviour:
   lightRadius: 0
   falls: 0
   spreadsOnto: 
-  size: {x: 5, y: 4}
+  size: {x: 7, y: 6}
   placement: 4
   interact: 
   sound: dig_soft
   isStation: 0
+  ore:
+    enabled: 0
+    hosts: []
+    depthMin: 0
+    depthMax: 0
+    scale: 0
+    threshold: 0

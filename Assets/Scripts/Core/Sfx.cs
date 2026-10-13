@@ -56,8 +56,12 @@ namespace Loamlight.Core
 
         public static bool Has(string name) => Instance._groups.ContainsKey(name);
 
-        public static void Play(string name, Vector2 worldPos, float volume = 1f, float pitchJitter = 0.08f) =>
+        public static void Play(string name, Vector2 worldPos, float volume = 1f, float pitchJitter = 0.08f)
+        {
+            // edit-mode tests run gameplay code too: log the request, but never create the audio host there
+            if (!Application.isPlaying) { if (!string.IsNullOrEmpty(name) && PlayLog.Count < 4096) PlayLog.Add(name); return; }
             Instance.PlayInternal(name, worldPos, volume, pitchJitter, true);
+        }
 
         public static void PlayUi(string name, float volume = 1f) => Instance.PlayInternal(name, Vector2.zero, volume, 0.02f, false);
 

@@ -19,7 +19,9 @@
         "Loamlight.Player",
         "Loamlight.UI",
         "Loamlight.Crafting",
-        "Loamlight.Liquids"
+        "Loamlight.Liquids",
+        "Loamlight.Combat",
+        "Loamlight.AI"
     ],
     "includePlatforms": [
         "Editor"

@@ -46,22 +46,92 @@ def hex_color(h):
 
 _materials = {}
 
+# Albedo shading: pixel art bakes a soft key light from the top left into its colours, so sprites read as solid
+# even under the flat sky light; the normal map then adds dynamic light on top. Bands are constant (no gradient)
+# so the shading stays crisp at 16 px per tile. SHADING is switched off for the calibration sphere.
+SHADING = {"on": True}
+KEY_LIGHT = (-0.52, -0.58, 0.63)          # world space: left, toward the viewer (-Y), up
+SHADE_BANDS = [(0.0, 0.52), (0.40, 0.76), (0.62, 1.0), (0.86, 1.2)]   # (position on (n.l + 1) / 2, multiplier)
+
 
 def flat_material(hex_str):
-    """Emission-only material: the rendered pixel is exactly the authored color."""
-    if hex_str in _materials:
-        return _materials[hex_str]
-    mat = bpy.data.materials.new("albedo_" + hex_str.lstrip("#"))
+    """Emission material: the authored colour times a banded key-light term (or exactly the colour if unshaded)."""
+    key = hex_str + ("_s" if SHADING["on"] else "_f")
+    if key in _materials:
+        return _materials[key]
+    mat = bpy.data.materials.new("albedo_" + key.lstrip("#"))
     mat.use_nodes = True
     nt = mat.node_tree
     nt.nodes.clear()
     out = nt.nodes.new("ShaderNodeOutputMaterial")
     em = nt.nodes.new("ShaderNodeEmission")
-    em.inputs["Color"].default_value = hex_color(hex_str)
     em.inputs["Strength"].default_value = 1.0
+    if SHADING["on"]:
+        geo = nt.nodes.new("ShaderNodeNewGeometry")
+        dot = nt.nodes.new("ShaderNodeVectorMath")
+        dot.operation = "DOT_PRODUCT"
+        length = math.sqrt(sum(c * c for c in KEY_LIGHT))
+        dot.inputs[1].default_value = tuple(c / length for c in KEY_LIGHT)
+        remap = nt.nodes.new("ShaderNodeMath")
+        remap.operation = "MULTIPLY_ADD"
+        remap.inputs[1].default_value = 0.5
+        remap.inputs[2].default_value = 0.5
+        ramp = nt.nodes.new("ShaderNodeValToRGB")
+        ramp.color_ramp.interpolation = "CONSTANT"
+        els = ramp.color_ramp.elements
+        while len(els) < len(SHADE_BANDS):
+            els.new(0.5)
+        for e, (pos, mul) in zip(els, SHADE_BANDS):
+            e.position = pos
+            e.color = (mul, mul, mul, 1.0)
+        mix = nt.nodes.new("ShaderNodeVectorMath")
+        mix.operation = "MULTIPLY"
+        mix.inputs[1].default_value = hex_color(hex_str)[:3]
+        nt.links.new(geo.outputs["Normal"], dot.inputs[0])
+        nt.links.new(dot.outputs["Value"], remap.inputs[0])
+        nt.links.new(remap.outputs["Value"], ramp.inputs["Fac"])
+        nt.links.new(ramp.outputs["Color"], mix.inputs[0])
+        nt.links.new(mix.outputs["Vector"], em.inputs["Color"])
+    else:
+        em.inputs["Color"].default_value = hex_color(hex_str)
     nt.links.new(em.outputs["Emission"], out.inputs["Surface"])
-    _materials[hex_str] = mat
+    _materials[key] = mat
     return mat
+
+
+def ellipsoid(name, radii, center, color, parent=None, segments=(16, 10), pivot=None):
+    """Smooth-shaded ellipsoid (uv sphere scaled per axis); origin at `pivot` (defaults to the centre)."""
+    bm = bmesh.new()
+    bmesh.ops.create_uvsphere(bm, u_segments=segments[0], v_segments=segments[1], radius=1.0)
+    piv = Vector(pivot if pivot is not None else center)
+    off = Vector(center) - piv
+    for v in bm.verts:
+        v.co = Vector((v.co.x * radii[0], v.co.y * radii[1], v.co.z * radii[2])) + off
+    return new_object(name, bm, color, parent, tuple(piv), smooth=True)
+
+
+def cone(name, r0, r1, depth, center, color, parent=None, rot=(0, 0, 0), segments=10, smooth=True):
+    """Cone/frustum along local Z, rotated by `rot` (radians) then placed at `center` (its origin)."""
+    from mathutils import Euler
+    bm = bmesh.new()
+    bmesh.ops.create_cone(bm, cap_ends=True, cap_tris=False, segments=segments, radius1=r0, radius2=r1, depth=depth)
+    m = Euler(rot).to_matrix().to_4x4()
+    bmesh.ops.transform(bm, matrix=m, verts=bm.verts)
+    return new_object(name, bm, color, parent, center, smooth=smooth)
+
+
+def membrane(name, points, color, parent=None, thickness=0.06):
+    """A flat polygon in the XZ plane (wing membranes, rags), thickened slightly along Y so it renders both sides."""
+    bm = bmesh.new()
+    verts = [bm.verts.new((x, 0.0, z)) for x, z in points]
+    face = bm.faces.new(verts)
+    res = bmesh.ops.extrude_face_region(bm, geom=[face])
+    for v in [e for e in res["geom"] if isinstance(e, bmesh.types.BMVert)]:
+        v.co.y += thickness
+    for v in bm.verts:
+        v.co.y -= thickness / 2
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    return new_object(name, bm, color, parent)
 
 
 def normal_material():
@@ -239,6 +309,8 @@ def build_miner():
         hip = empty(f"leg_{side}", root, (0.0, y, hip_z))
         box(f"thigh_{side}", (5 * PX, 0.22, 11 * PX), (0, 0, -5.5 * PX), shade, hip)
         box(f"boot_{side}", (7 * PX, 0.24, 3 * PX), (1 * PX, 0, -12.5 * PX), c["boots"], hip)
+        box(f"sole_{side}", (7.4 * PX, 0.25, 1 * PX), (1.2 * PX, 0, -13.6 * PX), "#1a1410", hip, round_px=0)
+        box(f"knee_{side}", (3.6 * PX, 0.23, 3 * PX), (0.8 * PX, -0.002, -5 * PX), "#4c3b2a" if side == "near" else "#3e3022", hip)
         legs[side] = hip
 
     # torso, belt, backpack
@@ -246,13 +318,18 @@ def build_miner():
     box("belt", (9.4 * PX, 0.44, 2 * PX), (0, 0, hip_z + 1 * PX), c["belt"], body)
     box("buckle", (1.6 * PX, 0.46, 1.6 * PX), (3.6 * PX, -0.005, hip_z + 1 * PX), c["buckle"], body)
     box("pack", (5 * PX, 0.36, 10 * PX), (-6.5 * PX, 0, hip_z + 8 * PX), c["pack"], body)
-    box("pack_roll", (6 * PX, 0.4, 3 * PX), (-6 * PX, 0, hip_z + 14.5 * PX), c["pack_strap"], body)
+    box("pack_pocket", (3 * PX, 0.4, 4 * PX), (-7.6 * PX, -0.02, hip_z + 5 * PX), c["pack_strap"], body)
+    box("pack_roll", (6 * PX, 0.4, 3 * PX), (-6 * PX, 0, hip_z + 14.5 * PX), "#9a8a6a", body)
+    box("strap", (1.4 * PX, 0.44, 12 * PX), (-2.6 * PX, -0.01, hip_z + 8 * PX), c["pack_strap"], body)
+    box("collar", (8 * PX, 0.44, 2 * PX), (0.5 * PX, 0, hip_z + 13.6 * PX), "#2c5470", body)
 
     # head: low-poly ico sphere, helmet: half uv sphere with brim, headlamp
     head_z = hip_z + 19.5 * PX
     bm = bmesh.new()
-    bmesh.ops.create_icosphere(bm, subdivisions=1, radius=5.4 * PX)
-    head = new_object("head", bm, c["skin"], body, (0.6 * PX, 0, head_z))
+    bmesh.ops.create_icosphere(bm, subdivisions=2, radius=5.4 * PX)
+    head = new_object("head", bm, c["skin"], body, (0.6 * PX, 0, head_z), smooth=True)
+    box("hair", (3 * PX, 0.38, 3 * PX), (-4.4 * PX, 0, -0.6 * PX), "#6a4424", head)
+    box("brow", (2.2 * PX, 0.36, 0.8 * PX), (3.4 * PX, -0.17, 1.8 * PX), "#5a3a1e", head, round_px=0)
     # the eye box runs deep toward the camera so it pokes out of the curved side of the head
     box("eye", (1.2 * PX, 0.35, 1.6 * PX), (3.6 * PX, -0.175, 0.4 * PX), c["eye"], head)
     box("nose", (1.6 * PX, 0.1, 1.4 * PX), (5.6 * PX, 0, -0.8 * PX), "#cf8f62", head)
@@ -260,7 +337,8 @@ def build_miner():
     bm = bmesh.new()
     bmesh.ops.create_uvsphere(bm, u_segments=10, v_segments=6, radius=6.2 * PX)
     bmesh.ops.delete(bm, geom=[v for v in bm.verts if v.co.z < -0.001], context="VERTS")
-    new_object("helmet", bm, c["helmet"], head, (0, 0, 1.0 * PX))
+    new_object("helmet", bm, c["helmet"], head, (0, 0, 1.0 * PX), smooth=True)
+    box("helmet_ridge", (1.4 * PX, 0.5, 2 * PX), (0, 0, 7.0 * PX), c["helmet_rim"], head)
     box("brim", (14.5 * PX, 0.5, 1.4 * PX), (0.6 * PX, 0, 0.6 * PX), c["helmet_rim"], head)
     box("lamp", (1.6 * PX, 0.16, 2.6 * PX), (6.4 * PX, -0.06, 3.2 * PX), c["lamp"], head)
 
@@ -270,7 +348,8 @@ def build_miner():
     for side, y, shade in (("near", -0.27, c["shirt"]), ("far", 0.27, c["shirt_dark"])):
         sh = empty(f"arm_{side}", body, (1.0 * PX, y, shoulder_z))
         box(f"sleeve_{side}", (4 * PX, 0.13, 9 * PX), (0, 0, -4.5 * PX), shade, sh)
-        box(f"hand_{side}", (3.6 * PX, 0.14, 3 * PX), (0, 0, -10 * PX), c["skin"], sh)
+        box(f"cuff_{side}", (4.2 * PX, 0.14, 1.4 * PX), (0, 0, -8.6 * PX), "#2c5470", sh)
+        box(f"hand_{side}", (3.6 * PX, 0.14, 3 * PX), (0, 0, -10 * PX), "#8a5a34", sh)
         arms[side] = sh
 
     # pickaxe: the grip sits in the near hand, the handle runs 20 degrees forward of the arm line (local -Z)
@@ -321,6 +400,14 @@ def pose_miner(rig, anim, i, n):
         swing(legs["far"], -8)
         swing(arms["near"], -165)
         swing(arms["far"], -140)
+    elif anim == "attack":
+        # weapon swings: the blade is a separate sprite, so the arm alone sells the motion
+        angle = [175, 120, 45, 15][i]
+        swing(arms["near"], angle)
+        swing(arms["far"], -20 + angle * 0.2)
+        body.rotation_euler = (0, math.radians(5 if i >= 2 else -4), 0)
+        swing(legs["near"], 18 if i >= 2 else 6)
+        swing(legs["far"], -14 if i >= 2 else -4)
     elif anim == "use":
         for o in pick_parts:
             o.hide_render = False
@@ -340,18 +427,229 @@ def build_calibration_sphere():
     return new_object("calib_sphere", bm, "#a0a0a0", None, (0, 0, 0), smooth=True)
 
 
+# --------------------------------------------------------------------------------------------- enemies
+def build_gloop():
+    """A jelly blob: glossy dome, darker core, two big eyes. Squash and stretch come from scaling the root."""
+    root = empty("gloop_root")
+    body = ellipsoid("gloop_body", (11 * PX, 0.5, 8.5 * PX), (0, 0, 8.5 * PX), "#5fbf4a", root, (24, 12), pivot=(0, 0, 0))
+    ellipsoid("gloop_core", (6 * PX, 0.4, 4.5 * PX), (-1.5 * PX, -0.12, 6.5 * PX), "#3f9a36", root, (16, 8), pivot=(0, 0, 0))
+    ellipsoid("gloop_shine", (3 * PX, 0.2, 1.6 * PX), (-4.5 * PX, -0.42, 13 * PX), "#d8ffc0", root, (12, 6), pivot=(0, 0, 0))
+    for i, x in enumerate((1.5, 6.0)):
+        ellipsoid(f"eye_{i}", (2.1 * PX, 0.2, 2.5 * PX), (x * PX, -0.42, 10 * PX), "#f4f8f0", root, (12, 8), pivot=(0, 0, 0))
+        ellipsoid(f"pupil_{i}", (1.0 * PX, 0.2, 1.3 * PX), ((x + 0.8) * PX, -0.5, 9.7 * PX), "#14200f", root, (8, 6), pivot=(0, 0, 0))
+    box("mouth", (3 * PX, 0.2, 0.8 * PX), (4 * PX, -0.44, 6.6 * PX), "#24501c", root, round_px=0)
+    return {"root": root}
+
+
+def pose_gloop(rig, anim, i, n):
+    root = rig["root"]
+    sx, sz = {
+        "idle": [(1.0, 1.0), (1.04, 0.95), (1.07, 0.92), (1.03, 0.96)],
+        "squash": [(1.18, 0.78), (1.28, 0.66)],
+        "jump": [(0.84, 1.22)],
+        "fall": [(0.92, 1.1)],
+    }[anim][i]
+    root.scale = (sx, 1.0, sz)
+
+
+def build_duskbat():
+    """Cave bat: furry round body, tall ears, glowing eyes, two membrane wings hinged at the shoulders."""
+    c = {"fur": "#4a3a5e", "belly": "#6e5a80", "wing": "#3b2c4c", "bone": "#2a1f36", "ear": "#5a4870", "eye": "#ffd84a"}
+    root = empty("bat_root")
+    body = empty("bat_body", root, (0, 0, 8 * PX))
+    ellipsoid("bat_torso", (5 * PX, 0.4, 6 * PX), (0, 0, 0), c["fur"], body, (16, 10))
+    ellipsoid("bat_belly", (3 * PX, 0.3, 4 * PX), (0.8 * PX, -0.14, -0.8 * PX), c["belly"], body, (12, 8))
+    for i, x in enumerate((-2.2, 2.2)):
+        cone(f"bat_ear_{i}", 2.0 * PX, 0.2 * PX, 5 * PX, (x * PX, 0, 6.8 * PX), c["ear"], body, rot=(0, math.radians(-15 if x < 0 else 15), 0), segments=8)
+    for i, x in enumerate((0.6, 3.0)):
+        ellipsoid(f"bat_eye_{i}", (1.1 * PX, 0.2, 1.2 * PX), (x * PX, -0.36, 1.8 * PX), c["eye"], body, (8, 6))
+    box("bat_fang", (2.6 * PX, 0.2, 1.2 * PX), (1.8 * PX, -0.36, -0.6 * PX), "#f0ece0", body, round_px=0)
+    wings = {}
+    for side, sgn in (("near", 1), ("far", -1)):
+        hinge = empty(f"wing_{side}", body, (sgn * 3.5 * PX, 0.05 * -sgn, 1.5 * PX))
+        pts = [(0, 0), (sgn * 6 * PX, 4 * PX), (sgn * 12 * PX, 3 * PX), (sgn * 13 * PX, -3 * PX), (sgn * 10 * PX, -1 * PX),
+               (sgn * 8 * PX, -4.5 * PX), (sgn * 5 * PX, -1.5 * PX), (sgn * 2 * PX, -4 * PX)]
+        if sgn < 0:
+            pts = list(reversed(pts))
+        membrane(f"wing_mem_{side}", pts, c["wing"] if side == "near" else "#30243f", hinge)
+        box(f"wing_bone_{side}", (12 * PX, 0.08, 1 * PX), (sgn * 6.5 * PX, -0.04, 3.5 * PX), c["bone"], hinge, round_px=0).rotation_euler = (0, math.radians(-4 * sgn), 0)
+        wings[side] = (hinge, sgn)
+    return {"root": root, "body": body, "wings": wings}
+
+
+def pose_duskbat(rig, anim, i, n):
+    body, wings = rig["body"], rig["wings"]
+    body.location = (0, 0, 8 * PX)
+    body.rotation_euler = (0, 0, 0)
+    if anim == "fly":
+        flap = [38, 12, -22, 8][i]
+        body.location = (0, 0, (8 + [0, 1, 2, 1][i]) * PX)
+    elif anim == "flare":
+        flap = [62, 70][i]
+    else:   # dive: wings swept back
+        flap = -55
+        body.rotation_euler = (0, math.radians(35), 0)
+    for hinge, sgn in wings.values():
+        hinge.rotation_euler = (0, -math.radians(flap) * sgn, 0)
+
+
+def build_hollow():
+    """A gaunt husk in a hood and rags: long thin arms, pale glowing eyes, hunched posture."""
+    c = {"skin": "#7a8490", "cloth": "#4a4f5a", "rag": "#3a3e48", "hood": "#2f333c", "eye": "#c8f0ff", "dark": "#262a32"}
+    root = empty("hollow_root")
+    body = empty("hollow_body", root)
+    hip_z = 15 * PX
+    legs = {}
+    for side, y, shade in (("near", -0.12, c["skin"]), ("far", 0.12, "#5e6672")):
+        hip = empty(f"hl_leg_{side}", root, (0, y, hip_z))
+        box(f"hl_shin_{side}", (3.4 * PX, 0.2, 14 * PX), (0, 0, -7 * PX), shade, hip)
+        box(f"hl_foot_{side}", (5 * PX, 0.22, 2 * PX), (1.2 * PX, 0, -14 * PX), c["dark"], hip)
+        legs[side] = hip
+    torso = empty("hollow_torso", body, (0, 0, hip_z))
+    box("hl_chest", (8 * PX, 0.4, 15 * PX), (0, 0, 7 * PX), c["cloth"], torso)
+    for k, (x, z, h) in enumerate(((-3, -1, 6), (0, -2, 7), (3, -1.5, 5))):
+        box(f"hl_rag_{k}", (2.6 * PX, 0.42, h * PX), (x * PX, -0.01, z * PX), c["rag"], torso)
+    box("hl_belt", (8.4 * PX, 0.44, 1.6 * PX), (0, 0, 1.5 * PX), c["dark"], torso)
+    head = empty("hollow_head", torso, (2 * PX, 0, 17 * PX))
+    ellipsoid("hl_face", (4 * PX, 0.32, 4.6 * PX), (0.6 * PX, 0, 0), c["skin"], head, (14, 10))
+    ellipsoid("hl_hood", (5.4 * PX, 0.4, 5.6 * PX), (-1.2 * PX, 0.04, 1.0 * PX), c["hood"], head, (14, 10))
+    for k, x in enumerate((1.4, 3.4)):
+        ellipsoid(f"hl_eye_{k}", (0.9 * PX, 0.2, 1.1 * PX), (x * PX, -0.32, 0.4 * PX), c["eye"], head, (8, 6))
+    box("hl_mouth", (2.4 * PX, 0.2, 0.7 * PX), (2.6 * PX, -0.3, -2.2 * PX), c["dark"], head, round_px=0)
+    arms = {}
+    for side, y, shade in (("near", -0.26, c["skin"]), ("far", 0.26, "#5e6672")):
+        sh = empty(f"hl_arm_{side}", torso, (1 * PX, y, 13 * PX))
+        box(f"hl_upper_{side}", (2.8 * PX, 0.14, 9 * PX), (0, 0, -4.5 * PX), c["rag"], sh)
+        box(f"hl_fore_{side}", (2.4 * PX, 0.14, 9 * PX), (0, 0, -12 * PX), shade, sh)
+        box(f"hl_claw_{side}", (3.4 * PX, 0.15, 2.4 * PX), (0.6 * PX, 0, -16.8 * PX), c["dark"], sh)
+        arms[side] = sh
+    return {"root": root, "body": body, "torso": torso, "legs": legs, "arms": arms}
+
+
+def pose_hollow(rig, anim, i, n):
+    torso, legs, arms = rig["torso"], rig["legs"], rig["arms"]
+    torso.rotation_euler = (0, math.radians(14), 0)    # the hunch
+    torso.location = (0, 0, 15 * PX)
+    for o in (*legs.values(), *arms.values()):
+        swing(o, 0)
+    if anim == "idle":
+        torso.location = (0, 0, (15 - (1 if i == 1 else 0)) * PX)
+        swing(arms["near"], 10 + 4 * i)
+        swing(arms["far"], 4)
+    elif anim == "walk":
+        t = 2 * math.pi * i / n
+        swing(legs["near"], 26 * math.sin(t))
+        swing(legs["far"], -26 * math.sin(t))
+        swing(arms["near"], 20 - 18 * math.sin(t))
+        swing(arms["far"], 20 + 18 * math.sin(t))
+        torso.location = (0, 0, (15 + (1 if abs(math.sin(t)) < 0.5 else 0)) * PX)
+    elif anim == "windup":
+        torso.rotation_euler = (0, math.radians(-6 - 6 * i), 0)
+        swing(arms["near"], 160 + 10 * i)
+        swing(arms["far"], 150 + 10 * i)
+        swing(legs["near"], 14)
+        swing(legs["far"], -18)
+    elif anim == "lunge":
+        torso.rotation_euler = (0, math.radians(32), 0)
+        swing(arms["near"], 80)
+        swing(arms["far"], 70)
+        swing(legs["near"], 30)
+        swing(legs["far"], -35)
+    else:   # fall
+        swing(arms["near"], 120)
+        swing(arms["far"], 100)
+        swing(legs["near"], 10)
+        swing(legs["far"], -12)
+
+
+def build_cinder_imp():
+    """A small horned fire imp with bat wings, a flame-tipped tail and a burning orb in its hand."""
+    c = {"skin": "#c2442a", "belly": "#e8864a", "horn": "#3a2a2a", "wing": "#7a2418", "eye": "#fff2a0", "orb": "#ffb040", "dark": "#5a1a10"}
+    root = empty("imp_root")
+    body = empty("imp_body", root, (0, 0, 12 * PX))
+    ellipsoid("imp_torso", (4.6 * PX, 0.36, 6 * PX), (0, 0, 0), c["skin"], body, (16, 10))
+    ellipsoid("imp_belly", (2.8 * PX, 0.3, 4 * PX), (1.0 * PX, -0.12, -0.8 * PX), c["belly"], body, (12, 8))
+    head = empty("imp_head", body, (1 * PX, 0, 8.6 * PX))
+    ellipsoid("imp_skull", (4.4 * PX, 0.34, 4 * PX), (0, 0, 0), c["skin"], head, (14, 10))
+    for k, (x, rz) in enumerate(((-2.4, -30), (2.0, 25))):
+        cone(f"imp_horn_{k}", 1.3 * PX, 0.2 * PX, 5 * PX, (x * PX, 0, 4.4 * PX), c["horn"], head, rot=(0, math.radians(rz), 0), segments=8)
+    for k, x in enumerate((0.8, 2.8)):
+        ellipsoid(f"imp_eye_{k}", (0.9 * PX, 0.2, 1.0 * PX), (x * PX, -0.34, 0.6 * PX), c["eye"], head, (8, 6))
+    box("imp_grin", (3 * PX, 0.2, 0.8 * PX), (2.2 * PX, -0.33, -1.8 * PX), c["dark"], head, round_px=0)
+    wings = []
+    for side, sgn in (("near", 1), ("far", -1)):
+        hinge = empty(f"imp_wing_{side}", body, (-2.5 * PX, 0.08 * sgn, 3 * PX))
+        pts = [(0, 0), (-5 * PX, 6 * PX), (-10 * PX, 5 * PX), (-8 * PX, 0.5 * PX), (-9 * PX, -3 * PX), (-4 * PX, -1 * PX)]
+        membrane(f"imp_wing_mem_{side}", pts, c["wing"] if sgn > 0 else c["dark"], hinge)
+        wings.append(hinge)
+    tail = empty("imp_tail", body, (-3 * PX, 0.05, -4 * PX))
+    box("imp_tail_seg", (8 * PX, 0.1, 1.4 * PX), (-4 * PX, 0, -1 * PX), c["skin"], tail).rotation_euler = (0, math.radians(-25), 0)
+    cone("imp_tail_flame", 1.6 * PX, 0.1 * PX, 3.5 * PX, (-8.4 * PX, 0, 1.8 * PX), c["orb"], tail, rot=(0, math.radians(-20), 0), segments=8)
+    arm = empty("imp_arm", body, (2.6 * PX, -0.22, 3 * PX))
+    box("imp_forearm", (2.2 * PX, 0.12, 7 * PX), (0, 0, -3.5 * PX), c["skin"], arm)
+    orb = empty("imp_orb", arm, (0, -0.1, -7.6 * PX))
+    ellipsoid("imp_orb_core", (2.4 * PX, 0.3, 2.4 * PX), (0, 0, 0), c["orb"], orb, (12, 8))
+    ellipsoid("imp_orb_hot", (1.2 * PX, 0.32, 1.2 * PX), (-0.5 * PX, -0.1, 0.5 * PX), "#fff6d0", orb, (8, 6))
+    legs = []
+    for k, y in enumerate((-0.1, 0.1)):
+        leg = empty(f"imp_leg_{k}", body, (0.6 * PX * (1 if k == 0 else -1), y, -5 * PX))
+        box(f"imp_shin_{k}", (2 * PX, 0.14, 5 * PX), (0, 0, -2.5 * PX), c["skin"] if k == 0 else c["dark"], leg)
+        legs.append(leg)
+    return {"root": root, "body": body, "wings": wings, "arm": arm, "orb": orb, "legs": legs}
+
+
+def pose_cinder_imp(rig, anim, i, n):
+    body, wings, arm, orb = rig["body"], rig["wings"], rig["arm"], rig["orb"]
+    body.location = (0, 0, 12 * PX)
+    orb.scale = (1, 1, 1)
+    for k, leg in enumerate(rig["legs"]):
+        swing(leg, 20 if k == 0 else -10)
+    if anim == "hover":
+        body.location = (0, 0, (12 + [0, 1, 2, 1][i]) * PX)
+        flap = [30, 5, -20, 5][i]
+        swing(arm, 30)
+    else:   # cast: raise the orb, it swells
+        flap = 40
+        swing(arm, [100, 150, 170][i])
+        s = [1.2, 1.5, 1.8][i]
+        orb.scale = (s, 1, s)
+    for k, w in enumerate(wings):
+        w.rotation_euler = (0, math.radians(flap if k == 0 else flap * 0.8), 0)
+
+
 # --------------------------------------------------------------------------------------------- sheets
 SHEETS = {
     # frame_px: square frame size; pivot_px: pivot from the bottom-left of a frame, in pixels
     "miner": {
         "frame_px": 64, "pivot_px": (32, 2), "outline": True, "meshType": "Tight",
         "animations": [("idle", 4, 6, True), ("walk", 8, 12, True), ("jump", 1, 1, False),
-                       ("fall", 1, 1, False), ("use", 4, 14, False)],
+                       ("fall", 1, 1, False), ("use", 4, 14, False), ("attack", 4, 16, False)],
     },
     "calib": {
         "frame_px": 64, "pivot_px": (32, 32), "outline": False, "meshType": "Tight",
         "animations": [("still", 1, 1, False)],
     },
+    "gloop": {
+        "frame_px": 32, "pivot_px": (16, 1), "outline": True, "meshType": "Tight",
+        "animations": [("idle", 4, 6, True), ("squash", 2, 8, False), ("jump", 1, 1, False), ("fall", 1, 1, False)],
+    },
+    "duskbat": {
+        "frame_px": 48, "pivot_px": (24, 4), "outline": True, "meshType": "Tight",
+        "animations": [("fly", 4, 12, True), ("flare", 2, 8, True), ("dive", 1, 1, False)],
+    },
+    "hollow": {
+        "frame_px": 64, "pivot_px": (32, 2), "outline": True, "meshType": "Tight",
+        "animations": [("idle", 2, 3, True), ("walk", 6, 8, True), ("windup", 2, 6, False), ("lunge", 1, 1, False), ("fall", 1, 1, False)],
+    },
+    "cinder_imp": {
+        "frame_px": 48, "pivot_px": (24, 3), "outline": True, "meshType": "Tight",
+        "animations": [("hover", 4, 8, True), ("cast", 3, 5, False)],
+    },
+}
+
+BUILDERS = {
+    "gloop": (build_gloop, pose_gloop), "duskbat": (build_duskbat, pose_duskbat),
+    "hollow": (build_hollow, pose_hollow), "cinder_imp": (build_cinder_imp, pose_cinder_imp),
 }
 
 
@@ -363,8 +661,13 @@ def render_sheet(name, spec, out_root):
     cam_center = ((frame_px / 2 - pvx) * PX, (frame_px / 2 - pvy) * PX)
     configure_render(frame_px, frame_px * PX, cam_center)
     nmat = normal_material()
+    SHADING["on"] = name != "calib"
 
-    if name == "miner":
+    if name in BUILDERS:
+        build, pose = BUILDERS[name]
+        rig = build()
+        poser = lambda anim, i, n: pose(rig, anim, i, n)
+    elif name == "miner":
         rig = build_miner()
         poser = lambda anim, i, n: pose_miner(rig, anim, i, n)
     elif name == "calib":

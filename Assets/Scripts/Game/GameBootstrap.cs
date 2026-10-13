@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Collections;
+using Loamlight.AI;
+using Loamlight.Combat;
 using Loamlight.Content;
 using Loamlight.Core;
 using Loamlight.Inventory;
@@ -55,6 +58,18 @@ namespace Loamlight.Game
         public LightMapSystem Light { get; private set; }
         public SimulationRunner Simulation { get; private set; }
         public DayNightCycle DayNight { get; private set; }
+        public PlayerHealth Health { get; private set; }
+        public WeaponUser Weapons { get; private set; }
+        public ProjectileSystem Projectiles { get; private set; }
+        public EnemySpawner Spawner { get; private set; }
+        public CombatFx Fx { get; private set; }
+        public HealthHud HealthUi { get; private set; }
+        public BiomeSensor Biomes { get; private set; }
+        /// <summary>Peaceful: no spawns and nothing hurts the player (older scenarios, perf runs, -llPeaceful).</summary>
+        public bool Peaceful { get; private set; }
+        public int Kills { get; private set; }
+        public int Deaths { get; private set; }
+        float _brewReady;
         public SkyBackdrop Sky { get; private set; }
         public PlayerController Player { get; private set; }
         public ToolUser Tools { get; private set; }
@@ -83,6 +98,11 @@ namespace Loamlight.Game
         void Start()
         {
             ApplyLaunchArgs();
+            // static combat state must not leak between scene loads
+            GameClock.Reset();
+            CombatRegistry.Clear();
+            CombatEvents.ClearListeners();
+            Enemy.Live.Clear();
             var sw = System.Diagnostics.Stopwatch.StartNew();
             Db = ContentDatabase.Instance;
             var atlas = WorldAtlas.Load();
@@ -157,6 +177,16 @@ namespace Loamlight.Game
             Interactor.Edits = Edits;
             Interactor.Db = Db;
 
+            Health = playerGo.AddComponent<PlayerHealth>();
+            Health.Init(Player, sr);
+            Weapons = playerGo.AddComponent<WeaponUser>();
+            Weapons.Player = Player;
+            Weapons.Db = Db;
+            Weapons.Inventory = Inventory;
+            Weapons.HeldSprite = item => SpriteSheetIndex.Frame("held_" + item.id, "all") ?? item.icon;
+            Tools.Weapons = Weapons;
+            Tools.Consume = UseConsumable;
+
             var visual = playerGo.AddComponent<PlayerVisual>();
             visual.Controller = Player;
             visual.Tools = Tools;
@@ -185,7 +215,33 @@ namespace Loamlight.Game
             DayNight.Light = Light;
             if (!string.IsNullOrEmpty(GameSession.LoadPath)) GameState.RestoreTime(this, Meta.gameJson);
             DayNight.SetTime(DayNight.time);
-            Sky = SkyBackdrop.Create(cam, DayNight, WorldGenerator.SurfaceLevel(World.Height, GenParams.Default));
+            float surfaceY = WorldGenerator.SurfaceLevel(World.Height, GenParams.Default);
+            Sky = SkyBackdrop.Create(cam, DayNight, surfaceY);
+
+            // combat
+            Projectiles = new GameObject("Projectiles").AddComponent<ProjectileSystem>();
+            Projectiles.Grid = Grid;
+            Projectiles.MakeLight = c => LightMapSystem.CreatePointLight("Projectile light", Projectiles.transform, c, 5f, 0.9f);
+            RegisterProjectiles();
+            Weapons.FireProjectile = (id, pos, vel, dmg, kb, w) => Projectiles.Fire(id, pos, vel, dmg, kb, Team.Player);
+            Enemy.ProjectileRequested += OnEnemyProjectile;
+            Enemy.Died += OnEnemyDied;
+            Fx = CombatFx.Create();
+            Projectiles.Impact += (spec, at, exploded) => { if (exploded) Fx.Explosion(at); };
+            CombatEvents.Shake += t => CameraFollow.AddTrauma(t);
+            Biomes = new BiomeSensor(World, Db, surfaceY);
+            Spawner = new GameObject("Enemy Spawner").AddComponent<EnemySpawner>();
+            Spawner.Db = Db;
+            Spawner.World = World;
+            Spawner.Grid = Grid;
+            Spawner.Liquids = Grid;
+            Spawner.Cam = cam;
+            Spawner.PlayerFeet = () => Player.Feet;
+            Spawner.IsNight = () => DayNight.IsNight;
+            Spawner.BiomeAt = Biomes.At;
+            Spawner.SurfaceY = surfaceY;
+            Health.Died += _ => { Deaths++; StartCoroutine(RespawnAfter(4f)); };
+            SetPeaceful(LaunchArgs.Has("-llPeaceful"));
             Player.Splashed += (under, kind) =>
             {
                 if (kind == LiquidType.Lava) Sfx.Play("sizzle", Player.Center, 0.6f);
@@ -200,6 +256,7 @@ namespace Loamlight.Game
                 es.AddComponent<InputSystemUIInputModule>();
             }
             Hud = Hud.Create(Inventory, Db);
+            HealthUi = HealthHud.Create(Hud.transform, Health);
             InventoryUi = InventoryScreen.Create(Inventory, Db, Hud);
             InventoryUi.NearbyStations = () => Edits.StationsNear(Player.Center, 4);
             InventoryUi.PlayerPosition = () => Player.Center;
@@ -263,6 +320,87 @@ namespace Loamlight.Game
             return new Vector2(World.Width / 2 + 0.5f, World.Height * 0.75f);
         }
 
+        public void SetPeaceful(bool peaceful)
+        {
+            Peaceful = peaceful;
+            if (Spawner != null) Spawner.Active = !peaceful;
+            if (Health != null) Health.Vulnerable = !peaceful;
+        }
+
+        void RegisterProjectiles()
+        {
+            Projectiles.Register(new ProjectileSpec
+            {
+                id = "arrow", sprite = SpriteSheetIndex.Frame("projectiles", "arrow"), gravity = 22f, life = 3f, radius = 0.3f, impactSound = "hit",
+            });
+            Projectiles.Register(new ProjectileSpec
+            {
+                id = "fireball", sprite = SpriteSheetIndex.Frame("projectiles", "fireball"), gravity = 0f, life = 2.2f, radius = 0.35f,
+                explodeRadius = 2.2f, glow = new Color(1f, 0.55f, 0.2f, 1f),
+            });
+            Projectiles.Register(new ProjectileSpec
+            {
+                id = "imp_bolt", sprite = SpriteSheetIndex.Frame("projectiles", "imp_bolt"), gravity = 0f, life = 3f, radius = 0.35f,
+                glow = new Color(0.8f, 0.3f, 1f, 1f), impactSound = "hit",
+            });
+        }
+
+        void OnEnemyProjectile(Enemy e, string id, Vector2 pos, Vector2 vel) => Projectiles.Fire(id, pos, vel, e.Def.damage, 4f, Team.Enemy);
+
+        void OnEnemyDied(Enemy e)
+        {
+            Kills++;
+            var table = Db.Loot(e.Def.loot);
+            if (table == null) return;
+            foreach (var entry in table.entries)
+            {
+                if (UnityEngine.Random.value > entry.chance) continue;
+                int n = UnityEngine.Random.Range(entry.min, entry.max + 1);
+                if (n > 0 && Db.TryItemId(entry.item, out var id))
+                    Pickups.Spawn(id, n, e.Center, new Vector2(UnityEngine.Random.Range(-3f, 3f), 6f));
+            }
+        }
+
+        IEnumerator RespawnAfter(float seconds)
+        {
+            float t = seconds;
+            while (t > 0f)
+            {
+                HealthUi.RespawnCountdown = t;
+                t -= Time.deltaTime;
+                yield return null;
+            }
+            HealthUi.RespawnCountdown = 0f;
+            Health.Respawn(SpawnPointWorld);
+            CameraFollow.SnapToTarget();
+        }
+
+        /// <summary>Drink, eat or use a consumable; returns true if it was used up.</summary>
+        bool UseConsumable(ItemDef item)
+        {
+            if (item.maxLifeUp > 0)
+            {
+                if (Health.MaxLife >= 200) { Hud.Toast("Your heart can grow no stronger"); return false; }
+                Health.SetMaxLife(Mathf.Min(200, Health.MaxLife + item.maxLifeUp), false);
+                Health.Heal(item.maxLifeUp);
+                Hud.Toast($"Maximum life is now {Health.MaxLife}");
+                return true;
+            }
+            if (item.heal > 0)
+            {
+                if (Health.Life >= Health.MaxLife) return false;
+                if (Time.time < _brewReady) { Hud.Toast("Too soon for another"); return false; }
+                _brewReady = Time.time + 20f;
+                Health.Heal(item.heal);
+                return true;
+            }
+            if (!string.IsNullOrEmpty(item.summons)) return Summon(item.summons);
+            return false;
+        }
+
+        /// <summary>Boss summons (M5).</summary>
+        bool Summon(string enemyId) => false;
+
         void GiveStartingItems()
         {
             Inventory.Add(Db.ItemId("copper_pickaxe"), 1);
@@ -299,6 +437,8 @@ namespace Loamlight.Game
             ["spawn"] = new List<object> { (double)g.SpawnPointWorld.x, (double)g.SpawnPointWorld.y, g.HasBedSpawn },
             ["chests"] = g.Chests.Capture(),
             ["time"] = g.DayNight != null ? (double)g.DayNight.time : 0.08,
+            ["life"] = g.Health != null ? (double)g.Health.Life : 100.0,
+            ["maxLife"] = g.Health != null ? (double)g.Health.MaxLife : 100.0,
             ["day"] = g.DayNight != null ? (double)g.DayNight.day : 1.0,
         };
 
@@ -324,6 +464,8 @@ namespace Loamlight.Game
                 g.HasBedSpawn = spawn[2] is bool b && b;
             }
             if (root.TryGetValue("chests", out var c)) g.Chests.Restore(c as List<object>);
+            if (g.Health != null && root.TryGetValue("life", out var life))
+                g.Health.Restore((int)Convert.ToDouble(life), root.TryGetValue("maxLife", out var max) ? (int)Convert.ToDouble(max) : 100);
         }
     }
 }

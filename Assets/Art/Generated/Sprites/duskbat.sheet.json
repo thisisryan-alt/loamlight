@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "name": "duskbat",
+  "frameWidth": 48,
+  "frameHeight": 48,
+  "columns": 7,
+  "rows": 1,
+  "pixelsPerUnit": 16,
+  "pivot": [
+    0.5,
+    0.083333
+  ],
+  "meshType": "Tight",
+  "normalMap": "duskbat_n.png",
+  "animations": [
+    {
+      "name": "fly",
+      "fps": 12,
+      "loop": true,
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "name": "flare",
+      "fps": 8,
+      "loop": true,
+      "frames": [
+        4,
+        5
+      ]
+    },
+    {
+      "name": "dive",
+      "fps": 1,
+      "loop": false,
+      "frames": [
+        6
+      ]
+    }
+  ],
+  "frames": [
+    {
+      "name": "duskbat_fly_0",
+      "x": 0,
+      "y": 0,
+      "w": 48,
+      "h": 48
+    },
+    {
+      "name": "duskbat_fly_1",
+      "x": 48,
+      "y": 0,
+      "w": 48,
+      "h": 48
+    },
+    {
+      "name": "duskbat_fly_2",
+      "x": 96,
+      "y": 0,
+      "w": 48,
+      "h": 48
+    },
+    {
+      "name": "duskbat_fly_3",
+      "x": 144,
+      "y": 0,
+      "w": 48,
+      "h": 48
+    },
+    {
+      "name": "duskbat_flare_0",
+      "x": 192,
+      "y": 0,
+      "w": 48,
+      "h": 48
+    },
+    {
+      "name": "duskbat_flare_1",
+      "x": 240,
+      "y": 0,
+      "w": 48,
+      "h": 48
+    },
+    {
+      "name": "duskbat_dive_0",
+      "x": 288,
+      "y": 0,
+      "w": 48,
+      "h": 48
+    }
+  ],
+  "source": "Tools/blender/render_sprites.py + Tools/art/pack_sheets.py"
+}

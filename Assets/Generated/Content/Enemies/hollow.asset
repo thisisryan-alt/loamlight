@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 817e58d4f64107d43b1016f29644936f, type: 3}
+  m_Name: hollow
+  m_EditorClassIdentifier: Loamlight.Content::Loamlight.Content.EnemyDef
+  id: hollow
+  displayName: Hollow
+  ai: 5
+  health: 55
+  damage: 16
+  defense: 4
+  knockbackResist: 0.3
+  speed: 4.2
+  size: {x: 1.1, y: 2.5}
+  sheet: hollow
+  loot: hollow
+  projectile: 
+  biomes:
+  - meadow
+  - dunes
+  - frostfell
+  depthMin: 0
+  depthMax: 0.4
+  nightOnly: 1
+  spawnWeight: 1.4
+  boss: 0

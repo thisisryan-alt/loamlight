@@ -1,0 +1,160 @@
+{
+  "version": 1,
+  "name": "fx",
+  "frameWidth": 16,
+  "frameHeight": 16,
+  "columns": 14,
+  "rows": 1,
+  "pixelsPerUnit": 16,
+  "pivot": [
+    0.5,
+    0.5
+  ],
+  "meshType": "FullRect",
+  "normalMap": "",
+  "animations": [
+    {
+      "name": "spark",
+      "fps": 24,
+      "loop": false,
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "name": "puff",
+      "fps": 14,
+      "loop": false,
+      "frames": [
+        4,
+        5,
+        6,
+        7,
+        8
+      ]
+    },
+    {
+      "name": "ember",
+      "fps": 8,
+      "loop": true,
+      "frames": [
+        9,
+        10
+      ]
+    },
+    {
+      "name": "slash",
+      "fps": 20,
+      "loop": false,
+      "frames": [
+        11,
+        12,
+        13
+      ]
+    }
+  ],
+  "frames": [
+    {
+      "name": "spark_0",
+      "x": 0,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "spark_1",
+      "x": 16,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "spark_2",
+      "x": 32,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "spark_3",
+      "x": 48,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "puff_0",
+      "x": 64,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "puff_1",
+      "x": 80,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "puff_2",
+      "x": 96,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "puff_3",
+      "x": 112,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "puff_4",
+      "x": 128,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "ember_0",
+      "x": 144,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "ember_1",
+      "x": 160,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "slash_0",
+      "x": 176,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "slash_1",
+      "x": 192,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "slash_2",
+      "x": 208,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    }
+  ],
+  "source": "Tools/art/gen_fx.py"
+}

@@ -19,7 +19,9 @@
         "Unity.Collections",
         "Unity.Burst",
         "Loamlight.Crafting",
-        "Loamlight.Liquids"
+        "Loamlight.Liquids",
+        "Loamlight.Combat",
+        "Loamlight.AI"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

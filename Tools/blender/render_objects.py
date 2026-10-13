@@ -170,36 +170,57 @@ def obj_bed():
 
 
 def obj_tree_top():
-    greens = ["#3d7a2e", "#4f8a3a", "#5aa043", "#6fb550", "#3a6e2c"]
-    blobs = [(2.5, 1.6, 1.35, 2), (1.3, 1.5, 0.95, 0), (3.7, 1.5, 0.95, 1), (1.9, 2.6, 1.0, 3), (3.1, 2.6, 1.0, 2),
-             (2.5, 3.2, 0.8, 3), (0.7, 1.0, 0.6, 4), (4.3, 1.0, 0.6, 4), (2.5, 0.8, 0.9, 1)]
-    for i, (x, z, r, c) in enumerate(blobs):
-        sphere(f"leaf{i}", r, (x, -0.2 * (i % 3), z), greens[c], subdiv=1)
-    B("trunk_top", 2.25, 0.0, 2.75, 0.9, "#6b4a2c", depth=0.4, y=0.3)
+    """Broad leafy crown (7 x 6 tiles): a few branches out of the trunk top, then many overlapping leaf clusters,
+    darker and further back at the bottom/inside, brighter on the top-left, so the baked key light reads as volume."""
+    import random
+    rnd = random.Random(7)
+    bark, bark_d = "#6b4a2c", "#4a321d"
+    B("trunk_top", 3.25, 0.0, 3.75, 1.6, bark, depth=0.45, y=0.35)
+    for k, (x0, z0, x1, z1) in enumerate(((3.5, 1.0, 1.6, 2.6), (3.5, 1.2, 5.4, 2.4), (3.5, 1.4, 3.2, 3.6))):
+        dx, dz = x1 - x0, z1 - z0
+        ln = math.hypot(dx, dz)
+        o = rs.box(f"branch{k}", (0.22, 0.3, ln), ((x0 + x1) / 2, 0.3, (z0 + z1) / 2), bark_d, round_px=0)
+        o.rotation_euler = (0, math.atan2(dx, dz), 0)
+    greens = ["#2f6a2a", "#3d7a2e", "#4f8a3a", "#5aa043", "#6fb550", "#86c860"]
+    clusters = [(3.5, 3.4, 1.7), (2.2, 2.9, 1.35), (4.8, 2.9, 1.35), (1.3, 2.1, 1.0), (5.7, 2.1, 1.0), (2.6, 4.4, 1.25),
+                (4.4, 4.4, 1.25), (3.5, 5.0, 1.05), (1.6, 3.7, 0.95), (5.4, 3.7, 0.95), (3.5, 2.2, 1.2), (2.4, 1.6, 0.8),
+                (4.6, 1.6, 0.8)]
+    for i, (x, z, r) in enumerate(clusters):
+        y = 0.2 + (0.25 if z < 2.5 else 0.0) - 0.15 * (i % 2)
+        shade = greens[min(5, max(0, int((z - 1.4) / 0.75) + (1 if x < 3.5 else 0)))]
+        sphere(f"leaf{i}", r, (x, y, z), shade, subdiv=2, scale=(1.0 + rnd.uniform(-0.08, 0.12), 0.8, 0.86))
+        # a few tufts break the outline of each cluster
+        for t in range(3):
+            a = rnd.uniform(0.3, 2.8)
+            sphere(f"tuft{i}_{t}", r * 0.38, (x + math.cos(a) * r * 0.85, y - 0.1, z + math.sin(a) * r * 0.8),
+                   greens[min(5, greens.index(shade) + 1)], subdiv=1)
 
 
 def obj_pine_top():
-    """Tiered conifer: stacked cones darkening toward the bottom, a dusting of snow on each tier."""
-    tiers = [(0.55, 2.4, 1.15, "#24563f"), (1.35, 2.0, 1.0, "#2b6549"), (2.1, 1.55, 0.9, "#337353"), (2.8, 1.05, 0.85, "#3b805c")]
+    """Tall conifer (5 x 7 tiles): stacked drooping tiers, darker underneath, a dusting of snow on each."""
+    tiers = [(0.7, 2.45, 1.5, "#1f4d38"), (1.75, 2.15, 1.4, "#245640"), (2.8, 1.8, 1.3, "#2b6549"),
+             (3.8, 1.45, 1.2, "#337353"), (4.75, 1.1, 1.1, "#3b805c"), (5.6, 0.7, 1.2, "#44895f")]
     for i, (z, r, hgt, col) in enumerate(tiers):
         bm = bmesh.new()
-        bmesh.ops.create_cone(bm, cap_ends=True, cap_tris=False, segments=12, radius1=r, radius2=0.08, depth=hgt)
+        bmesh.ops.create_cone(bm, cap_ends=True, cap_tris=False, segments=14, radius1=r, radius2=0.06, depth=hgt)
         for v in bm.verts:
-            v.co = Vector((v.co.x + 2.5, v.co.y * 0.55 - 0.1, v.co.z + z + hgt / 2))
-        rs.new_object(f"tier{i}", bm, col)
+            # droop: the rim sags at the tips
+            sag = 0.18 * (abs(v.co.x) / max(r, 0.01)) ** 2 if v.co.z < 0 else 0.0
+            v.co = Vector((v.co.x + 2.5, v.co.y * 0.55 - 0.1, v.co.z + z + hgt / 2 - sag))
+        rs.new_object(f"tier{i}", bm, col, None)
         bm = bmesh.new()
-        bmesh.ops.create_cone(bm, cap_ends=True, cap_tris=False, segments=12, radius1=r * 0.55, radius2=0.05, depth=hgt * 0.45)
+        bmesh.ops.create_cone(bm, cap_ends=True, cap_tris=False, segments=14, radius1=r * 0.62, radius2=0.04, depth=hgt * 0.42)
         for v in bm.verts:
-            v.co = Vector((v.co.x + 2.5, v.co.y * 0.5 - 0.2, v.co.z + z + hgt * 0.78))
-        rs.new_object(f"snow{i}", bm, "#e8f0f6")
-    B("trunk_top", 2.3, 0.0, 2.7, 0.7, "#5a3d24", depth=0.4, y=0.3)
+            v.co = Vector((v.co.x + 2.5 - 0.08, v.co.y * 0.5 - 0.22, v.co.z + z + hgt * 0.8))
+        rs.new_object(f"snow{i}", bm, "#e8f0f6", None)
+    B("trunk_top", 2.3, 0.0, 2.7, 0.9, "#5a3d24", depth=0.4, y=0.3)
 
 
 OBJECTS = {
     "workbench": (2, 1, obj_workbench), "furnace": (3, 2, obj_furnace), "anvil": (2, 1, obj_anvil),
     "table": (3, 2, obj_table), "chair": (1, 2, obj_chair), "chest": (2, 2, obj_chest),
     "door": (1, 3, lambda: obj_door(False)), "door_open": (1, 3, lambda: obj_door(True)),
-    "bed": (4, 2, obj_bed), "tree_top": (5, 4, obj_tree_top), "pine_top": (5, 4, obj_pine_top),
+    "bed": (4, 2, obj_bed), "tree_top": (7, 6, obj_tree_top), "pine_top": (5, 7, obj_pine_top),
 }
 
 # ------------------------------------------------------------------------------------------------- icons
@@ -248,12 +269,146 @@ def icon_bar(metal):
     o.location = (0, 0, -0.05)
 
 
+def _diag(root, length):
+    """Lay an item along the icon diagonal (handle bottom-left, business end top-right), centred, `length` long."""
+    root.rotation_euler = (0, math.radians(45), 0)
+    return root
+
+
+def item_sword(metal, length=0.95, width=0.13, guard=0.32):
+    m = METAL[metal]
+    root = rs.empty("sword_root")
+    _diag(root, length)
+    grip = length * 0.24
+    rs.box("grip", (0.07, 0.08, grip), (0, 0, -length / 2 + grip / 2), "#5a3a22", parent=root, round_px=0)
+    rs.box("pommel", (0.12, 0.1, 0.07), (0, 0, -length / 2), m[1], parent=root, round_px=0)
+    rs.box("guard", (guard, 0.1, 0.07), (0, 0, -length / 2 + grip), m[1], parent=root, round_px=0)
+    blade = length - grip - 0.05
+    bm = bmesh.new()
+    bmesh.ops.create_cube(bm, size=1.0)
+    for v in bm.verts:   # tapered blade with a point
+        top = v.co.z > 0
+        v.co = Vector((v.co.x * width * (0.25 if top else 1.0), v.co.y * 0.05, v.co.z * blade))
+    o = rs.new_object("blade", bm, m[2], root)
+    o.location = (0, 0, -length / 2 + grip + blade / 2 + 0.03)
+    rs.box("fuller", (width * 0.25, 0.06, blade * 0.7), (0, -0.005, -length / 2 + grip + blade * 0.42), m[0], parent=root, round_px=0)
+    return root
+
+
+def item_spear(metal, length=1.0):
+    m = METAL[metal]
+    root = rs.empty("spear_root")
+    _diag(root, length)
+    rs.box("shaft", (0.05, 0.06, length * 0.78), (0, 0, -length * 0.11), "#6a4a2c", parent=root, round_px=0)
+    for k in range(3):
+        rs.box(f"wrap{k}", (0.07, 0.07, 0.03), (0, 0, -length * 0.3 + k * 0.05), "#3a2a1a", parent=root, round_px=0)
+    bm = bmesh.new()
+    bmesh.ops.create_cube(bm, size=1.0)
+    for v in bm.verts:   # leaf blade
+        top = v.co.z > 0
+        v.co = Vector((v.co.x * (0.03 if top else 0.16), v.co.y * 0.05, v.co.z * length * 0.26))
+    o = rs.new_object("spear_blade", bm, m[2], root)
+    o.location = (0, 0, length * 0.37)
+    rs.box("spear_collar", (0.12, 0.08, 0.04), (0, 0, length * 0.24), m[1], parent=root, round_px=0)
+    return root
+
+
+def item_staff(length=1.0):
+    root = rs.empty("staff_root")
+    _diag(root, length)
+    rs.box("staff_shaft", (0.06, 0.06, length * 0.8), (0, 0, -length * 0.1), "#3a2a2a", parent=root, round_px=0)
+    for k in range(2):
+        rs.box(f"staff_band{k}", (0.09, 0.07, 0.04), (0, 0, length * (0.18 - k * 0.3)), "#c87533", parent=root, round_px=0)
+    claw = rs.box("staff_claw", (0.22, 0.07, 0.06), (0, 0, length * 0.3), "#5a1a10", parent=root, round_px=0)
+    orb = sphere("staff_orb", length * 0.12, (0, -0.05, length * 0.4), "#ffb040", subdiv=2, parent=root)
+    orb.data.materials[0] = glow_material("#ffb040")
+    sphere("staff_orb_hot", length * 0.06, (-0.02, -0.12, length * 0.42), "#fff6d0", subdiv=1, parent=root)
+    return root
+
+
+def item_bow():
+    root = rs.empty("bow_root")
+    root.rotation_euler = (0, math.radians(45), 0)
+    # the limb: a thin arc of short boxes; string straight across
+    for k in range(9):
+        a = math.radians(-60 + k * 15)
+        x, z = math.cos(a) * 0.32 - 0.18, math.sin(a) * 0.46
+        b = rs.box(f"limb{k}", (0.07, 0.07, 0.13), (x, 0, z), "#8a5a2c" if k % 4 else "#5a3a1e", parent=root, round_px=0)
+        b.rotation_euler = (0, -a, 0)
+    rs.box("bow_string", (0.015, 0.03, 0.8), (-0.02, -0.01, 0), "#e8e0c8", parent=root, round_px=0)
+    rs.box("bow_grip", (0.09, 0.08, 0.14), (0.14, 0, 0), "#3a2a1a", parent=root, round_px=0)
+    return root
+
+
+def item_arrow():
+    root = rs.empty("arrow_root")
+    _diag(root, 1.0)
+    rs.box("arrow_shaft", (0.04, 0.04, 0.8), (0, 0, -0.05), "#a07a4a", parent=root, round_px=0)
+    bm = bmesh.new()
+    bmesh.ops.create_cone(bm, cap_ends=True, cap_tris=False, segments=4, radius1=0.07, radius2=0.0, depth=0.16)
+    o = rs.new_object("arrow_head", bm, "#b8bcc6", root)
+    o.location = (0, 0, 0.42)
+    for sgn in (-1, 1):
+        rs.box(f"fletch{sgn}", (0.1, 0.02, 0.14), (sgn * 0.05, 0, -0.38), "#e8e4dc", parent=root, round_px=0)
+    return root
+
+
+def item_gel():
+    sphere("gel", 0.34, (0, 0, -0.1), "#5fbf4a", subdiv=2, scale=(1.2, 1, 0.8))
+    sphere("gel_shine", 0.09, (-0.14, -0.3, 0.06), "#d8ffc0", subdiv=1)
+
+
+def item_wing():
+    pts = [(-0.4, -0.2), (-0.1, 0.35), (0.2, 0.42), (0.45, 0.2), (0.3, 0.0), (0.38, -0.25), (0.1, -0.1), (-0.05, -0.35)]
+    rs.membrane("wing", pts, "#3b2c4c")
+    rs.box("wing_bone", (0.7, 0.08, 0.04), (0.05, -0.05, 0.12), "#2a1f36", round_px=0).rotation_euler = (0, math.radians(-20), 0)
+
+
+def item_cloth():
+    for k, (x, z, w, h, c) in enumerate(((-0.1, 0.05, 0.6, 0.5, "#4a4f5a"), (0.1, -0.1, 0.5, 0.4, "#3a3e48"), (0.0, 0.2, 0.4, 0.15, "#5a606c"))):
+        rs.box(f"cloth{k}", (w, 0.08 + 0.02 * k, h), (x, -0.02 * k, z), c)
+
+
+def item_core():
+    o = sphere("core", 0.3, (0, 0, -0.05), "#ff7a2a", subdiv=2)
+    o.data.materials[0] = glow_material("#ff7a2a")
+    sphere("core_hot", 0.15, (-0.06, -0.2, 0.02), "#fff0b0", subdiv=1)
+    cone_ = cyl("flame", 0.12, 0.3, (0.05, 0, 0.3), "#ffb040", axis="Z", verts=6)
+
+
+def item_brew():
+    cyl("bottle", 0.24, 0.5, (0, 0, -0.15), "#9fd6f0", axis="Z", verts=12)
+    cyl("brew", 0.22, 0.32, (0, -0.02, -0.22), "#3a8af0", axis="Z", verts=12)
+    cyl("neck", 0.09, 0.2, (0, 0, 0.2), "#9fd6f0", axis="Z", verts=8)
+    cyl("cork", 0.1, 0.1, (0, 0, 0.34), "#8a6236", axis="Z", verts=8)
+    sphere("glint", 0.05, (-0.12, -0.24, -0.05), "#ffffff", subdiv=1)
+
+
+def item_heartroot():
+    sphere("lobe_l", 0.2, (-0.13, 0, 0.08), "#c2364a", subdiv=2)
+    sphere("lobe_r", 0.2, (0.13, 0, 0.08), "#c2364a", subdiv=2)
+    bm = bmesh.new()
+    bmesh.ops.create_cone(bm, cap_ends=True, cap_tris=False, segments=10, radius1=0.33, radius2=0.0, depth=0.42)
+    for v in bm.verts:
+        v.co.z = -v.co.z
+    o = rs.new_object("tip", bm, "#a82a3c", None)
+    o.location = (0, 0, -0.14)
+    for k, (x, rz) in enumerate(((-0.1, 20), (0.08, -30))):
+        rs.box(f"root{k}", (0.03, 0.04, 0.22), (x, 0, -0.38), "#6a4a2c", round_px=0).rotation_euler = (0, math.radians(rz), 0)
+    sphere("shine", 0.05, (-0.16, -0.18, 0.16), "#ffd0d8", subdiv=1)
+
+
 ICONS = {
     "copper_pickaxe": lambda: icon_tool("pickaxe", "copper"), "iron_pickaxe": lambda: icon_tool("pickaxe", "iron"),
     "copper_axe": lambda: icon_tool("axe", "copper"), "iron_axe": lambda: icon_tool("axe", "iron"),
     "wooden_hammer": lambda: icon_tool("hammer", "copper"),
     "copper_bar": lambda: icon_bar("copper"), "iron_bar": lambda: icon_bar("iron"),
     "lumite_bar": lambda: icon_bar("lumite"), "cinderite_bar": lambda: icon_bar("cinderite"),
+    "lumite_pickaxe": lambda: icon_tool("pickaxe", "lumite"), "cinderite_pickaxe": lambda: icon_tool("pickaxe", "cinderite"),
+    "copper_shortsword": lambda: item_sword("copper", 0.82, 0.12, 0.26), "iron_broadsword": lambda: item_sword("iron", 1.0, 0.18, 0.4),
+    "lumite_glaive": lambda: item_spear("lumite"), "ember_staff": item_staff, "wooden_bow": item_bow, "wooden_arrow": item_arrow,
+    "gloop_gel": item_gel, "bat_wing": item_wing, "husk_cloth": item_cloth, "ember_core": item_core, "glowcap_brew": item_brew,
+    "heartroot": item_heartroot,
 }
 
 
@@ -321,6 +476,29 @@ def render_icon(name, build, out_dir):
     render_passes(out_dir, name, nmat, emission=False)
 
 
+HELD = {   # item id: (frame px, builder) - the model spans the frame diagonal
+    "copper_shortsword": (24, lambda: item_sword("copper", 0.82, 0.12, 0.26)),
+    "iron_broadsword": (36, lambda: item_sword("iron", 1.0, 0.18, 0.4)),
+    "lumite_glaive": (52, lambda: item_spear("lumite")),
+    "ember_staff": (32, item_staff),
+    "wooden_bow": (24, item_bow),
+}
+
+
+def render_held(name, spec, out_dir):
+    px, build = spec
+    configure(px, px, (0, 0))
+    nmat = rs.normal_material()
+    build()
+    # icon models are built for a 16 px frame (about 1.25 units on the diagonal); scale to this frame
+    s = px / 16.0
+    for o in list(bpy.context.scene.objects):
+        if o.type in ("MESH", "EMPTY") and o.parent is None:
+            o.location = Vector((o.location.x * s, o.location.y * s, o.location.z * s))
+            o.scale = (s, s, s)
+    render_passes(out_dir, name, nmat, emission=False)
+
+
 def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     ap = argparse.ArgumentParser()
@@ -337,6 +515,12 @@ def main():
             render_object_icon(name, spec, icon_dir)
     for name, build in ICONS.items():
         render_icon(name, build, icon_dir)
+    held_dir = os.path.join(root, "held")
+    os.makedirs(held_dir, exist_ok=True)
+    for name, spec in HELD.items():
+        render_held(name, spec, held_dir)
+    with open(os.path.join(held_dir, "manifest.json"), "w", encoding="utf-8", newline="\n") as f:
+        json.dump({k: v[0] for k, v in HELD.items()}, f, indent=2)
     with open(os.path.join(obj_dir, "manifest.json"), "w", encoding="utf-8", newline="\n") as f:
         json.dump(manifest, f, indent=2)
     icons = sorted(n for n in list(ICONS) + [n for n in OBJECTS if n not in ("tree_top", "pine_top", "door_open")])

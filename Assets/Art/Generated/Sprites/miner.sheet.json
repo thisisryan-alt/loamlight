@@ -65,6 +65,17 @@
         16,
         17
       ]
+    },
+    {
+      "name": "attack",
+      "fps": 16,
+      "loop": false,
+      "frames": [
+        18,
+        19,
+        20,
+        21
+      ]
     }
   ],
   "frames": [
@@ -190,6 +201,34 @@
     {
       "name": "miner_use_3",
       "x": 64,
+      "y": 0,
+      "w": 64,
+      "h": 64
+    },
+    {
+      "name": "miner_attack_0",
+      "x": 128,
+      "y": 0,
+      "w": 64,
+      "h": 64
+    },
+    {
+      "name": "miner_attack_1",
+      "x": 192,
+      "y": 0,
+      "w": 64,
+      "h": 64
+    },
+    {
+      "name": "miner_attack_2",
+      "x": 256,
+      "y": 0,
+      "w": 64,
+      "h": 64
+    },
+    {
+      "name": "miner_attack_3",
+      "x": 320,
       "y": 0,
       "w": 64,
       "h": 64

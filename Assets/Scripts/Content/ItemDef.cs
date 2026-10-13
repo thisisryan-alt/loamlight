@@ -41,6 +41,7 @@ namespace Loamlight.Content
         [Header("Consumables")]
         public int heal;
         public int restoreMana;
+        public int maxLifeUp;          // permanent max-life increase when consumed
         public string summons;         // enemy id (boss) this item summons
     }
 }

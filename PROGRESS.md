@@ -257,3 +257,33 @@ The user asked for the whole game to be finished without milestone check-ins (20
 - The parallax hills sit at the average surface height, so in deep valleys they can look high.
 - The dune surface is steppy, because of per-column noise and sand settling.
 
+
+## M4: Fight (plan, 2026-10-13)
+
+### Architecture
+- **`Loamlight.Combat` (Core, Content, World).**
+  - `Health` (pure `HealthState` plus a component), `DamageInfo`, knockback, i-frames.
+  - `Hitstop`: a gameplay time scale that player, enemies, projectiles and tools all multiply in. It is never `Time.timeScale`, so UI and audio keep running.
+  - `Projectiles`: pooled, gravity-optional, they collide with tiles and bodies.
+  - `MeleeArc` hit queries, plus `CombatFx`: sparks, damage numbers and shake requests, delivered through events so Combat stays UI-free.
+- **`Loamlight.AI` (Core, Content, World, Combat).**
+  - An `Enemy` body on the shared `TileCollision`, at a fixed 60 Hz.
+  - Brains per `AiKind`:
+    - Hopper: squash telegraph, then a leap;
+    - Flyer: erratic drift; wing flare and a screech, then a dive;
+    - Walker: night husk; raises its arms, then lunges;
+    - Caster: hover; a 0.7 s charge glow, then a fireball.
+  - `EnemySpawner`: off-screen, weighted by biome (a tile sensor), depth, night and spawn weight; caps and despawn.
+- **Player:**
+  - `PlayerHealth`: 100 life (hearts in the HUD), 0.67 s i-frames with flicker, contact and projectile damage, fall damage over 12 tiles, lava burns, and drowning after 7 s of breath;
+  - death overlay, then respawn at the bed or world spawn after 4 s; no item loss (softcore).
+- **Weapons** (a `WeaponUser` beside `ToolUser`, data in `items.json`):
+  - copper shortsword: fast stab;
+  - iron broadsword: wide arc, heavy hitstop and shake;
+  - wooden bow with wooden arrows (ammo, gravity);
+  - lumite glaive: long piercing thrust;
+  - ember staff: an exploding fireball that lights its path.
+- **Feel:** hitstop 50–90 ms scaled per weapon, knockback (scaled by resistance), screen shake (decaying, per hit), white hit flash, sparks, damage numbers, death puffs, and SFX for every event.
+- **Loot:** `loot.json` tables (gel, bat wing, husk cloth, ember core), plus a healing brew (glowcap + gel).
+- **Art:** Blender rigs for gloop, duskbat, hollow and cinder imp (sprite sheets with normal maps), weapon icons and projectiles.
+- **Tests:** health and i-frames, damage formula, knockback, hitstop clock, projectile tile collision, loot rolls, spawn rules. Scenario `m4`: fight each enemy with each weapon, take damage, die and respawn.

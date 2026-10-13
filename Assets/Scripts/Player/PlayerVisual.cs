@@ -23,7 +23,8 @@ namespace Loamlight.Player
             if (Controller == null || _anim == null) return;
             var v = Controller.Velocity;
             string clip;
-            if (Tools != null && Tools.Swinging) clip = "use";
+            if (Tools != null && Tools.Attacking) clip = _anim.Animations != null && _anim.Animations.Find("attack") != null ? "attack" : "use";
+            else if (Tools != null && Tools.Swinging) clip = "use";
             else if (!Controller.Grounded) clip = v.y > 0.5f ? "jump" : "fall";
             else if (Mathf.Abs(v.x) > 0.6f) clip = "walk";
             else clip = "idle";

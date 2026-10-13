@@ -28,6 +28,17 @@
     { "id": "sandstone_wall", "result": "sandstone_wall", "resultCount": 4, "station": "workbench", "ingredients": [ { "item": "sandstone_bricks", "count": 1 } ] },
     { "id": "obsidian_bricks", "result": "obsidian_bricks", "station": "furnace", "ingredients": [ { "item": "obsidian", "count": 2 } ] },
     { "id": "lumite_bar", "result": "lumite_bar", "station": "furnace", "ingredients": [ { "item": "lumite_ore", "count": 3 } ] },
-    { "id": "cinderite_bar", "result": "cinderite_bar", "station": "furnace", "ingredients": [ { "item": "cinderite_ore", "count": 3 }, { "item": "obsidian", "count": 1 } ] }
+    { "id": "cinderite_bar", "result": "cinderite_bar", "station": "furnace", "ingredients": [ { "item": "cinderite_ore", "count": 3 }, { "item": "obsidian", "count": 1 } ] },
+
+    { "id": "copper_shortsword", "result": "copper_shortsword", "station": "anvil", "ingredients": [ { "item": "copper_bar", "count": 6 } ] },
+    { "id": "iron_broadsword", "result": "iron_broadsword", "station": "anvil", "ingredients": [ { "item": "iron_bar", "count": 10 } ] },
+    { "id": "wooden_bow", "result": "wooden_bow", "station": "workbench", "ingredients": [ { "item": "wood", "count": 12 } ] },
+    { "id": "wooden_arrow", "result": "wooden_arrow", "resultCount": 15, "station": "workbench", "ingredients": [ { "item": "wood", "count": 1 }, { "item": "stone", "count": 1 } ] },
+    { "id": "lumite_glaive", "result": "lumite_glaive", "station": "anvil", "ingredients": [ { "item": "lumite_bar", "count": 12 }, { "item": "bat_wing", "count": 3 } ] },
+    { "id": "lumite_pickaxe", "result": "lumite_pickaxe", "station": "anvil", "ingredients": [ { "item": "lumite_bar", "count": 12 }, { "item": "wood", "count": 4 } ] },
+    { "id": "cinderite_pickaxe", "result": "cinderite_pickaxe", "station": "anvil", "ingredients": [ { "item": "cinderite_bar", "count": 12 }, { "item": "lumite_bar", "count": 4 } ] },
+    { "id": "ember_staff", "result": "ember_staff", "station": "anvil", "ingredients": [ { "item": "cinderite_bar", "count": 10 }, { "item": "ember_core", "count": 2 } ] },
+    { "id": "glowcap_brew", "result": "glowcap_brew", "station": "workbench", "ingredients": [ { "item": "glowcap", "count": 3 }, { "item": "gloop_gel", "count": 1 } ] },
+    { "id": "torch_gel", "result": "torch", "resultCount": 5, "ingredients": [ { "item": "gloop_gel", "count": 1 }, { "item": "wood", "count": 1 } ] }
   ]
 }

@@ -56,6 +56,10 @@ namespace Loamlight.Player
         public AtlasSprites Atlas { get; set; }
         public Material GhostMaterial { get; set; }
         public Func<Vector2Int, bool> CanRemove { get; set; }   // e.g. refuse to break non-empty chests
+        /// <summary>Weapon items are handed to this (ToolUser stays the only reader of the Use input).</summary>
+        public WeaponUser Weapons { get; set; }
+        /// <summary>Consumables (healing brews, summon items): returns true if the item was used up.</summary>
+        public Func<ItemDef, bool> Consume { get; set; }
         public float TimeScale { get; set; } = 1f;
         /// <summary>False while a menu has the mouse.</summary>
         public bool Enabled { get; set; } = true;
@@ -72,7 +76,8 @@ namespace Loamlight.Player
 
         public Vector2Int Target => _target;
         public float MiningProgress => _progress;
-        public bool Swinging => _swing > 0f;
+        public bool Swinging => _swing > 0f && (Weapons == null || !Weapons.Swinging);
+        public bool Attacking => Weapons != null && Weapons.Swinging;
         public ItemDef HeldItem => Db.Item(Inventory.SelectedStack.item);
         public int UndoDepth => _undo.Count;
         public IReadOnlyList<Vector2Int> DragPreview => _dragTiles;
@@ -94,7 +99,7 @@ namespace Loamlight.Player
         void Tick()
         {
             if (Input == null || Edits == null) return;
-            float dt = Time.deltaTime * TimeScale;
+            float dt = Time.deltaTime * TimeScale * GameClock.Scale;
             _cooldown -= dt;
             _swing = Mathf.Max(0f, _swing - dt);
 
@@ -130,6 +135,22 @@ namespace Loamlight.Player
                 CancelDrag();
                 if (Db.TryTileId(item.placesTile, out var oid)) GhostObject(Db.Tile(oid), tile, inReach);
                 if (use && inReach) TryPlaceObject(tile, item);
+            }
+            else if (item.weaponKind != WeaponKind.None)
+            {
+                ResetMining();
+                CancelDrag();
+                Weapons?.Use(item, aim, held || pressed, dt);
+            }
+            else if ((item.category == ItemCategory.Consumable || item.category == ItemCategory.Summon) && Consume != null)
+            {
+                ResetMining();
+                CancelDrag();
+                if ((pressed || (held && !_useWasHeld)) && Enabled && _cooldown <= 0f && Consume(item))
+                {
+                    Inventory.ConsumeFromSlot(Inventory.Selected, 1);
+                    _cooldown = Mathf.Max(0.3f, item.useTime);
+                }
             }
             else if (!string.IsNullOrEmpty(item.bucket))
             {

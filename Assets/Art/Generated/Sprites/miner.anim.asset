@@ -52,3 +52,11 @@ MonoBehaviour:
     - {fileID: -1880954044, guid: 00f1070379be290488b4624165206a67, type: 3}
     - {fileID: -1651578973, guid: 00f1070379be290488b4624165206a67, type: 3}
     - {fileID: -1661635868, guid: 00f1070379be290488b4624165206a67, type: 3}
+  - name: attack
+    fps: 16
+    loop: 0
+    frames:
+    - {fileID: 1394993903, guid: 00f1070379be290488b4624165206a67, type: 3}
+    - {fileID: 1476389500, guid: 00f1070379be290488b4624165206a67, type: 3}
+    - {fileID: 1663289483, guid: 00f1070379be290488b4624165206a67, type: 3}
+    - {fileID: 2104888977, guid: 00f1070379be290488b4624165206a67, type: 3}

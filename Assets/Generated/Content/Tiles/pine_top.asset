@@ -26,7 +26,7 @@ MonoBehaviour:
   lightRadius: 0
   falls: 0
   spreadsOnto: 
-  size: {x: 5, y: 4}
+  size: {x: 5, y: 7}
   placement: 4
   interact: 
   sound: dig_soft

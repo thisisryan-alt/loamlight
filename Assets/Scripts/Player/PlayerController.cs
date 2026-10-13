@@ -49,6 +49,12 @@ namespace Loamlight.Player
             transform.position = new Vector3(feet.x, feet.y, 0f);
         }
 
+        /// <summary>Turn to face a direction (attacks turn the player toward the aim).</summary>
+        public void Face(int dir)
+        {
+            if (dir != 0) _state.facing = dir > 0 ? 1 : -1;
+        }
+
         public void AddImpulse(Vector2 velocity, float controlLoss)
         {
             _state.body.velocity = new float2(velocity.x, math.max(_state.body.velocity.y, velocity.y));
@@ -59,7 +65,7 @@ namespace Loamlight.Player
         void Update()
         {
             if (Grid == null || Input == null || Frozen) return;
-            _accum += Time.deltaTime * TimeScale;
+            _accum += Time.deltaTime * TimeScale * GameClock.Scale;
             if (_accum > 0.25f) _accum = 0.25f;   // never spiral after a hitch
             bool jumpPressed = false;
             while (_accum >= StepTime)

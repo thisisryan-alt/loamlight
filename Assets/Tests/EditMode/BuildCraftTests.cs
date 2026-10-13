@@ -74,6 +74,8 @@ namespace Loamlight.Tests
             var book = new CraftingBook(Db);
             var have = new HashSet<string> { "wood", "stone", "dirt", "sand", "clay", "copper_ore", "iron_ore", "copper_pickaxe", "copper_axe", "torch",
                 "gravel", "obsidian", "sandstone", "snow", "ice", "ash", "basalt", "lumite_ore", "cinderite_ore", "cactus", "glowcap" };   // starting kit + natural world drops
+            foreach (var table in ContentDatabase.Instance.lootTables)
+                foreach (var e in table.entries) have.Add(e.item);   // and enemy loot
             var stations = new HashSet<string>();
             bool changed = true;
             while (changed)

@@ -197,97 +197,97 @@ MonoBehaviour:
   - id: pine_top
     layout: 3
     start: 728
-    count: 20
+    count: 35
     w: 5
-    h: 4
+    h: 7
     variants: 1
   - id: sand
     layout: 1
-    start: 748
+    start: 763
     count: 48
     w: 1
     h: 1
     variants: 3
   - id: sandstone
     layout: 1
-    start: 796
+    start: 811
     count: 48
     w: 1
     h: 1
     variants: 3
   - id: sandstone_bricks
     layout: 1
-    start: 844
+    start: 859
     count: 48
     w: 1
     h: 1
     variants: 3
   - id: snow
     layout: 1
-    start: 892
+    start: 907
     count: 48
     w: 1
     h: 1
     variants: 3
   - id: stone
     layout: 1
-    start: 940
+    start: 955
     count: 48
     w: 1
     h: 1
     variants: 3
   - id: stone_bricks
     layout: 1
-    start: 988
+    start: 1003
     count: 48
     w: 1
     h: 1
     variants: 3
   - id: table
     layout: 3
-    start: 1036
+    start: 1051
     count: 6
     w: 3
     h: 2
     variants: 1
   - id: torch
     layout: 2
-    start: 1042
+    start: 1057
     count: 1
     w: 1
     h: 1
     variants: 1
   - id: tree_top
     layout: 3
-    start: 1043
-    count: 20
-    w: 5
-    h: 4
+    start: 1058
+    count: 42
+    w: 7
+    h: 6
     variants: 1
   - id: tree_trunk
     layout: 4
-    start: 1063
+    start: 1100
     count: 3
     w: 1
     h: 1
     variants: 1
   - id: wood_planks
     layout: 1
-    start: 1066
+    start: 1103
     count: 48
     w: 1
     h: 1
     variants: 3
   - id: wood_platform
     layout: 4
-    start: 1114
+    start: 1151
     count: 1
     w: 1
     h: 1
     variants: 1
   - id: workbench
     layout: 3
-    start: 1115
+    start: 1152
     count: 2
     w: 2
     h: 1
@@ -295,49 +295,49 @@ MonoBehaviour:
   walls:
   - id: basalt_wall
     layout: 4
-    start: 1117
+    start: 1154
     count: 3
     w: 1
     h: 1
     variants: 1
   - id: dirt_wall
     layout: 4
-    start: 1120
+    start: 1157
     count: 3
     w: 1
     h: 1
     variants: 1
   - id: ice_wall
     layout: 4
-    start: 1123
+    start: 1160
     count: 3
     w: 1
     h: 1
     variants: 1
   - id: sandstone_wall
     layout: 4
-    start: 1126
+    start: 1163
     count: 3
     w: 1
     h: 1
     variants: 1
   - id: stone_brick_wall
     layout: 4
-    start: 1129
+    start: 1166
     count: 3
     w: 1
     h: 1
     variants: 1
   - id: stone_wall
     layout: 4
-    start: 1132
+    start: 1169
     count: 3
     w: 1
     h: 1
     variants: 1
   - id: wood_wall
     layout: 4
-    start: 1135
+    start: 1172
     count: 3
     w: 1
     h: 1
@@ -345,14 +345,14 @@ MonoBehaviour:
   liquids:
   - id: lava
     layout: 4
-    start: 1140
+    start: 1177
     count: 2
     w: 1
     h: 1
     variants: 1
   - id: water
     layout: 4
-    start: 1138
+    start: 1175
     count: 2
     w: 1
     h: 1
@@ -1500,3 +1500,40 @@ MonoBehaviour:
   - {x: 0.33496094, y: 0.26367188, z: 0.35058594, w: 0.29492188}
   - {x: 0.35253906, y: 0.26367188, z: 0.36816406, w: 0.29492188}
   - {x: 0.3701172, y: 0.26367188, z: 0.3857422, w: 0.29492188}
+  - {x: 0.3876953, y: 0.26367188, z: 0.4033203, w: 0.29492188}
+  - {x: 0.40527344, y: 0.26367188, z: 0.42089844, w: 0.29492188}
+  - {x: 0.42285156, y: 0.26367188, z: 0.43847656, w: 0.29492188}
+  - {x: 0.4404297, y: 0.26367188, z: 0.4560547, w: 0.29492188}
+  - {x: 0.4580078, y: 0.26367188, z: 0.4736328, w: 0.29492188}
+  - {x: 0.47558594, y: 0.26367188, z: 0.49121094, w: 0.29492188}
+  - {x: 0.49316406, y: 0.26367188, z: 0.50878906, w: 0.29492188}
+  - {x: 0.5107422, y: 0.26367188, z: 0.5263672, w: 0.29492188}
+  - {x: 0.5283203, y: 0.26367188, z: 0.5439453, w: 0.29492188}
+  - {x: 0.54589844, y: 0.26367188, z: 0.56152344, w: 0.29492188}
+  - {x: 0.56347656, y: 0.26367188, z: 0.57910156, w: 0.29492188}
+  - {x: 0.5810547, y: 0.26367188, z: 0.5966797, w: 0.29492188}
+  - {x: 0.5986328, y: 0.26367188, z: 0.6142578, w: 0.29492188}
+  - {x: 0.61621094, y: 0.26367188, z: 0.63183594, w: 0.29492188}
+  - {x: 0.63378906, y: 0.26367188, z: 0.64941406, w: 0.29492188}
+  - {x: 0.6513672, y: 0.26367188, z: 0.6669922, w: 0.29492188}
+  - {x: 0.6689453, y: 0.26367188, z: 0.6845703, w: 0.29492188}
+  - {x: 0.68652344, y: 0.26367188, z: 0.70214844, w: 0.29492188}
+  - {x: 0.70410156, y: 0.26367188, z: 0.71972656, w: 0.29492188}
+  - {x: 0.7216797, y: 0.26367188, z: 0.7373047, w: 0.29492188}
+  - {x: 0.7392578, y: 0.26367188, z: 0.7548828, w: 0.29492188}
+  - {x: 0.75683594, y: 0.26367188, z: 0.77246094, w: 0.29492188}
+  - {x: 0.77441406, y: 0.26367188, z: 0.79003906, w: 0.29492188}
+  - {x: 0.7919922, y: 0.26367188, z: 0.8076172, w: 0.29492188}
+  - {x: 0.8095703, y: 0.26367188, z: 0.8251953, w: 0.29492188}
+  - {x: 0.82714844, y: 0.26367188, z: 0.84277344, w: 0.29492188}
+  - {x: 0.84472656, y: 0.26367188, z: 0.86035156, w: 0.29492188}
+  - {x: 0.8623047, y: 0.26367188, z: 0.8779297, w: 0.29492188}
+  - {x: 0.8798828, y: 0.26367188, z: 0.8955078, w: 0.29492188}
+  - {x: 0.89746094, y: 0.26367188, z: 0.91308594, w: 0.29492188}
+  - {x: 0.91503906, y: 0.26367188, z: 0.93066406, w: 0.29492188}
+  - {x: 0.9326172, y: 0.26367188, z: 0.9482422, w: 0.29492188}
+  - {x: 0.9501953, y: 0.26367188, z: 0.9658203, w: 0.29492188}
+  - {x: 0.96777344, y: 0.26367188, z: 0.98339844, w: 0.29492188}
+  - {x: 0.0009765625, y: 0.22851562, z: 0.016601562, w: 0.25976562}
+  - {x: 0.018554688, y: 0.22851562, z: 0.034179688, w: 0.25976562}
+  - {x: 0.036132812, y: 0.22851562, z: 0.051757812, w: 0.25976562}

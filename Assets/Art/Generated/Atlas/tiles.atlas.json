@@ -161,84 +161,84 @@
   "pine_top": {
    "layout": "object",
    "start": 728,
-   "count": 20,
+   "count": 35,
    "w": 5,
-   "h": 4
+   "h": 7
   },
   "sand": {
    "layout": "terrain",
-   "start": 748,
+   "start": 763,
    "count": 48,
    "variants": 3
   },
   "sandstone": {
    "layout": "terrain",
-   "start": 796,
+   "start": 811,
    "count": 48,
    "variants": 3
   },
   "sandstone_bricks": {
    "layout": "terrain",
-   "start": 844,
+   "start": 859,
    "count": 48,
    "variants": 3
   },
   "snow": {
    "layout": "terrain",
-   "start": 892,
+   "start": 907,
    "count": 48,
    "variants": 3
   },
   "stone": {
    "layout": "terrain",
-   "start": 940,
+   "start": 955,
    "count": 48,
    "variants": 3
   },
   "stone_bricks": {
    "layout": "terrain",
-   "start": 988,
+   "start": 1003,
    "count": 48,
    "variants": 3
   },
   "table": {
    "layout": "object",
-   "start": 1036,
+   "start": 1051,
    "count": 6,
    "w": 3,
    "h": 2
   },
   "torch": {
    "layout": "single",
-   "start": 1042,
+   "start": 1057,
    "count": 1
   },
   "tree_top": {
    "layout": "object",
-   "start": 1043,
-   "count": 20,
-   "w": 5,
-   "h": 4
+   "start": 1058,
+   "count": 42,
+   "w": 7,
+   "h": 6
   },
   "tree_trunk": {
    "layout": "variants",
-   "start": 1063,
+   "start": 1100,
    "count": 3
   },
   "wood_planks": {
    "layout": "terrain",
-   "start": 1066,
+   "start": 1103,
    "count": 48,
    "variants": 3
   },
   "wood_platform": {
    "layout": "variants",
-   "start": 1114,
+   "start": 1151,
    "count": 1
   },
   "workbench": {
    "layout": "object",
-   "start": 1115,
+   "start": 1152,
    "count": 2,
    "w": 2,
    "h": 1
@@ -247,49 +247,49 @@
  "walls": {
   "basalt_wall": {
    "layout": "variants",
-   "start": 1117,
+   "start": 1154,
    "count": 3
   },
   "dirt_wall": {
    "layout": "variants",
-   "start": 1120,
+   "start": 1157,
    "count": 3
   },
   "ice_wall": {
    "layout": "variants",
-   "start": 1123,
+   "start": 1160,
    "count": 3
   },
   "sandstone_wall": {
    "layout": "variants",
-   "start": 1126,
+   "start": 1163,
    "count": 3
   },
   "stone_brick_wall": {
    "layout": "variants",
-   "start": 1129,
+   "start": 1166,
    "count": 3
   },
   "stone_wall": {
    "layout": "variants",
-   "start": 1132,
+   "start": 1169,
    "count": 3
   },
   "wood_wall": {
    "layout": "variants",
-   "start": 1135,
+   "start": 1172,
    "count": 3
   }
  },
  "liquids": {
   "water": {
    "layout": "variants",
-   "start": 1138,
+   "start": 1175,
    "count": 2
   },
   "lava": {
    "layout": "variants",
-   "start": 1140,
+   "start": 1177,
    "count": 2
   }
  },
@@ -4861,6 +4861,154 @@
   [
    379,
    361
+  ],
+  [
+   397,
+   361
+  ],
+  [
+   415,
+   361
+  ],
+  [
+   433,
+   361
+  ],
+  [
+   451,
+   361
+  ],
+  [
+   469,
+   361
+  ],
+  [
+   487,
+   361
+  ],
+  [
+   505,
+   361
+  ],
+  [
+   523,
+   361
+  ],
+  [
+   541,
+   361
+  ],
+  [
+   559,
+   361
+  ],
+  [
+   577,
+   361
+  ],
+  [
+   595,
+   361
+  ],
+  [
+   613,
+   361
+  ],
+  [
+   631,
+   361
+  ],
+  [
+   649,
+   361
+  ],
+  [
+   667,
+   361
+  ],
+  [
+   685,
+   361
+  ],
+  [
+   703,
+   361
+  ],
+  [
+   721,
+   361
+  ],
+  [
+   739,
+   361
+  ],
+  [
+   757,
+   361
+  ],
+  [
+   775,
+   361
+  ],
+  [
+   793,
+   361
+  ],
+  [
+   811,
+   361
+  ],
+  [
+   829,
+   361
+  ],
+  [
+   847,
+   361
+  ],
+  [
+   865,
+   361
+  ],
+  [
+   883,
+   361
+  ],
+  [
+   901,
+   361
+  ],
+  [
+   919,
+   361
+  ],
+  [
+   937,
+   361
+  ],
+  [
+   955,
+   361
+  ],
+  [
+   973,
+   361
+  ],
+  [
+   991,
+   361
+  ],
+  [
+   1,
+   379
+  ],
+  [
+   19,
+   379
+  ],
+  [
+   37,
+   379
   ]
  ],
  "source": "Tools/art/gen_atlas.py"

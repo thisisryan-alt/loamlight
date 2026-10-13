@@ -827,6 +827,29 @@ def main():
             add_outline_rgba(a)
             frames_i.append(a); normals_i.append(n)
         write_sheet(args.sprites, "icons_items", frames_i, ["icon_" + r for r in rendered], normal=normals_i)
+    # held weapon sprites (Blender, in-hand size): one single-frame sheet per weapon, "held_<item>"
+    held_dir = os.path.join(os.path.dirname(args.icons), "held")
+    held_manifest = os.path.join(held_dir, "manifest.json")
+    if os.path.exists(held_manifest):
+        for item_id, px in json.load(open(held_manifest, encoding="utf-8")).items():
+            a = np.array(Image.open(os.path.join(held_dir, item_id + "_albedo.png")).convert("RGBA"))
+            n = np.array(Image.open(os.path.join(held_dir, item_id + "_normal.png")).convert("RGB"))
+            opaque = a[..., 3] > 0
+            a[..., 3] = np.where(opaque, 255, 0)
+            a[~opaque, :3] = 0
+            n[~opaque] = (128, 128, 255)
+            add_outline_rgba(a)
+            name = "held_" + item_id
+            Image.fromarray(a, "RGBA").save(os.path.join(args.sprites, name + ".png"), optimize=False, compress_level=9)
+            Image.fromarray(n, "RGB").save(os.path.join(args.sprites, name + "_n.png"), optimize=False, compress_level=9)
+            h, w = a.shape[:2]
+            sidecar = {"version": 1, "name": name, "frameWidth": w, "frameHeight": h, "columns": 1, "rows": 1, "pixelsPerUnit": 16,
+                       "pivot": [0.5, 0.5], "meshType": "FullRect", "normalMap": name + "_n.png",
+                       "animations": [{"name": "all", "fps": 1, "loop": False, "frames": [0]}],
+                       "frames": [{"name": name, "x": 0, "y": 0, "w": w, "h": h}], "source": "Tools/art/gen_atlas.py"}
+            with open(os.path.join(args.sprites, name + ".sheet.json"), "w", encoding="utf-8", newline="\n") as fh:
+                json.dump(sidecar, fh, indent=2)
+                fh.write("\n")
     write_sheet(args.sprites, "cracks", crack_frames(), [f"cracks_{i}" for i in range(4)],
                 animations=[{"name": "crack", "fps": 1, "loop": False, "frames": [0, 1, 2, 3]}])
     print(f"[gen_atlas] {len(frames)} frames, atlas {A.shape[1]}x{A.shape[0]}, {len(layout['tiles'])} tiles, "

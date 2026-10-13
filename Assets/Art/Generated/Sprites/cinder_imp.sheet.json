@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "name": "cinder_imp",
+  "frameWidth": 48,
+  "frameHeight": 48,
+  "columns": 7,
+  "rows": 1,
+  "pixelsPerUnit": 16,
+  "pivot": [
+    0.5,
+    0.0625
+  ],
+  "meshType": "Tight",
+  "normalMap": "cinder_imp_n.png",
+  "animations": [
+    {
+      "name": "hover",
+      "fps": 8,
+      "loop": true,
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "name": "cast",
+      "fps": 5,
+      "loop": false,
+      "frames": [
+        4,
+        5,
+        6
+      ]
+    }
+  ],
+  "frames": [
+    {
+      "name": "cinder_imp_hover_0",
+      "x": 0,
+      "y": 0,
+      "w": 48,
+      "h": 48
+    },
+    {
+      "name": "cinder_imp_hover_1",
+      "x": 48,
+      "y": 0,
+      "w": 48,
+      "h": 48
+    },
+    {
+      "name": "cinder_imp_hover_2",
+      "x": 96,
+      "y": 0,
+      "w": 48,
+      "h": 48
+    },
+    {
+      "name": "cinder_imp_hover_3",
+      "x": 144,
+      "y": 0,
+      "w": 48,
+      "h": 48
+    },
+    {
+      "name": "cinder_imp_cast_0",
+      "x": 192,
+      "y": 0,
+      "w": 48,
+      "h": 48
+    },
+    {
+      "name": "cinder_imp_cast_1",
+      "x": 240,
+      "y": 0,
+      "w": 48,
+      "h": 48
+    },
+    {
+      "name": "cinder_imp_cast_2",
+      "x": 288,
+      "y": 0,
+      "w": 48,
+      "h": 48
+    }
+  ],
+  "source": "Tools/blender/render_sprites.py + Tools/art/pack_sheets.py"
+}

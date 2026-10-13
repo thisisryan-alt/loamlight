@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "name": "held_copper_shortsword",
+  "frameWidth": 24,
+  "frameHeight": 24,
+  "columns": 1,
+  "rows": 1,
+  "pixelsPerUnit": 16,
+  "pivot": [
+    0.5,
+    0.5
+  ],
+  "meshType": "FullRect",
+  "normalMap": "held_copper_shortsword_n.png",
+  "animations": [
+    {
+      "name": "all",
+      "fps": 1,
+      "loop": false,
+      "frames": [
+        0
+      ]
+    }
+  ],
+  "frames": [
+    {
+      "name": "held_copper_shortsword",
+      "x": 0,
+      "y": 0,
+      "w": 24,
+      "h": 24
+    }
+  ],
+  "source": "Tools/art/gen_atlas.py"
+}

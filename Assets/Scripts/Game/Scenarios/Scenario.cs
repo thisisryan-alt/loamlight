@@ -30,6 +30,9 @@ namespace Loamlight.Game.Scenarios
 
         public abstract IEnumerator Run();
 
+        /// <summary>Spawns off and the player can't be hurt (true for every scenario that isn't about fighting).</summary>
+        public virtual bool Peaceful => true;
+
         protected void Check(bool ok, string what)
         {
             _log.Add((ok ? "ok: " : "FAIL: ") + what);

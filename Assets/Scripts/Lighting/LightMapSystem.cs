@@ -208,6 +208,23 @@ namespace Loamlight.Lighting
             }
         }
 
+        /// <summary>A normal-mapped point light that affects every sorting layer (projectiles, casters, the boss).</summary>
+        public static Light2D CreatePointLight(string name, Transform parent, Color color, float radius, float intensity)
+        {
+            var go = new GameObject(name);
+            if (parent != null) go.transform.SetParent(parent, false);
+            var l = go.AddComponent<Light2D>();
+            l.lightType = Light2D.LightType.Point;
+            l.pointLightInnerRadius = 0.2f;
+            l.pointLightOuterRadius = radius;
+            l.falloffIntensity = 0.6f;
+            l.intensity = intensity;
+            l.color = color;
+            l.targetSortingLayers = AllLayers();
+            Light2DSettings.EnableNormalMaps(l, 1.2f);
+            return l;
+        }
+
         Light2D CreateHighlight(int i)
         {
             var go = new GameObject($"Highlight {i}");

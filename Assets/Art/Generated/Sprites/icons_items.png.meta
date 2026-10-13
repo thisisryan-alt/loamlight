@@ -122,7 +122,7 @@ TextureImporter:
       name: icon_bed
       rect:
         serializedVersion: 2
-        x: 16
+        x: 32
         y: 16
         width: 16
         height: 16
@@ -144,7 +144,7 @@ TextureImporter:
       name: icon_chair
       rect:
         serializedVersion: 2
-        x: 32
+        x: 48
         y: 16
         width: 16
         height: 16
@@ -166,7 +166,7 @@ TextureImporter:
       name: icon_chest
       rect:
         serializedVersion: 2
-        x: 48
+        x: 64
         y: 16
         width: 16
         height: 16
@@ -188,7 +188,7 @@ TextureImporter:
       name: icon_copper_axe
       rect:
         serializedVersion: 2
-        x: 80
+        x: 112
         y: 16
         width: 16
         height: 16
@@ -210,7 +210,7 @@ TextureImporter:
       name: icon_copper_bar
       rect:
         serializedVersion: 2
-        x: 96
+        x: 128
         y: 16
         width: 16
         height: 16
@@ -232,7 +232,7 @@ TextureImporter:
       name: icon_copper_pickaxe
       rect:
         serializedVersion: 2
-        x: 112
+        x: 144
         y: 16
         width: 16
         height: 16
@@ -254,7 +254,7 @@ TextureImporter:
       name: icon_door
       rect:
         serializedVersion: 2
-        x: 128
+        x: 176
         y: 16
         width: 16
         height: 16
@@ -276,7 +276,7 @@ TextureImporter:
       name: icon_furnace
       rect:
         serializedVersion: 2
-        x: 144
+        x: 224
         y: 16
         width: 16
         height: 16
@@ -298,8 +298,8 @@ TextureImporter:
       name: icon_iron_axe
       rect:
         serializedVersion: 2
-        x: 160
-        y: 16
+        x: 48
+        y: 0
         width: 16
         height: 16
       alignment: 9
@@ -320,8 +320,8 @@ TextureImporter:
       name: icon_iron_bar
       rect:
         serializedVersion: 2
-        x: 176
-        y: 16
+        x: 64
+        y: 0
         width: 16
         height: 16
       alignment: 9
@@ -342,8 +342,8 @@ TextureImporter:
       name: icon_iron_pickaxe
       rect:
         serializedVersion: 2
-        x: 192
-        y: 16
+        x: 96
+        y: 0
         width: 16
         height: 16
       alignment: 9
@@ -364,8 +364,8 @@ TextureImporter:
       name: icon_table
       rect:
         serializedVersion: 2
-        x: 224
-        y: 16
+        x: 160
+        y: 0
         width: 16
         height: 16
       alignment: 9
@@ -386,8 +386,8 @@ TextureImporter:
       name: icon_wooden_hammer
       rect:
         serializedVersion: 2
-        x: 240
-        y: 16
+        x: 208
+        y: 0
         width: 16
         height: 16
       alignment: 9
@@ -408,7 +408,7 @@ TextureImporter:
       name: icon_workbench
       rect:
         serializedVersion: 2
-        x: 0
+        x: 224
         y: 0
         width: 16
         height: 16
@@ -430,7 +430,7 @@ TextureImporter:
       name: icon_cinderite_bar
       rect:
         serializedVersion: 2
-        x: 64
+        x: 80
         y: 16
         width: 16
         height: 16
@@ -452,8 +452,8 @@ TextureImporter:
       name: icon_lumite_bar
       rect:
         serializedVersion: 2
-        x: 208
-        y: 16
+        x: 112
+        y: 0
         width: 16
         height: 16
       alignment: 9
@@ -466,6 +466,314 @@ TextureImporter:
       bones: []
       spriteID: 384dbe7cdfd9992d05326d0c9c842365
       internalID: 1697526163
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_bat_wing
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 16
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5b8857c89ab21726e1f84aa7ab55cc0f
+      internalID: -1473573804
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_cinderite_pickaxe
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 16
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 078858ca98bde540973e088eb48eea32
+      internalID: 1252367399
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_copper_shortsword
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 16
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f912b261a85da8d0c694ce91082c54d7
+      internalID: 827542933
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_ember_core
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 16
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: de5aed54b08a600074e4827eef58d46f
+      internalID: 1194703943
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_ember_staff
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 16
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c113392521b5aa1605089ee7161fbc62
+      internalID: 303551711
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_gloop_gel
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 16
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ed135fdd883beda0f597d9dfb3226b6b
+      internalID: 1709957550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_glowcap_brew
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4826d4a86b22044ee259cd8fc887b3ec
+      internalID: 896930344
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_heartroot
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 0
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9d4e1333b180c75c8685955169ba6031
+      internalID: 1057231872
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_husk_cloth
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 0
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 077a50cd5d144785261390af3978ff77
+      internalID: 382036468
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_iron_broadsword
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 0
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ce10dba1268929222c86e870a751b6ae
+      internalID: -1835884658
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_lumite_glaive
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 096a99ea3639fdcdf530449653005994
+      internalID: 381160861
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_lumite_pickaxe
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 0
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 48398dd42d93bec78fa83c54a40e3688
+      internalID: -561201772
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_wooden_arrow
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 0
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c0991fb43ae29746861d0cb600d81f5a
+      internalID: 1184117663
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_wooden_bow
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 82ab171766924edf732a258be04301e0
+      internalID: -1075292509
       vertices: []
       indices: 
       edges: []
@@ -487,20 +795,34 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       icon_anvil: 127707247
+      icon_bat_wing: -1473573804
       icon_bed: -1058637884
       icon_chair: 1288113972
       icon_chest: 57434722
       icon_cinderite_bar: 1068200110
+      icon_cinderite_pickaxe: 1252367399
       icon_copper_axe: -531738543
       icon_copper_bar: 1449577731
       icon_copper_pickaxe: 1369605695
+      icon_copper_shortsword: 827542933
       icon_door: -1473425453
+      icon_ember_core: 1194703943
+      icon_ember_staff: 303551711
       icon_furnace: 759613216
+      icon_gloop_gel: 1709957550
+      icon_glowcap_brew: 896930344
+      icon_heartroot: 1057231872
+      icon_husk_cloth: 382036468
       icon_iron_axe: -1660465365
       icon_iron_bar: -1696839487
+      icon_iron_broadsword: -1835884658
       icon_iron_pickaxe: 2104570212
       icon_lumite_bar: 1697526163
+      icon_lumite_glaive: 381160861
+      icon_lumite_pickaxe: -561201772
       icon_table: 1897060876
+      icon_wooden_arrow: 1184117663
+      icon_wooden_bow: -1075292509
       icon_wooden_hammer: -562145489
       icon_workbench: 1842744750
   mipmapLimitGroupName: 

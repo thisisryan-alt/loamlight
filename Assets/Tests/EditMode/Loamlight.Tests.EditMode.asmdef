@@ -20,7 +20,9 @@
         "Unity.Burst",
         "Loamlight.Crafting",
         "Loamlight.UI",
-        "Loamlight.Liquids"
+        "Loamlight.Liquids",
+        "Loamlight.Combat",
+        "Loamlight.AI"
     ],
     "includePlatforms": [
         "Editor"

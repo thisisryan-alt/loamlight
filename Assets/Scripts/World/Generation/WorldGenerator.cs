@@ -26,7 +26,14 @@ namespace Loamlight.World.Generation
         public ushort dirt, grass, stone, sand, clay, gravel, snow, ice, sandstone, ash, basalt, obsidian, mossyStone;
         public ushort treeTrunk, treeTop, pineTop, cactus, grassDecor, duneGrass, glowcap;
         public ushort dirtWall, stoneWall, sandstoneWall, basaltWall, iceWall;
+        public int2 treeTopSize, pineTopSize;   // canopy objects, in tiles (from content)
         public FixedList512Bytes<OreGen> ores;
+
+        static int2 Size(ContentDatabase db, ushort id)
+        {
+            var t = db.Tile(id);
+            return t != null ? new int2(t.size.x, t.size.y) : new int2(5, 4);
+        }
 
         public static GenIds From(ContentDatabase db)
         {
@@ -46,6 +53,8 @@ namespace Loamlight.World.Generation
                 dirtWall = W("dirt_wall"), stoneWall = W("stone_wall"), sandstoneWall = W("sandstone_wall"), basaltWall = W("basalt_wall"),
                 iceWall = W("ice_wall"),
             };
+            ids.treeTopSize = Size(db, ids.treeTop);
+            ids.pineTopSize = Size(db, ids.pineTop);
             // biomes fall back to their neighbours' materials when a tile is missing (tests with trimmed content)
             if (ids.sandstone == 0) ids.sandstone = ids.stone;
             if (ids.snow == 0) ids.snow = ids.dirt;
@@ -336,24 +345,26 @@ namespace Loamlight.World.Generation
                 }
                 bool pine = biome == Biome.Frostfell && g == ids.snow && ids.pineTop != 0;
                 if (!pine && g != ids.grass) continue;
-                if (x >= nextTree && CanGrowTree(w, x, top, 18, 2))
+                var size = pine ? ids.pineTopSize : ids.treeTopSize;
+                int maxTrunk = (pine ? 7 : 6) + 6;
+                if (x >= nextTree && CanGrowTree(w, x, top, maxTrunk + size.y + 1, size.x / 2))
                 {
                     int height = (pine ? 7 : 6) + rng.NextInt(0, 7);
                     for (int i = 1; i <= height; i++) w.Blocks[layout.Index(x, top + i)] = ids.treeTrunk;
-                    // canopy: 5x4 object centred on the trunk, cell index = cx + cy * 5
-                    int ox = x - 2, oy = top + height + 1;
+                    // canopy: a size.x by size.y object centred on the trunk, cell index = cx + cy * size.x
+                    int ox = x - size.x / 2, oy = top + height + 1;
                     ushort canopy = pine ? ids.pineTop : ids.treeTop;
-                    if (oy + 4 < w.Height)
-                        for (int cy = 0; cy < 4; cy++)
-                        for (int cx = 0; cx < 5; cx++)
+                    if (oy + size.y < w.Height)
+                        for (int cy = 0; cy < size.y; cy++)
+                        for (int cx = 0; cx < size.x; cx++)
                         {
                             int i = layout.Index(ox + cx, oy + cy);
                             if (w.Blocks[i] != 0) continue;
                             w.Blocks[i] = canopy;
-                            w.Frames[i] = (byte)(cx + cy * 5);
+                            w.Frames[i] = (byte)(cx + cy * size.x);
                         }
                     trees++;
-                    nextTree = x + (pine ? 7 : 5) + rng.NextInt(0, pine ? 12 : 9);
+                    nextTree = x + size.x + 1 + rng.NextInt(0, pine ? 10 : 8);
                     continue;
                 }
                 if (!pine && ids.grassDecor != 0 && w.Blocks[above] == 0 && rng.NextFloat() < 0.4f) w.Blocks[above] = ids.grassDecor;
