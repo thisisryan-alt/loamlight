@@ -270,3 +270,20 @@ Performance is measured on the full world in a **release** build, in the worst c
 - **Darkness is real at night.** The sky light that floods open columns drops to 0.17 blue moonlight; surface exploration at night needs torches.
 - **The sky is unlit sprites on sorting layer `Sky`,** tinted from the cycle. A runtime 1×32 gradient texture is the only runtime-generated texture, and it is not an asset.
 
+### M4
+- **Hitstop is a gameplay clock, not `Time.timeScale`** (`GameClock.Scale`). UI, audio, camera shake and damage numbers keep moving during the 50–90 ms freeze, which is what makes a hit feel heavy without the game feeling stuck.
+- **Use has one owner.** `ToolUser` reads the input and hands weapon items to `WeaponUser`, so pickaxes, buckets, consumables and swords never fight over a click.
+- **AI never sees the player type.** Every hittable thing registers in `CombatRegistry` with a team and hurtbox; enemies target the nearest live Player-team entry. The assembly-graph test keeps AI → Player impossible.
+- **Every attack has a tell** of 0.35–0.8 s that the player can read: squash, wing flare plus screech, raised arms, charging orb; the boss adds lantern flares, path lines and a chime. A heavy hit interrupts light enemies' tells.
+- **Peaceful mode for non-combat scenarios** keeps m1–m3 and perf deterministic.
+- **Art:** albedo bakes a banded key light from the top left (4 constant bands), so models read as solid under flat sky light; normal maps still add dynamic light.
+
+### M5
+- **Structures are data** (rows plus a legend) and must be buried: 55% solid footprint, no liquid. They read as discovered, not floating. Chests are filled by the game from loot tables, seeded by world seed and position, so a world always has the same loot.
+- **The boss changes the world it fights in.** Phase 2 dims all map light to 30% (eased, not snapped), turning the arena into the darkness-as-resource pillar: torches matter, and the headlamp and the warden's own lantern become the main lights.
+
+### M6
+- **The menu reuses the game's sky** (`SkyBackdrop` plus `DayNightCycle`), so it costs nothing and looks like the game.
+- **Settings are a tiny JSON file**, not PlayerPrefs, so they are portable and readable. Keys are stored as Input System control paths and applied as binding overrides.
+- **Music is synthesised like everything else** (numpy, fixed seeds), at 22.05 kHz mono to stay small. Crossfades happen in `Sfx`, so any system can ask for a track.
+

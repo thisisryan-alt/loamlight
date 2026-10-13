@@ -1,0 +1,21 @@
+scene: MainMenu
+resolution: 1280x720, device: Qualcomm(R) Adreno(TM) X1-85 GPU (Direct3D12)
+cpu: Snapdragon(R) X 10-core X1P64100 @ 3.40 GHz, 10 threads, build: development
+frame ms over 240 frames: avg 0.91 (1102 fps), p50 0.76, p95 1.86, max 2.98
+FrameTimingManager avg: cpu 0.91 ms, gpu 0.69 ms (240 samples)
+profiler: Main Thread avg 0.888 ms max 2.97 ms | Update.ScriptRunBehaviourUpdate avg 0.012 ms max 0.04 ms | PreLateUpdate.ScriptRunBehaviourLateUpdate avg 0.022 ms max 0.09 ms | PostLateUpdate.PlayerUpdateCanvases avg 0.004 ms max 0.02 ms | UGUI.Rendering.UpdateBatches avg 0.003 ms max 0.02 ms | Camera.Render avg 0.000 ms max 0.00 ms | Gfx.WaitForPresentOnGfxThread avg 0.001 ms max 0.01 ms | GC Allocated In Frame avg 0.4 KB max 5.5 KB
+shot 00_title.png: 1280x720, luminance mean 56.9, variance 835.0
+  verify: ok ok: menu music playing (track 1 of 3) | ok: three music tracks imported
+shot 01_settings.png: 1280x720, luminance mean 51.5, variance 808.7
+  verify: ok ok: master volume applies to the audio host
+shot 02_worlds.png: 1280x720, luminance mean 48.4, variance 550.2
+  verify: ok ok: settings (with the rebind) were saved to settings.json
+shot 03_tutorial.png: 1280x720, luminance mean 73.0, variance 2666.5
+  verify: ok ok: the new world loaded | ok: world is 2100x700, seed 777 | ok: tutorial hint: 'Move with A/D, jump with SPACE.'
+shot 04_pause.png: 1280x720, luminance mean 46.9, variance 1426.4
+  verify: ok ok: moving advanced the tutorial (step 1) | ok: day music in the meadow | ok: the pause menu stops gameplay time
+shot 05_worlds_after.png: 1280x720, luminance mean 52.5, variance 690.8
+  verify: ok ok: saved to Scenario World.lmw | ok: resume restarts time | ok: back at the main menu | ok: the saved world is in the list
+shot 06_loaded.png: 1280x720, luminance mean 69.5, variance 2844.4
+  verify: ok ok: the world loads back from the menu | ok: tutorial progress was saved with the world
+result: ok

@@ -86,6 +86,12 @@ def obj_workbench():
     B("shelf", 0.2, 0.18, 1.8, 0.28, WOOD_D, depth=0.5)
     B("vise", 1.45, 0.86, 1.75, 1.0, IRON, depth=0.3)
     B("saw", 0.3, 0.86, 0.95, 0.92, IRON_L, depth=0.05, y=-0.2)
+    for x in (0.65, 1.3):
+        B(f"seam{x}", x, 0.62, x + 0.03, 0.86, WOOD_D, depth=0.72, round_px=0)
+    B("hammer_handle", 1.0, 0.88, 1.36, 0.93, WOOD, depth=0.06, y=-0.25)
+    B("hammer_head", 1.3, 0.86, 1.4, 1.0, IRON_D, depth=0.12, y=-0.25)
+    for x in (0.3, 0.9, 1.5):
+        B(f"box{x}", x, 0.28, x + 0.28, 0.48, "#7a5a3a" if x != 0.9 else "#5a6a7a", depth=0.4)
 
 
 def obj_furnace():
@@ -101,8 +107,15 @@ def obj_furnace():
     ember = glow_material("#ff6a2a")
     o = B("embers", 0.95, 0.25, 2.05, 0.38, "#ff6a2a", depth=0.2, y=-0.5)
     o.data.materials[0] = ember
-    for i, x in enumerate((0.3, 2.55)):
-        B(f"brick{i}", x, 0.4, x + 0.2, 0.55, STONE_L, depth=1.02)
+    for row, z in enumerate((0.05, 0.42, 0.79, 1.16)):
+        off = 0.0 if row % 2 == 0 else 0.22
+        for k in range(7):
+            x = 0.12 + off + k * 0.44
+            if x + 0.38 > 2.88 or (0.72 < x + 0.38 and x < 2.28 and z < 1.15):
+                continue
+            B(f"brick{row}_{k}", x, z, x + 0.38, z + 0.32, STONE_L if (row + k) % 3 else STONE, depth=1.02)
+    for k in range(4):
+        B(f"grate{k}", 0.95 + k * 0.33, 0.22, 1.0 + k * 0.33, 0.62, IRON_D, depth=1.1, round_px=0)
 
 
 def obj_anvil():
@@ -125,12 +138,18 @@ def obj_table():
         B(f"leg{x}", x, 0.0, x + 0.25, 1.4, WOOD, depth=0.5)
     B("cloth", 1.0, 1.8, 2.0, 1.86, "#d9cfb8", depth=0.6)
     sphere("mug", 0.14, (2.3, 0, 1.98), "#a85a2a", subdiv=1, scale=(1, 1, 1.3))
+    B("plate", 0.45, 1.8, 0.95, 1.85, "#e8e0d0", depth=0.4)
+    B("candle", 1.42, 1.86, 1.56, 2.2, "#f0e8d0", depth=0.12)
+    flame = sphere("candle_flame", 0.06, (1.49, -0.02, 2.28), "#ffd27a", subdiv=1, scale=(1, 1, 1.6))
+    flame.data.materials[0] = glow_material("#ffd27a")
 
 
 def obj_chair():
     B("seat", 0.12, 0.72, 0.92, 0.9, WOOD_L, depth=0.7)
     B("back", 0.12, 0.9, 0.28, 1.85, WOOD, depth=0.6)
     B("rail", 0.12, 1.5, 0.28, 1.62, WOOD_D, depth=0.62)
+    B("rail_low", 0.12, 1.12, 0.28, 1.22, WOOD_D, depth=0.62)
+    B("cushion", 0.2, 0.9, 0.86, 0.98, "#a84a4a", depth=0.6)
     for x in (0.14, 0.72):
         B(f"leg{x}", x, 0.0, x + 0.14, 0.75, WOOD_D, depth=0.5)
 
@@ -142,6 +161,10 @@ def obj_chest():
         B(f"band{x}", x, 0.0, x + 0.15, 1.6, IRON_D, depth=1.08)
     B("trim", 0.05, 1.0, 1.95, 1.12, IRON_D, depth=1.08)
     B("lock", 0.85, 0.8, 1.15, 1.2, "#e0b44a", depth=1.12)
+    B("keyhole", 0.97, 0.88, 1.03, 1.0, "#3a2a10", depth=1.14, round_px=0)
+    for z in (0.35, 0.7):
+        B(f"plank{z}", 0.25, z, 1.75, z + 0.03, "#7a5428", depth=1.02, round_px=0)
+    B("lid_ridge", 0.25, 1.45, 1.75, 1.52, "#d09a5a", depth=1.07)
 
 
 def obj_door(open_=False):
@@ -150,6 +173,10 @@ def obj_door(open_=False):
         for z in (0.35, 1.45, 2.55):
             B(f"rail{z}", 0.1, z, 0.9, z + 0.18, WOOD_D, depth=0.3)
         B("handle", 0.7, 1.35, 0.82, 1.6, "#d8b04a", depth=0.36)
+        for x in (0.35, 0.62):
+            B(f"plankline{x}", x, 0.05, x + 0.03, 2.95, "#6e4a28", depth=0.27, round_px=0)
+        for z in (0.4, 2.6):
+            B(f"hinge{z}", 0.06, z, 0.34, z + 0.1, IRON_D, depth=0.34, round_px=0)
     else:
         # swung open toward the viewer: seen almost edge-on against the left jamb
         B("slab_edge", 0.08, 0.0, 0.32, 3.0, "#7a5230", depth=0.9, y=-0.35)

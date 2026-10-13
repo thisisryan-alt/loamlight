@@ -329,11 +329,51 @@ The user asked for the whole game to be finished without milestone check-ins (20
 - The ember staff often misses the drifting warden in the scripted fight (about 22% hit rate without leading the target), so m5 adds scripted damage after 25 s and says so in a note.
 - The dash pose clips the sprite frame slightly.
 
-## M6: Polish (plan)
-- **Main menu scene** (built from C#): title over the sky backdrop, Play, Settings, Quit.
-- **World select:** saved worlds with size, seed and play time; delete with confirmation; New World with name, seed (random or typed) and size.
-- **Settings** (JSON in persistentDataPath): master, music and SFX volume; resolution and fullscreen; rebindable keys (Input System rebinding), applied in game too.
-- **In game:** pause menu (Esc) with Resume, Save, Settings and Save & Quit; autosave; save toast.
-- **Tutorial:** contextual hints driven by game events, stored in the save.
-- **Music:** three synthesised loops (day, night and caverns, boss) with crossfades. More SFX for the UI.
-- **Release perf run.** Final model polish for the furniture.
+## M6: Polish (done 2026-10-13)
+
+### Done
+- **Main menu scene** (built in C#, first in the build): title over the game's own sky on a slow day/night loop, with Play, Settings and Quit.
+- **World select:** saved worlds, newest first, with size and play time; delete with a confirm click; New World with name, seed (random or typed) and size (Small 2100×700 or Medium 4200×1200).
+- **Settings** (`GameSettings` → `persistentDataPath/settings.json`):
+  - master, music and effects volume;
+  - resolution cycling and fullscreen;
+  - tutorial hints on/off;
+  - key rebinding for move left/right, jump, drop down and inventory (press a key; Escape cancels), applied live to the input maps.
+- **In game:**
+  - Escape opens the pause menu (Resume, Save, Settings, Save & quit), and gameplay time stops;
+  - autosave every 5 minutes;
+  - save toasts with timing;
+  - play time is tracked into the save.
+- **Tutorial:** 7 hints that advance on real actions (move, dig, gather 10 wood, craft a workbench, place a torch, survive dusk, find ore). Progress is saved with the world, and hints show the player's current keys.
+- **Music:** three synthesised loops (`Tools/audio/synth_music.py`: meadow day, deep night and caverns, warden boss) chosen by `MusicDirector` and crossfaded by `Sfx`. New UI sounds for the menus.
+- **Furniture polish:**
+  - workbench: plank seams, hammer and crates;
+  - furnace: brick courses and a grate;
+  - table: candle with a glowing flame, and a plate;
+  - chair: rails and cushion;
+  - chest: planks, keyhole and lid ridge;
+  - door: plank lines and hinges.
+- **Scenario m6** (MainMenu scene; the director survives scene loads), all green: title and music, settings with a rebind saved to disk, creating a 2100×700 seed-777 world, the tutorial hint and its first step, pause stopping time, save, quit to the menu, the world in the list, loading it back with tutorial progress intact.
+- **Release build perf run** (`PlayerBuild.BuildRelease`, perf scenario):
+  - 4200×1200 generates with structures in 0.22 s;
+  - frames p50 1.27 ms, p95 2.86 ms (60 fps budget 16.7 ms);
+  - one 69 ms hitch while streaming the first teleport.
+
+## Final state
+- **Scenarios:**
+  - m1: dig and move;
+  - m2: build and craft;
+  - m3: light, liquids and day/night;
+  - m4: fight;
+  - m5: biomes, structures, ore tiers and boss;
+  - m6: menus, settings, saves and tutorial;
+  - perf.
+  - Plus the PipelineDemo and TileLab captures and the EditMode/PlayMode tests. `./Tools/verify.ps1` runs it all.
+- **Rebuilding:**
+  - `./Tools/build_art.ps1` regenerates every asset (Blender sprites and objects, Pillow tiles, sky, effects, UI, font, SFX and music);
+  - `./Tools/unity.ps1 setup` imports it and rebuilds scenes and content.
+
+### Known issues / rough edges
+- Combat balance is first-pass: the warden is tanky against the staff unless you lead your shots.
+- Furniture has no item-tooltip descriptions for stats (weapons do in the description text only).
+- One frame hitch (about 70–150 ms) when teleporting into an unstreamed region (scenario only; walking never triggers it).
