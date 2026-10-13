@@ -26,6 +26,8 @@ namespace Loamlight.World.Rendering
         public int width, height;
         public AtlasEntry[] tiles = Array.Empty<AtlasEntry>();
         public AtlasEntry[] walls = Array.Empty<AtlasEntry>();
+        /// <summary>"water" / "lava": frame start = body, start + 1 = surface.</summary>
+        public AtlasEntry[] liquids = Array.Empty<AtlasEntry>();
         /// <summary>Per frame: (uMin, vMin, uMax, vMax).</summary>
         public Vector4[] uvRects = Array.Empty<Vector4>();
 
@@ -54,6 +56,7 @@ namespace Loamlight.World.Rendering
         public NativeArray<float4> Uvs;
         public NativeArray<TileProps> TileProps;
         public readonly Material Material;
+        public readonly int WaterFrame, LavaFrame;
 
         public WorldRenderData(ContentDatabase db, WorldAtlas atlas)
         {
@@ -70,6 +73,12 @@ namespace Loamlight.World.Rendering
             Uvs = new NativeArray<float4>(atlas.uvRects.Length, Allocator.Persistent);
             for (int i = 0; i < atlas.uvRects.Length; i++) Uvs[i] = atlas.uvRects[i];
             TileProps = new NativeArray<TileProps>(db.BuildTileProps(), Allocator.Persistent);
+            WaterFrame = LavaFrame = -1;
+            foreach (var e in atlas.liquids)
+            {
+                if (e.id == "water") WaterFrame = e.start;
+                if (e.id == "lava") LavaFrame = e.start;
+            }
         }
 
         static TileRenderInfo Info(AtlasEntry e) => new TileRenderInfo

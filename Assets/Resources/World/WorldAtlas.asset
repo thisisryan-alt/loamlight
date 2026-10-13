@@ -237,6 +237,21 @@ MonoBehaviour:
     w: 1
     h: 1
     variants: 1
+  liquids:
+  - id: lava
+    layout: 4
+    start: 673
+    count: 2
+    w: 1
+    h: 1
+    variants: 1
+  - id: water
+    layout: 4
+    start: 671
+    count: 2
+    w: 1
+    h: 1
+    variants: 1
   uvRects:
   - {x: 0.0009765625, y: 0.93359375, z: 0.016601562, w: 0.99609375}
   - {x: 0.018554688, y: 0.93359375, z: 0.034179688, w: 0.99609375}

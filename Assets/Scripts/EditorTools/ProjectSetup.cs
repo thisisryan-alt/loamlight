@@ -16,7 +16,7 @@ namespace Loamlight.EditorTools
         public const string ProductName = "Loamlight";
 
         /// <summary>Sorting layers, back to front. IDs are derived from the names so they never change.</summary>
-        public static readonly string[] SortingLayers = { "Background", "Walls", "World", "Entities", "Foreground", "Overlay" };
+        public static readonly string[] SortingLayers = { "Sky", "Background", "Walls", "World", "Entities", "Liquid", "Foreground", "Overlay" };
 
         [MenuItem("Loamlight/Setup/Run All")]
         public static void RunAll()

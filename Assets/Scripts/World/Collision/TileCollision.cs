@@ -105,6 +105,19 @@ namespace Loamlight.World.Collision
         public static MoveResult Move(ref Body body, float dt, ICollisionGrid grid, float stepHeight)
         {
             var result = new MoveResult();
+            // never stay embedded: if something solid appeared inside the body (falling sand), push up out of it
+            if (!Free(grid, body.Left, body.Right, body.Bottom, body.Top))
+            {
+                for (int k = 1; k <= 12; k++)
+                {
+                    float up = k * 0.25f;
+                    if (Free(grid, body.Left, body.Right, body.Bottom + up, body.Top + up))
+                    {
+                        body.position.y += up;
+                        break;
+                    }
+                }
+            }
             bool wasGrounded = body.grounded;
             float2 delta = body.velocity * dt;
             int steps = math.max(1, (int)math.ceil(math.cmax(math.abs(delta)) / MaxSubStep));

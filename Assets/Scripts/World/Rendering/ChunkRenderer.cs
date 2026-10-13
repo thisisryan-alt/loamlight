@@ -42,7 +42,7 @@ namespace Loamlight.World.Rendering
         sealed class ChunkView
         {
             public GameObject root;
-            public Mesh wallMesh, blockMesh;
+            public Mesh wallMesh, blockMesh, liquidMesh;
             public int chunk = -1;
         }
 
@@ -140,23 +140,25 @@ namespace Loamlight.World.Rendering
             int count = _buildList.Count;
             var chunks = new NativeArray<int>(count, Allocator.TempJob);
             for (int i = 0; i < count; i++) chunks[i] = _buildList[i];
-            var meshData = Mesh.AllocateWritableMeshData(count * 2);
+            var meshData = Mesh.AllocateWritableMeshData(count * ChunkMeshJob.Layers);
             var job = new ChunkMeshJob
             {
                 layout = _world.Layout, chunks = chunks, blocks = _world.Blocks, walls = _world.Walls,
                 shapes = _world.Shapes, frames = _world.Frames, tileInfo = _render.Tiles, wallInfo = _render.Walls,
                 tileProps = _render.TileProps, uvs = _render.Uvs, vertexLayout = _vertexLayout, meshes = meshData,
-                wallTint = wallTint,
+                wallTint = wallTint, liquid = _world.Liquid, liquidKind = _world.LiquidKind,
+                waterFrame = _render.WaterFrame, lavaFrame = _render.LavaFrame,
             };
-            job.Schedule(count * 2, 1).Complete();
+            job.Schedule(count * ChunkMeshJob.Layers, 1).Complete();
             chunks.Dispose();
 
-            var meshes = new Mesh[count * 2];
+            var meshes = new Mesh[count * ChunkMeshJob.Layers];
             for (int i = 0; i < count; i++)
             {
                 var view = _active[_buildList[i]];
-                meshes[i * 2] = view.wallMesh;
-                meshes[i * 2 + 1] = view.blockMesh;
+                meshes[i * 3] = view.wallMesh;
+                meshes[i * 3 + 1] = view.blockMesh;
+                meshes[i * 3 + 2] = view.liquidMesh;
             }
             Mesh.ApplyAndDisposeWritableMeshData(meshData, meshes,
                 MeshUpdateFlags.DontRecalculateBounds | MeshUpdateFlags.DontValidateIndices);
@@ -188,6 +190,7 @@ namespace Loamlight.World.Rendering
             view.chunk = -1;
             view.wallMesh.Clear();
             view.blockMesh.Clear();
+            view.liquidMesh.Clear();
             view.root.SetActive(false);
             _pool.Push(view);
         }
@@ -201,11 +204,14 @@ namespace Loamlight.World.Rendering
                 root = root,
                 wallMesh = new Mesh { name = "chunk walls" },
                 blockMesh = new Mesh { name = "chunk blocks" },
+                liquidMesh = new Mesh { name = "chunk liquids" },
             };
             view.wallMesh.MarkDynamic();
             view.blockMesh.MarkDynamic();
+            view.liquidMesh.MarkDynamic();
             AddLayer(root.transform, "Walls", view.wallMesh, "Walls");
             AddLayer(root.transform, "Blocks", view.blockMesh, "World");
+            AddLayer(root.transform, "Liquids", view.liquidMesh, "Liquid");
             return view;
         }
 
@@ -227,6 +233,7 @@ namespace Loamlight.World.Rendering
         {
             if (v.wallMesh != null) Destroy(v.wallMesh);
             if (v.blockMesh != null) Destroy(v.blockMesh);
+            if (v.liquidMesh != null) Destroy(v.liquidMesh);
             if (v.root != null) Destroy(v.root);
         }
     }

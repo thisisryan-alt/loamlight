@@ -306,8 +306,11 @@ namespace Loamlight.Lighting
                         if (math.cmax(p.light) > 0f)
                         {
                             l = p.light;
-                            int3 c = (int3)math.round(math.saturate(p.light) * 255f);
-                            emitters.Add(new int4(x, y, (c.x << 16) | (c.y << 8) | c.z, (int)(p.lightRadius * 10f)));
+                            if (p.lightRadius >= 5f)
+                            {
+                                int3 c = (int3)math.round(math.saturate(p.light) * 255f);
+                                emitters.Add(new int4(x, y, (c.x << 16) | (c.y << 8) | c.z, (int)(p.lightRadius * 10f)));
+                            }
                         }
                     }
                     if (liquid[i] > 0)

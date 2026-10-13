@@ -5,6 +5,7 @@ using Loamlight.Content;
 using Loamlight.Core;
 using Loamlight.Inventory;
 using Loamlight.Lighting;
+using Loamlight.Liquids;
 using Loamlight.Player;
 using Loamlight.UI;
 using Loamlight.World;
@@ -52,6 +53,7 @@ namespace Loamlight.Game
         public WorldCollisionGrid Grid { get; private set; }
         public ChunkRenderer Chunks { get; private set; }
         public LightMapSystem Light { get; private set; }
+        public SimulationRunner Simulation { get; private set; }
         public PlayerController Player { get; private set; }
         public ToolUser Tools { get; private set; }
         public Interactor Interactor { get; private set; }
@@ -173,6 +175,8 @@ namespace Loamlight.Game
 
             Light = new GameObject("Light Map").AddComponent<LightMapSystem>();
             Light.Init(World, Render.TileProps, cam);
+            Simulation = new GameObject("Simulation").AddComponent<SimulationRunner>();
+            Simulation.Init(World, Render.TileProps, Db, cam);
 
             // UI
             if (FindAnyObjectByType<EventSystem>() == null)

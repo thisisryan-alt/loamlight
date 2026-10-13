@@ -19,7 +19,8 @@
         "Unity.Collections",
         "Unity.Burst",
         "Loamlight.Crafting",
-        "Loamlight.UI"
+        "Loamlight.UI",
+        "Loamlight.Liquids"
     ],
     "includePlatforms": [
         "Editor"

@@ -20,7 +20,7 @@ namespace Loamlight.World.Rendering
     }
 
     /// <summary>
-    /// Builds chunk meshes in Burst: mesh 2k is the wall layer of chunks[k], mesh 2k+1 its block/object layer.
+    /// Builds chunk meshes in Burst: mesh 3k is the wall layer of chunks[k], 3k+1 its block/object layer, 3k+2 liquids.
     /// Terrain autotiles from its air neighbours (reading across chunk borders), slopes and half blocks change the
     /// geometry, objects pick their cell from the tile's frame byte.
     /// </summary>
@@ -36,15 +36,20 @@ namespace Loamlight.World.Rendering
         [ReadOnly] public NativeArray<float4> uvs;
         [ReadOnly] public NativeArray<VertexAttributeDescriptor> vertexLayout;
         public Mesh.MeshDataArray meshes;
+        [ReadOnly] public NativeArray<byte> liquid, liquidKind;
+        public int waterFrame, lavaFrame;
         public Color32 wallTint;
+        public const int Layers = 3;
 
         static readonly float3 Normal = new float3(0, 0, -1);
         static readonly float4 Tangent = new float4(1, 0, 0, -1);
 
         public void Execute(int meshIndex)
         {
-            int chunk = chunks[meshIndex >> 1];
-            bool wallLayer = (meshIndex & 1) == 0;
+            int chunk = chunks[meshIndex / Layers];
+            int layer = meshIndex % Layers;
+            bool wallLayer = layer == 0;
+            if (layer == 2) { BuildLiquids(meshIndex, chunk); return; }
             int cx = chunk % layout.ChunksX, cy = chunk / layout.ChunksX;
             int x0 = cx * WorldLayout.ChunkSize, y0 = cy * WorldLayout.ChunkSize;
             int baseIndex = chunk << 10;
@@ -143,6 +148,45 @@ namespace Loamlight.World.Rendering
             md.subMeshCount = 1;
             var bounds = new Bounds(new Vector3(16f, 16f, 0f), new Vector3(32f, 32f, 1f));
             md.SetSubMesh(0, new SubMeshDescriptor(0, indexCount) { bounds = bounds, vertexCount = vertexCount },
+                MeshUpdateFlags.DontRecalculateBounds | MeshUpdateFlags.DontValidateIndices | MeshUpdateFlags.DontNotifyMeshUsers);
+        }
+
+        void BuildLiquids(int meshIndex, int chunk)
+        {
+            int cx = chunk % layout.ChunksX, cy = chunk / layout.ChunksX;
+            int x0 = cx * WorldLayout.ChunkSize, y0 = cy * WorldLayout.ChunkSize;
+            int baseIndex = chunk << 10;
+            int quads = 0;
+            for (int i = 0; i < WorldLayout.ChunkArea; i++)
+                if (liquid[baseIndex | i] > 0 && layout.InBounds(x0 + (i & WorldLayout.ChunkMask), y0 + (i >> WorldLayout.ChunkShift))) quads++;
+            var md = meshes[meshIndex];
+            md.SetVertexBufferParams(quads * 4, vertexLayout);
+            md.SetIndexBufferParams(quads * 6, IndexFormat.UInt16);
+            var verts = md.GetVertexData<TileVertex>();
+            var inds = md.GetIndexData<ushort>();
+            int v = 0, n = 0;
+            for (int i = 0; i < WorldLayout.ChunkArea; i++)
+            {
+                int idx = baseIndex | i;
+                int amount = liquid[idx];
+                if (amount == 0) continue;
+                int lx = i & WorldLayout.ChunkMask, ly = i >> WorldLayout.ChunkShift;
+                int x = x0 + lx, y = y0 + ly;
+                if (!layout.InBounds(x, y)) continue;
+                bool lava = liquidKind[idx] == (byte)LiquidType.Lava;
+                int frame = lava ? lavaFrame : waterFrame;
+                if (frame < 0) frame = 0;
+                bool covered = y + 1 < layout.Height && liquid[layout.Index(x, y + 1)] > 0;
+                float h = covered ? 1f : math.max(1f / 16f, amount / 255f);
+                var uv = uvs[covered ? frame : frame + 1];
+                // surface frames keep their lighter top rows at the liquid's top edge
+                var clipped = new float4(uv.x, uv.w - (uv.w - uv.y) * h, uv.z, uv.w);
+                var color = lava ? new Color32(255, 255, 255, 245) : new Color32(255, 255, 255, 165);
+                Quad(ref verts, ref inds, ref v, ref n, lx, ly, clipped, color, 0f, h);
+            }
+            md.subMeshCount = 1;
+            var bounds = new Bounds(new Vector3(16f, 16f, 0f), new Vector3(32f, 32f, 1f));
+            md.SetSubMesh(0, new SubMeshDescriptor(0, quads * 6) { bounds = bounds, vertexCount = quads * 4 },
                 MeshUpdateFlags.DontRecalculateBounds | MeshUpdateFlags.DontValidateIndices | MeshUpdateFlags.DontNotifyMeshUsers);
         }
 

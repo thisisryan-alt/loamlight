@@ -199,7 +199,7 @@ namespace Loamlight.Liquids
             var l = _world.Layout;
             if (cx < 0 || cy < 0 || cx >= l.ChunksX || cy >= l.ChunksY) return;
             int c = cy * l.ChunksX + cx;
-            _world.ChunkFlags[c] = (byte)(_world.ChunkFlags[c] | WorldData.FlagMeshDirty | WorldData.FlagLiquidActive | WorldData.FlagSimActive);
+            _world.ChunkFlags[c] = (byte)(_world.ChunkFlags[c] | WorldData.FlagLiquidActive | WorldData.FlagSimActive);
         }
 
         public event System.Action LiquidChanged;

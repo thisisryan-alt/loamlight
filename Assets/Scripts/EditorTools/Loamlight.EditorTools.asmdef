@@ -18,7 +18,8 @@
         "Loamlight.Inventory",
         "Loamlight.Player",
         "Loamlight.UI",
-        "Loamlight.Crafting"
+        "Loamlight.Crafting",
+        "Loamlight.Liquids"
     ],
     "includePlatforms": [
         "Editor"

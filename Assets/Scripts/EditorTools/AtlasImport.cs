@@ -68,6 +68,7 @@ namespace Loamlight.EditorTools
             atlas.width = width; atlas.height = height;
             atlas.tiles = Entries(root["tiles"]);
             atlas.walls = Entries(root["walls"]);
+            atlas.liquids = root.TryGetValue("liquids", out var liq) ? Entries(liq) : Array.Empty<AtlasEntry>();
             atlas.uvRects = uvs;
             if (created) AssetDatabase.CreateAsset(atlas, AssetPath);
             else if (EditorJsonUtility.ToJson(atlas) != before) EditorUtility.SetDirty(atlas);

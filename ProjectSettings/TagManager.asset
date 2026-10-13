@@ -41,6 +41,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Sky
+    uniqueID: 1477505021
+    locked: 0
   - name: Background
     uniqueID: 1172193982
     locked: 0
@@ -52,6 +55,9 @@ TagManager:
     locked: 0
   - name: Entities
     uniqueID: 1686377374
+    locked: 0
+  - name: Liquid
+    uniqueID: 387452919
     locked: 0
   - name: Foreground
     uniqueID: 226813808

@@ -17,7 +17,8 @@
         "Loamlight.Player",
         "Loamlight.UI",
         "Unity.InputSystem",
-        "Loamlight.Crafting"
+        "Loamlight.Crafting",
+        "Loamlight.Liquids"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

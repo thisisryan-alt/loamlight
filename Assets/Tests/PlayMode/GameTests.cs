@@ -53,8 +53,8 @@ namespace Loamlight.Tests
             var layout = ChunkMeshLayout.Create(Allocator.Persistent);
             var chunks = new NativeArray<int>(16, Allocator.Persistent);
             for (int i = 0; i < 16; i++) chunks[i] = i + 8;
-            var meshes = new Mesh[32];
-            for (int i = 0; i < 32; i++) meshes[i] = new Mesh();
+            var meshes = new Mesh[16 * ChunkMeshJob.Layers];
+            for (int i = 0; i < meshes.Length; i++) meshes[i] = new Mesh();
 
             // warm up both paths once
             RunMesh(world, render, layout, chunks, meshes);
@@ -85,13 +85,14 @@ namespace Loamlight.Tests
         static void RunMesh(WorldData world, WorldRenderData render, NativeArray<UnityEngine.Rendering.VertexAttributeDescriptor> layout,
             NativeArray<int> chunks, Mesh[] meshes)
         {
-            var data = Mesh.AllocateWritableMeshData(chunks.Length * 2);
+            var data = Mesh.AllocateWritableMeshData(chunks.Length * ChunkMeshJob.Layers);
             new ChunkMeshJob
             {
                 layout = world.Layout, chunks = chunks, blocks = world.Blocks, walls = world.Walls, shapes = world.Shapes,
                 frames = world.Frames, tileInfo = render.Tiles, wallInfo = render.Walls, tileProps = render.TileProps, uvs = render.Uvs,
                 vertexLayout = layout, meshes = data, wallTint = new Color32(150, 150, 160, 255),
-            }.Schedule(chunks.Length * 2, 1).Complete();
+                liquid = world.Liquid, liquidKind = world.LiquidKind, waterFrame = render.WaterFrame, lavaFrame = render.LavaFrame,
+            }.Schedule(chunks.Length * ChunkMeshJob.Layers, 1).Complete();
             Mesh.ApplyAndDisposeWritableMeshData(data, meshes);
         }
 

@@ -171,7 +171,10 @@ namespace Loamlight.World
             var p = _props[id];
             for (int cy = 0; cy < p.height; cy++)
             for (int cx = 0; cx < p.width; cx++)
+            {
                 World.SetBlock(ox + cx, oy + cy, id, p.width == 1 && p.height == 1 ? shape : TileShape.Full, (byte)(cx + cy * p.width));
+                if (p.solid != 0 && World.GetLiquid(ox + cx, oy + cy) > 0) World.SetLiquid(ox + cx, oy + cy, 0, LiquidType.None);
+            }
         }
 
         /// <summary>Ids of crafting-station tiles within <paramref name="radius"/> tiles of a point.</summary>
