@@ -4,7 +4,7 @@
   "frameWidth": 16,
   "frameHeight": 16,
   "columns": 16,
-  "rows": 2,
+  "rows": 3,
   "pixelsPerUnit": 16,
   "pivot": [
     0.5,
@@ -48,7 +48,11 @@
         27,
         28,
         29,
-        30
+        30,
+        31,
+        32,
+        33,
+        34
       ]
     }
   ],
@@ -56,216 +60,244 @@
     {
       "name": "icon_anvil",
       "x": 0,
-      "y": 16,
+      "y": 32,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_bat_wing",
       "x": 16,
-      "y": 16,
+      "y": 32,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_bed",
       "x": 32,
-      "y": 16,
+      "y": 32,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_chair",
       "x": 48,
-      "y": 16,
+      "y": 32,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_chest",
       "x": 64,
-      "y": 16,
+      "y": 32,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_cinderite_bar",
       "x": 80,
-      "y": 16,
+      "y": 32,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_cinderite_pickaxe",
       "x": 96,
-      "y": 16,
+      "y": 32,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_copper_axe",
       "x": 112,
-      "y": 16,
+      "y": 32,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_copper_bar",
       "x": 128,
-      "y": 16,
+      "y": 32,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_copper_pickaxe",
       "x": 144,
-      "y": 16,
+      "y": 32,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_copper_shortsword",
       "x": 160,
-      "y": 16,
+      "y": 32,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_door",
       "x": 176,
-      "y": 16,
+      "y": 32,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_ember_core",
       "x": 192,
-      "y": 16,
+      "y": 32,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_ember_staff",
       "x": 208,
-      "y": 16,
+      "y": 32,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_furnace",
       "x": 224,
+      "y": 32,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_gloam_shard",
+      "x": 240,
+      "y": 32,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_gloamblade",
+      "x": 0,
       "y": 16,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_gloop_gel",
-      "x": 240,
+      "x": 16,
       "y": 16,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_glowcap_brew",
+      "x": 32,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_heartroot",
+      "x": 48,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_husk_cloth",
+      "x": 64,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_iron_axe",
+      "x": 80,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_iron_bar",
+      "x": 96,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_iron_broadsword",
+      "x": 112,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_iron_pickaxe",
+      "x": 128,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_lumite_bar",
+      "x": 144,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_lumite_glaive",
+      "x": 160,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_lumite_pickaxe",
+      "x": 176,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_table",
+      "x": 192,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_warden_lantern",
+      "x": 208,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_wick_charm",
+      "x": 224,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_wooden_arrow",
+      "x": 240,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_wooden_bow",
       "x": 0,
       "y": 0,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_heartroot",
+      "name": "icon_wooden_hammer",
       "x": 16,
       "y": 0,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_husk_cloth",
-      "x": 32,
-      "y": 0,
-      "w": 16,
-      "h": 16
-    },
-    {
-      "name": "icon_iron_axe",
-      "x": 48,
-      "y": 0,
-      "w": 16,
-      "h": 16
-    },
-    {
-      "name": "icon_iron_bar",
-      "x": 64,
-      "y": 0,
-      "w": 16,
-      "h": 16
-    },
-    {
-      "name": "icon_iron_broadsword",
-      "x": 80,
-      "y": 0,
-      "w": 16,
-      "h": 16
-    },
-    {
-      "name": "icon_iron_pickaxe",
-      "x": 96,
-      "y": 0,
-      "w": 16,
-      "h": 16
-    },
-    {
-      "name": "icon_lumite_bar",
-      "x": 112,
-      "y": 0,
-      "w": 16,
-      "h": 16
-    },
-    {
-      "name": "icon_lumite_glaive",
-      "x": 128,
-      "y": 0,
-      "w": 16,
-      "h": 16
-    },
-    {
-      "name": "icon_lumite_pickaxe",
-      "x": 144,
-      "y": 0,
-      "w": 16,
-      "h": 16
-    },
-    {
-      "name": "icon_table",
-      "x": 160,
-      "y": 0,
-      "w": 16,
-      "h": 16
-    },
-    {
-      "name": "icon_wooden_arrow",
-      "x": 176,
-      "y": 0,
-      "w": 16,
-      "h": 16
-    },
-    {
-      "name": "icon_wooden_bow",
-      "x": 192,
-      "y": 0,
-      "w": 16,
-      "h": 16
-    },
-    {
-      "name": "icon_wooden_hammer",
-      "x": 208,
-      "y": 0,
-      "w": 16,
-      "h": 16
-    },
-    {
       "name": "icon_workbench",
-      "x": 224,
+      "x": 32,
       "y": 0,
       "w": 16,
       "h": 16

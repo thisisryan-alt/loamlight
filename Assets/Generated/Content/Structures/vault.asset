@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ec6ca76e5bf59e43bccaeffa99c88b4, type: 3}
+  m_Name: vault
+  m_EditorClassIdentifier: Loamlight.Content::Loamlight.Content.StructureDef
+  id: vault
+  biomes:
+  - emberdeep
+  depthMin: 0.86
+  depthMax: 0.97
+  count: 5
+  ruin: 0
+  loot: vault_chest
+  rows:
+  - '#############'
+  - '#ooooooooooo#'
+  - '#oToooooooTo#'
+  - '#ooooooooooo#'
+  - '#ooooCoCoooo#'
+  - '#############'
+  legend:
+  - key: '#'
+    tile: obsidian_bricks
+    wall: 
+    clear: 0
+    ruinable: 0
+  - key: o
+    tile: 
+    wall: basalt_wall
+    clear: 1
+    ruinable: 0
+  - key: T
+    tile: torch
+    wall: basalt_wall
+    clear: 0
+    ruinable: 0
+  - key: C
+    tile: chest
+    wall: basalt_wall
+    clear: 0
+    ruinable: 0

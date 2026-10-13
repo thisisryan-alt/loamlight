@@ -1,0 +1,150 @@
+{
+  "version": 1,
+  "structures": [
+    {
+      "id": "cabin",
+      "biomes": [
+        "meadow"
+      ],
+      "depthMin": 0.38,
+      "depthMax": 0.78,
+      "count": 14,
+      "ruin": 0.12,
+      "loot": "cabin_chest",
+      "legend": [
+        {
+          "key": "#",
+          "tile": "wood_planks",
+          "ruinable": true
+        },
+        {
+          "key": "w",
+          "wall": "wood_wall",
+          "clear": true
+        },
+        {
+          "key": "=",
+          "tile": "wood_platform",
+          "wall": "wood_wall"
+        },
+        {
+          "key": "T",
+          "tile": "torch",
+          "wall": "wood_wall"
+        },
+        {
+          "key": "C",
+          "tile": "chest",
+          "wall": "wood_wall"
+        },
+        {
+          "key": "t",
+          "tile": "table",
+          "wall": "wood_wall"
+        },
+        {
+          "key": "h",
+          "tile": "chair",
+          "wall": "wood_wall"
+        },
+        {
+          "key": ".",
+          "clear": true
+        }
+      ],
+      "rows": [
+        " ############# ",
+        " #wwwwwwwwwww# ",
+        " #wwwTwwwwwTw# ",
+        " #wwwwwwwwwww# ",
+        " #===wwwwwwww# ",
+        " #wwwwwwwwwww# ",
+        " #Cwwwwhwtwww# ",
+        " ############# "
+      ]
+    },
+    {
+      "id": "shrine",
+      "biomes": [
+        "dunes"
+      ],
+      "depthMin": 0.33,
+      "depthMax": 0.5,
+      "count": 6,
+      "ruin": 0.06,
+      "loot": "shrine_chest",
+      "legend": [
+        {
+          "key": "#",
+          "tile": "sandstone_bricks",
+          "ruinable": true
+        },
+        {
+          "key": "s",
+          "wall": "sandstone_wall",
+          "clear": true
+        },
+        {
+          "key": "T",
+          "tile": "torch",
+          "wall": "sandstone_wall"
+        },
+        {
+          "key": "C",
+          "tile": "chest",
+          "wall": "sandstone_wall"
+        }
+      ],
+      "rows": [
+        "      #      ",
+        "     ###     ",
+        "    #sss#    ",
+        "   #sssss#   ",
+        "  #ssTsTss#  ",
+        " #sssssssss# ",
+        " #ssssCssss# ",
+        " ########### "
+      ]
+    },
+    {
+      "id": "vault",
+      "biomes": [
+        "emberdeep"
+      ],
+      "depthMin": 0.86,
+      "depthMax": 0.97,
+      "count": 5,
+      "ruin": 0.0,
+      "loot": "vault_chest",
+      "legend": [
+        {
+          "key": "#",
+          "tile": "obsidian_bricks"
+        },
+        {
+          "key": "o",
+          "wall": "basalt_wall",
+          "clear": true
+        },
+        {
+          "key": "T",
+          "tile": "torch",
+          "wall": "basalt_wall"
+        },
+        {
+          "key": "C",
+          "tile": "chest",
+          "wall": "basalt_wall"
+        }
+      ],
+      "rows": [
+        "#############",
+        "#ooooooooooo#",
+        "#oToooooooTo#",
+        "#ooooooooooo#",
+        "#ooooCoCoooo#",
+        "#############"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "name": "held_gloamblade",
+  "frameWidth": 42,
+  "frameHeight": 42,
+  "columns": 1,
+  "rows": 1,
+  "pixelsPerUnit": 16,
+  "pivot": [
+    0.5,
+    0.5
+  ],
+  "meshType": "FullRect",
+  "normalMap": "held_gloamblade_n.png",
+  "animations": [
+    {
+      "name": "all",
+      "fps": 1,
+      "loop": false,
+      "frames": [
+        0
+      ]
+    }
+  ],
+  "frames": [
+    {
+      "name": "held_gloamblade",
+      "x": 0,
+      "y": 0,
+      "w": 42,
+      "h": 42
+    }
+  ],
+  "source": "Tools/art/gen_atlas.py"
+}

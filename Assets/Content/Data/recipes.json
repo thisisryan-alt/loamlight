@@ -39,6 +39,9 @@
     { "id": "cinderite_pickaxe", "result": "cinderite_pickaxe", "station": "anvil", "ingredients": [ { "item": "cinderite_bar", "count": 12 }, { "item": "lumite_bar", "count": 4 } ] },
     { "id": "ember_staff", "result": "ember_staff", "station": "anvil", "ingredients": [ { "item": "cinderite_bar", "count": 10 }, { "item": "ember_core", "count": 2 } ] },
     { "id": "glowcap_brew", "result": "glowcap_brew", "station": "workbench", "ingredients": [ { "item": "glowcap", "count": 3 }, { "item": "gloop_gel", "count": 1 } ] },
-    { "id": "torch_gel", "result": "torch", "resultCount": 5, "ingredients": [ { "item": "gloop_gel", "count": 1 }, { "item": "wood", "count": 1 } ] }
+    { "id": "torch_gel", "result": "torch", "resultCount": 5, "ingredients": [ { "item": "gloop_gel", "count": 1 }, { "item": "wood", "count": 1 } ] },
+
+    { "id": "wick_charm", "result": "wick_charm", "station": "anvil", "ingredients": [ { "item": "glowcap", "count": 10 }, { "item": "lumite_bar", "count": 5 }, { "item": "husk_cloth", "count": 3 } ] },
+    { "id": "gloamblade", "result": "gloamblade", "station": "anvil", "ingredients": [ { "item": "gloam_shard", "count": 15 }, { "item": "cinderite_bar", "count": 10 } ] }
   ]
 }

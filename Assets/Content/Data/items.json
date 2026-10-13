@@ -69,6 +69,10 @@
     { "id": "husk_cloth", "name": "Husk Cloth", "category": "Material", "maxStack": 999, "description": "Rags from something that walked at night." },
     { "id": "ember_core", "name": "Ember Core", "category": "Material", "maxStack": 99, "description": "A heart of living fire from the Emberdeep." },
     { "id": "glowcap_brew", "name": "Glowcap Brew", "category": "Consumable", "maxStack": 30, "heal": 50, "useTime": 0.5, "description": "Restores 50 life. Tastes blue." },
-    { "id": "heartroot", "name": "Heartroot", "category": "Consumable", "maxStack": 10, "maxLifeUp": 20, "useTime": 0.5, "description": "Eat it to raise your maximum life by 20 (up to 200)." }
+    { "id": "heartroot", "name": "Heartroot", "category": "Consumable", "maxStack": 10, "maxLifeUp": 20, "useTime": 0.5, "description": "Eat it to raise your maximum life by 20 (up to 200)." },
+    { "id": "wick_charm", "name": "Wick Charm", "category": "Summon", "maxStack": 5, "summons": "gloamwarden", "useTime": 1.0, "description": "Light it at night or deep underground, and something that eats light will come for it." },
+    { "id": "gloam_shard", "name": "Gloam Shard", "category": "Material", "maxStack": 999, "description": "A splinter of solid darkness, cold to the touch." },
+    { "id": "warden_lantern", "name": "Warden's Lantern", "category": "Placeable", "maxStack": 9, "placesTile": "warden_lantern", "description": "The Gloamwarden's own light. Floods a wide area." },
+    { "id": "gloamblade", "name": "Gloamblade", "category": "Weapon", "maxStack": 1, "weaponKind": "Broadsword", "damage": 48, "knockback": 8, "useTime": 0.38, "reach": 3.0, "hitstop": 1.8, "shake": 1.8, "description": "Forged from the warden's darkness. Every arc lands like thunder." }
   ]
 }

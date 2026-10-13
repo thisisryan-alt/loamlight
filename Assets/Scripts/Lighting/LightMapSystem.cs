@@ -38,6 +38,8 @@ namespace Loamlight.Lighting
 
         public float lavaGlow = 1f;
         public Color lavaColor = new Color(1f, 0.45f, 0.12f);
+        /// <summary>Global multiplier on all map light (the Gloamwarden swallows the light). 1 = normal.</summary>
+        [Range(0f, 1f)] public float dimming = 1f;
         [Header("Emberdeep ambient")]
         public Color deepAmbient = new Color(0.34f, 0.12f, 0.06f);
         [Range(0f, 0.3f)] public float deepFraction = 0.11f;
@@ -146,6 +148,7 @@ namespace Loamlight.Lighting
         public void Tick()
         {
             if (_world == null) return;
+            if (_mapLight != null) _mapLight.intensity = Mathf.Clamp01(dimming);
             using var _ = TickMarker.Auto();
             var sw = System.Diagnostics.Stopwatch.StartNew();
             EnsureTexture();
@@ -204,7 +207,7 @@ namespace Loamlight.Lighting
                 // packed colour: rgb in 0..255 in e.z (24 bits), radius scale in e.w (tenths)
                 l.color = new Color(((e.z >> 16) & 255) / 255f, ((e.z >> 8) & 255) / 255f, (e.z & 255) / 255f);
                 l.pointLightOuterRadius = Mathf.Max(2f, e.w / 10f) * highlightRadius / 10f;
-                l.intensity = highlightIntensity;
+                l.intensity = highlightIntensity * Mathf.Clamp01(dimming);
             }
         }
 

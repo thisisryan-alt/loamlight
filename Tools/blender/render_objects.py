@@ -239,7 +239,8 @@ OBJECTS = {
 
 # ------------------------------------------------------------------------------------------------- icons
 METAL = {"copper": ("#c87533", "#8a4a24", "#f2a96a"), "iron": ("#a8a7b0", "#6d6c75", "#d8d7de"),
-         "lumite": ("#3fd6c0", "#1f8a7e", "#b6fff2"), "cinderite": ("#ff7a2a", "#a3360f", "#ffd08a")}
+         "lumite": ("#3fd6c0", "#1f8a7e", "#b6fff2"), "cinderite": ("#ff7a2a", "#a3360f", "#ffd08a"),
+         "gloam": ("#7a5ab0", "#3a2a5a", "#d8c8ff")}
 
 
 def icon_tool(kind, metal):
@@ -448,6 +449,7 @@ ICONS = {
     "lumite_glaive": lambda: item_spear("lumite"), "ember_staff": item_staff, "wooden_bow": item_bow, "wooden_arrow": item_arrow,
     "gloop_gel": item_gel, "bat_wing": item_wing, "husk_cloth": item_cloth, "ember_core": item_core, "glowcap_brew": item_brew,
     "heartroot": item_heartroot, "wick_charm": item_charm, "gloam_shard": item_shard,
+    "gloamblade": lambda: item_sword("gloam", 1.0, 0.22, 0.44),
 }
 
 
@@ -521,6 +523,7 @@ HELD = {   # item id: (frame px, builder) - the model spans the frame diagonal
     "lumite_glaive": (52, lambda: item_spear("lumite")),
     "ember_staff": (32, item_staff),
     "wooden_bow": (24, item_bow),
+    "gloamblade": (42, lambda: item_sword("gloam", 1.0, 0.22, 0.44)),
 }
 
 

@@ -21,6 +21,7 @@ namespace Loamlight.Game.Scenarios
                 "m2" => new M2Scenario(),
                 "m3" => new M3Scenario(),
                 "m4" => new M4Scenario(),
+                "m5" => new M5Scenario(),
                 _ => null,
             };
             if (_scenario == null)

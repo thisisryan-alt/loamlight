@@ -46,6 +46,15 @@ namespace Loamlight.EditorTools
         [Serializable] public class RecipeJson { public string id, result, station; public int resultCount = 1; public ItemAmount[] ingredients; }
         [Serializable] public class LootFile { public int version; public LootJson[] tables; }
         [Serializable] public class LootJson { public string id; public LootEntry[] entries; }
+        [Serializable] public class StructuresFile { public int version; public StructureJson[] structures; }
+        [Serializable] public class StructureJson
+        {
+            public string id, loot;
+            public string[] biomes, rows;
+            public float depthMin, depthMax = 1f, ruin;
+            public int count = 1;
+            public StructureCell[] legend;
+        }
         [Serializable] public class EnemiesFile { public int version; public EnemyJson[] enemies; }
         [Serializable] public class EnemyJson
         {
@@ -74,7 +83,9 @@ namespace Loamlight.EditorTools
             var lootJ = (Read<LootFile>("loot.json").tables ?? Array.Empty<LootJson>()).OrderBy(t => t.id, StringComparer.Ordinal).ToArray();
             var enemiesJ = (Read<EnemiesFile>("enemies.json").enemies ?? Array.Empty<EnemyJson>()).OrderBy(t => t.id, StringComparer.Ordinal).ToArray();
 
+            var structuresJ = (Read<StructuresFile>("structures.json").structures ?? Array.Empty<StructureJson>()).OrderBy(t => t.id, StringComparer.Ordinal).ToArray();
             var errors = Validate(tilesJ, wallsJ, itemsJ, recipesJ, lootJ, enemiesJ);
+            errors.AddRange(ValidateStructures(structuresJ, tilesJ, wallsJ, lootJ));
             if (errors.Count > 0)
                 throw new InvalidDataException("content validation failed:\n  " + string.Join("\n  ", errors));
 
@@ -133,13 +144,20 @@ namespace Loamlight.EditorTools
             RemoveStale("Recipes", recipes.Select(t => t.id));
             RemoveStale("Loot", loot.Select(t => t.id));
             RemoveStale("Enemies", enemies.Select(t => t.id));
+            var structures = structuresJ.Select(j => Upsert<StructureDef>("Structures", j.id, d =>
+            {
+                d.id = j.id; d.loot = j.loot ?? ""; d.biomes = j.biomes ?? Array.Empty<string>(); d.rows = j.rows ?? Array.Empty<string>();
+                d.depthMin = j.depthMin; d.depthMax = j.depthMax; d.ruin = j.ruin; d.count = Mathf.Max(0, j.count);
+                d.legend = j.legend ?? Array.Empty<StructureCell>();
+            })).ToArray();
+            RemoveStale("Structures", structures.Select(t => t.id));
 
             AssetFolders.Ensure(Path.GetDirectoryName(DatabasePath).Replace('\\', '/'));
             var db = AssetDatabase.LoadAssetAtPath<ContentDatabase>(DatabasePath);
             bool created = db == null;
             if (created) db = ScriptableObject.CreateInstance<ContentDatabase>();
             var before = created ? null : EditorJsonUtility.ToJson(db);
-            db.tiles = tiles; db.walls = walls; db.items = items; db.recipes = recipes; db.lootTables = loot; db.enemies = enemies;
+            db.tiles = tiles; db.walls = walls; db.items = items; db.recipes = recipes; db.lootTables = loot; db.enemies = enemies; db.structures = structures;
             if (created) AssetDatabase.CreateAsset(db, DatabasePath);
             else if (EditorJsonUtility.ToJson(db) != before) EditorUtility.SetDirty(db);
             AssetDatabase.SaveAssets();
@@ -207,6 +225,35 @@ namespace Loamlight.EditorTools
         }
 
         /// <summary>Icon sprites from every generated icons_*.png sheet, by sprite name ("icon_&lt;item id&gt;").</summary>
+        public static List<string> ValidateStructures(StructureJson[] structures, TileJson[] tiles, WallJson[] walls, LootJson[] loot)
+        {
+            var errors = new List<string>();
+            var tileIds = new HashSet<string>(tiles.Select(t => t.id));
+            var wallIds = new HashSet<string>(walls.Select(t => t.id));
+            var lootIds = new HashSet<string>(loot.Select(t => t.id));
+            foreach (var s in structures)
+            {
+                if (!string.IsNullOrEmpty(s.loot) && !lootIds.Contains(s.loot)) errors.Add($"structure {s.id}: unknown loot table '{s.loot}'");
+                var keys = new HashSet<char>();
+                foreach (var c in s.legend ?? Array.Empty<StructureCell>())
+                {
+                    if (string.IsNullOrEmpty(c.key) || c.key.Length != 1) { errors.Add($"structure {s.id}: legend key '{c.key}' must be one character"); continue; }
+                    keys.Add(c.key[0]);
+                    if (!string.IsNullOrEmpty(c.tile) && !tileIds.Contains(c.tile)) errors.Add($"structure {s.id}: unknown tile '{c.tile}'");
+                    if (!string.IsNullOrEmpty(c.wall) && !wallIds.Contains(c.wall)) errors.Add($"structure {s.id}: unknown wall '{c.wall}'");
+                }
+                var rows = s.rows ?? Array.Empty<string>();
+                if (rows.Length == 0) errors.Add($"structure {s.id}: no rows");
+                foreach (var row in rows)
+                {
+                    if (row.Length != rows[0].Length) errors.Add($"structure {s.id}: rows differ in width");
+                    foreach (char ch in row)
+                        if (ch != ' ' && !keys.Contains(ch)) errors.Add($"structure {s.id}: '{ch}' is not in the legend");
+                }
+            }
+            return errors;
+        }
+
         static Dictionary<string, Sprite> LoadIcons()
         {
             var map = new Dictionary<string, Sprite>(StringComparer.Ordinal);

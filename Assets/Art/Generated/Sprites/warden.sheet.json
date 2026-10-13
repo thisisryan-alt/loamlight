@@ -1,0 +1,128 @@
+{
+  "version": 1,
+  "name": "warden",
+  "frameWidth": 144,
+  "frameHeight": 144,
+  "columns": 8,
+  "rows": 2,
+  "pixelsPerUnit": 16,
+  "pivot": [
+    0.5,
+    0.027778
+  ],
+  "meshType": "Tight",
+  "normalMap": "warden_n.png",
+  "animations": [
+    {
+      "name": "float",
+      "fps": 6,
+      "loop": true,
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "name": "flare",
+      "fps": 6,
+      "loop": true,
+      "frames": [
+        4,
+        5
+      ]
+    },
+    {
+      "name": "dash",
+      "fps": 1,
+      "loop": false,
+      "frames": [
+        6
+      ]
+    },
+    {
+      "name": "cast",
+      "fps": 6,
+      "loop": false,
+      "frames": [
+        7,
+        8,
+        9
+      ]
+    }
+  ],
+  "frames": [
+    {
+      "name": "warden_float_0",
+      "x": 0,
+      "y": 144,
+      "w": 144,
+      "h": 144
+    },
+    {
+      "name": "warden_float_1",
+      "x": 144,
+      "y": 144,
+      "w": 144,
+      "h": 144
+    },
+    {
+      "name": "warden_float_2",
+      "x": 288,
+      "y": 144,
+      "w": 144,
+      "h": 144
+    },
+    {
+      "name": "warden_float_3",
+      "x": 432,
+      "y": 144,
+      "w": 144,
+      "h": 144
+    },
+    {
+      "name": "warden_flare_0",
+      "x": 576,
+      "y": 144,
+      "w": 144,
+      "h": 144
+    },
+    {
+      "name": "warden_flare_1",
+      "x": 720,
+      "y": 144,
+      "w": 144,
+      "h": 144
+    },
+    {
+      "name": "warden_dash_0",
+      "x": 864,
+      "y": 144,
+      "w": 144,
+      "h": 144
+    },
+    {
+      "name": "warden_cast_0",
+      "x": 1008,
+      "y": 144,
+      "w": 144,
+      "h": 144
+    },
+    {
+      "name": "warden_cast_1",
+      "x": 0,
+      "y": 0,
+      "w": 144,
+      "h": 144
+    },
+    {
+      "name": "warden_cast_2",
+      "x": 144,
+      "y": 0,
+      "w": 144,
+      "h": 144
+    }
+  ],
+  "source": "Tools/blender/render_sprites.py + Tools/art/pack_sheets.py"
+}

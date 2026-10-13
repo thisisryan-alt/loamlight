@@ -69,6 +69,7 @@ namespace Loamlight.Game
         public bool Peaceful { get; private set; }
         public int Kills { get; private set; }
         public int Deaths { get; private set; }
+        public int BossesDefeated { get; private set; }
         float _brewReady;
         public SkyBackdrop Sky { get; private set; }
         public PlayerController Player { get; private set; }
@@ -117,7 +118,8 @@ namespace Loamlight.Game
             else
             {
                 GameSession.LoadPath = null;
-                World = WorldGenerator.Generate(GameSession.Width, GameSession.Height, GameSession.Seed, GenIdsFor(Db), GenParams.Default, out var report);
+                World = WorldGenerator.Generate(GameSession.Width, GameSession.Height, GameSession.Seed, GenIdsFor(Db), GenParams.Default, out var report,
+                    StructurePlan.From(Db));
                 GenReport = report;
                 Meta = new SaveMeta { name = GameSession.WorldName };
                 Debug.Log($"[Game] generated {World.Width}x{World.Height} seed {GameSession.Seed}: {report}");
@@ -196,6 +198,7 @@ namespace Loamlight.Game
                 if (ev.landed && ev.landingSpeed > 12f) Sfx.Play("land", Player.Feet, Mathf.Clamp01(ev.landingSpeed / 40f));
             };
 
+            if (GenReport != null) FillStructureChests(GenReport);
             SpawnPointWorld = SpawnPoint();
             Player.Teleport(SpawnPointWorld);
             GiveStartingItems();
@@ -229,6 +232,15 @@ namespace Loamlight.Game
             Weapons.FireProjectile = (id, pos, vel, dmg, kb, w) => Projectiles.Fire(id, pos, vel, dmg, kb, Team.Player);
             Enemy.ProjectileRequested += OnEnemyProjectile;
             Enemy.Died += OnEnemyDied;
+            Enemy.MinionRequested += (boss, id, at) => { var def = Db.Enemy(id); if (def != null && Enemy.Live.Count < 14) Spawner.Spawn(def, at); };
+            Enemy.DarknessRequested += (boss, level) => _targetDimming = level;
+            Enemy.BossPhaseChanged += OnBossPhase;
+            Enemy.Despawned += e =>
+            {
+                if (!e.Def.boss || Hud == null) return;
+                _targetDimming = 1f;
+                Hud.Toast($"{e.Def.displayName} fades back into the dark");
+            };
             Fx = CombatFx.Create();
             Projectiles.Impact += (spec, at, exploded) => { if (exploded) Fx.Explosion(at); };
             CombatEvents.Shake += t => CameraFollow.AddTrauma(t);
@@ -343,16 +355,75 @@ namespace Loamlight.Game
             });
             Projectiles.Register(new ProjectileSpec
             {
+                id = "wisp", sprite = SpriteSheetIndex.Frame("projectiles", "wisp"), gravity = 0f, life = 4f, radius = 0.4f,
+                glow = new Color(0.55f, 0.75f, 1f, 1f), impactSound = "hit",
+            });
+            Projectiles.Register(new ProjectileSpec
+            {
                 id = "imp_bolt", sprite = SpriteSheetIndex.Frame("projectiles", "imp_bolt"), gravity = 0f, life = 3f, radius = 0.35f,
                 glow = new Color(0.8f, 0.3f, 1f, 1f), impactSound = "hit",
             });
         }
 
-        void OnEnemyProjectile(Enemy e, string id, Vector2 pos, Vector2 vel) => Projectiles.Fire(id, pos, vel, e.Def.damage, 4f, Team.Enemy);
+        void OnEnemyProjectile(Enemy e, string id, Vector2 pos, Vector2 vel) =>
+            Projectiles.Fire(id, pos, vel, e.Def.boss ? Mathf.RoundToInt(e.Def.damage * 0.7f) : e.Def.damage, 4f, Team.Enemy);
+
+        float _targetDimming = 1f;
+        public Enemy ActiveBoss
+        {
+            get
+            {
+                foreach (var e in Enemy.Live) if (e != null && e.Def.boss && e.Alive) return e;
+                return null;
+            }
+        }
+
+        void Update()
+        {
+            if (!Ready) return;
+            // the warden's darkness eases in and out instead of snapping
+            Light.dimming = Mathf.MoveTowards(Light.dimming, _targetDimming, Time.deltaTime * 0.8f);
+            var boss = ActiveBoss;
+            HealthUi.SetBoss(boss != null ? boss.Def.displayName : null, boss != null ? boss.Health.Fraction : 0f);
+        }
+
+        void OnBossPhase(Enemy boss, int phase)
+        {
+            Hud.Toast(phase == 2 ? $"{boss.Def.displayName} swallows the light!" : $"{boss.Def.displayName} burns with fury!");
+            CameraFollow.AddTrauma(0.7f);
+            var lamp = boss.GetComponentInChildren<UnityEngine.Rendering.Universal.Light2D>();
+            if (lamp != null) lamp.color = phase >= 3 ? new Color(1f, 0.35f, 0.25f) : new Color(0.75f, 0.7f, 1f);
+        }
+
+        /// <summary>Roll each structure chest's loot table into it (seeded by world seed and position).</summary>
+        void FillStructureChests(GenReport report)
+        {
+            foreach (var c in report.Chests)
+            {
+                var table = Db.Loot(c.loot);
+                if (table == null) continue;
+                var container = Chests.Get(new Vector2Int(c.origin.x, c.origin.y));
+                var rng = new System.Random(unchecked((int)(GameSession.Seed * 31u + (uint)c.origin.x * 7919u + (uint)c.origin.y)));
+                foreach (var e in table.entries)
+                {
+                    if (rng.NextDouble() > e.chance || !Db.TryItemId(e.item, out var id)) continue;
+                    container.Add(id, rng.Next(e.min, e.max + 1));
+                }
+            }
+        }
 
         void OnEnemyDied(Enemy e)
         {
             Kills++;
+            if (e.Def.boss)
+            {
+                _targetDimming = 1f;
+                BossesDefeated++;
+                Hud.Toast($"{e.Def.displayName} is vanquished!");
+                Sfx.Play("chime", e.Center, 1f);
+                Fx.Explosion(e.Center);
+                CameraFollow.AddTrauma(0.9f);
+            }
             var table = Db.Loot(e.Def.loot);
             if (table == null) return;
             foreach (var entry in table.entries)
@@ -401,8 +472,29 @@ namespace Loamlight.Game
             return false;
         }
 
-        /// <summary>Boss summons (M5).</summary>
-        bool Summon(string enemyId) => false;
+        /// <summary>Use a summon item: the boss comes at night or deep underground, one at a time.</summary>
+        bool Summon(string enemyId)
+        {
+            var def = Db.Enemy(enemyId);
+            if (def == null) return false;
+            if (ActiveBoss != null) { Hud.Toast("It is already here."); return false; }
+            bool deep = Player.Feet.y < WorldGenerator.SurfaceLevel(World.Height, GenParams.Default) - 40f;
+            if (!DayNight.IsNight && !deep) { Hud.Toast("Nothing answers in daylight. Try at night, or deep below."); return false; }
+            SummonBoss(def);
+            return true;
+        }
+
+        public Enemy SummonBoss(EnemyDef def)
+        {
+            var at = Player.Feet + new Vector2(Player.Facing * -16f, 9f);
+            var boss = Spawner.Spawn(def, at);
+            var lamp = LightMapSystem.CreatePointLight("Warden lantern", boss.transform, new Color(1f, 0.85f, 0.55f), 10f, 1.1f);
+            lamp.transform.localPosition = new Vector3(0.1f, 3.6f, 0f);
+            Hud.Toast($"{def.displayName} has awoken!");
+            Sfx.Play("roar", at, 1f);
+            CameraFollow.AddTrauma(0.6f);
+            return boss;
+        }
 
         void GiveStartingItems()
         {

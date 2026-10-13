@@ -3,7 +3,7 @@
   "name": "projectiles",
   "frameWidth": 16,
   "frameHeight": 16,
-  "columns": 3,
+  "columns": 4,
   "rows": 1,
   "pixelsPerUnit": 16,
   "pivot": [
@@ -36,6 +36,14 @@
       "frames": [
         2
       ]
+    },
+    {
+      "name": "wisp",
+      "fps": 1,
+      "loop": false,
+      "frames": [
+        3
+      ]
     }
   ],
   "frames": [
@@ -56,6 +64,13 @@
     {
       "name": "imp_bolt",
       "x": 32,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "wisp",
+      "x": 48,
       "y": 0,
       "w": 16,
       "h": 16

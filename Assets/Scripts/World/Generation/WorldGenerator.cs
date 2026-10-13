@@ -100,11 +100,13 @@ namespace Loamlight.World.Generation
     public sealed class GenReport
     {
         public double ColumnsMs, FillMs, LakesMs, SettleMs, PoolsMs, SurfaceMs, MossMs, DecorateMs, TotalMs;
-        public int Trees, Lakes, WaterPools, LavaPools, Settled;
+        public int Trees, Lakes, WaterPools, LavaPools, Settled, Structures;
+        public double StructuresMs;
+        public readonly System.Collections.Generic.List<PlacedChest> Chests = new System.Collections.Generic.List<PlacedChest>();
         public override string ToString() =>
             $"columns {ColumnsMs:0.0} ms, fill {FillMs:0.0} ms, lakes {LakesMs:0.0} ms ({Lakes}), settle {SettleMs:0.0} ms ({Settled} fell), " +
             $"pools {PoolsMs:0.0} ms ({WaterPools} water, {LavaPools} lava), surface {SurfaceMs:0.0} ms, moss {MossMs:0.0} ms, " +
-            $"decorate {DecorateMs:0.0} ms ({Trees} trees), total {TotalMs:0.0} ms";
+            $"decorate {DecorateMs:0.0} ms ({Trees} trees), structures {StructuresMs:0.0} ms ({Structures}, {Chests.Count} chests), total {TotalMs:0.0} ms";
     }
 
     /// <summary>
@@ -143,7 +145,7 @@ namespace Loamlight.World.Generation
     /// </summary>
     public static class WorldGenerator
     {
-        public static WorldData Generate(int width, int height, uint seed, GenIds ids, GenParams p, out GenReport report)
+        public static WorldData Generate(int width, int height, uint seed, GenIds ids, GenParams p, out GenReport report, StructurePlan structures = null)
         {
             report = new GenReport();
             var total = Stopwatch.StartNew();
@@ -230,6 +232,13 @@ namespace Loamlight.World.Generation
                 sw.Restart();
                 report.Trees = Decorate(world, ids, surface, columnBiome, seed);
                 report.DecorateMs = sw.Elapsed.TotalMilliseconds;
+
+                if (structures != null)
+                {
+                    sw.Restart();
+                    report.Structures = structures.Place(world, field, columnBiome, seed, report.Chests);
+                    report.StructuresMs = sw.Elapsed.TotalMilliseconds;
+                }
             }
             finally
             {

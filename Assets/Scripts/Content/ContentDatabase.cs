@@ -20,6 +20,7 @@ namespace Loamlight.Content
         public RecipeDef[] recipes = Array.Empty<RecipeDef>();
         public EnemyDef[] enemies = Array.Empty<EnemyDef>();
         public LootTableDef[] lootTables = Array.Empty<LootTableDef>();
+        public StructureDef[] structures = Array.Empty<StructureDef>();
 
         Dictionary<string, ushort> _tileIds;
         Dictionary<string, ushort> _wallIds;

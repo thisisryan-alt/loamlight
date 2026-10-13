@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ec6ca76e5bf59e43bccaeffa99c88b4, type: 3}
+  m_Name: shrine
+  m_EditorClassIdentifier: Loamlight.Content::Loamlight.Content.StructureDef
+  id: shrine
+  biomes:
+  - dunes
+  depthMin: 0.33
+  depthMax: 0.5
+  count: 6
+  ruin: 0.06
+  loot: shrine_chest
+  rows:
+  - '      #      '
+  - '     ###     '
+  - '    #sss#    '
+  - '   #sssss#   '
+  - '  #ssTsTss#  '
+  - ' #sssssssss# '
+  - ' #ssssCssss# '
+  - ' ########### '
+  legend:
+  - key: '#'
+    tile: sandstone_bricks
+    wall: 
+    clear: 0
+    ruinable: 1
+  - key: s
+    tile: 
+    wall: sandstone_wall
+    clear: 1
+    ruinable: 0
+  - key: T
+    tile: torch
+    wall: sandstone_wall
+    clear: 0
+    ruinable: 0
+  - key: C
+    tile: chest
+    wall: sandstone_wall
+    clear: 0
+    ruinable: 0

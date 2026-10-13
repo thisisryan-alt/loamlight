@@ -144,7 +144,8 @@ def main():
     os.makedirs(args.out, exist_ok=True)
     proj = [("arrow", arrow()),
             ("fireball", orb(hex_rgb("#fff6d0"), hex_rgb("#ffb040"), hex_rgb("#ff6418"), hex_rgb("#d8401a"))),
-            ("imp_bolt", orb(hex_rgb("#ffe8ff"), hex_rgb("#e070ff"), hex_rgb("#9a30d0"), hex_rgb("#ff7a2a"), 3.8, 6))]
+            ("imp_bolt", orb(hex_rgb("#ffe8ff"), hex_rgb("#e070ff"), hex_rgb("#9a30d0"), hex_rgb("#ff7a2a"), 3.8, 6)),
+            ("wisp", orb(hex_rgb("#f4f8ff"), hex_rgb("#a8c8ff"), hex_rgb("#5a78d0"), hex_rgb("#3a4a9a"), 4.2, 8))]
     write_sheet(args.out, "projectiles", proj, [{"name": n, "fps": 1, "loop": False, "frames": [i]} for i, (n, _) in enumerate(proj)])
     fx = [(f"spark_{i}", spark(i)) for i in range(4)] + [(f"puff_{i}", puff(i)) for i in range(5)] + \
          [(f"ember_{i}", ember(i)) for i in range(2)] + [(f"slash_{i}", slash(i)) for i in range(3)]

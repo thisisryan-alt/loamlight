@@ -29,8 +29,21 @@ namespace Loamlight.AI
         public float PhaseTime => _phaseTime;
         public Body Body => _body;
         public HealthState Health => _health;
-        public bool Telegraphing => _phase == Phase.Windup;
-        public int Facing => _facing;
+        public bool Telegraphing => _phase == Phase.Windup || TelegraphOverride;
+        public int Facing { get => _facing; set => _facing = value >= 0 ? 1 : -1; }
+        public WardenBrain Boss { get; private set; }
+        /// <summary>Set by a boss brain: forces an animation clip / the telegraph tint.</summary>
+        public string ClipOverride { get; set; }
+        public bool TelegraphOverride { get; set; }
+        public Vector2 Velocity { get => _body.velocity; set => _body.velocity = value; }
+
+        /// <summary>Boss calls: (boss, minion id, position).</summary>
+        public static event Action<Enemy, string, Vector2> MinionRequested;
+        /// <summary>Boss calls: dim the world's light to a level (1 = normal).</summary>
+        public static event Action<Enemy, float> DarknessRequested;
+        public static event Action<Enemy, int> BossPhaseChanged;
+        /// <summary>An enemy left without dying (no target for a while).</summary>
+        public static event Action<Enemy> Despawned;
 
         /// <summary>Caster/boss shots: (enemy, projectile id, position, velocity).</summary>
         public static event Action<Enemy, string, Vector2, Vector2> ProjectileRequested;
@@ -63,6 +76,7 @@ namespace Loamlight.AI
             _health = HealthState.Full(def.health);
             _body = new Body { position = new float2(feet.x, feet.y), size = new float2(def.size.x, def.size.y) };
             _gravity = def.ai == AiKind.Hopper || def.ai == AiKind.Walker;
+            if (def.ai == AiKind.Boss) Boss = new WardenBrain();
             _rng = seed | 1u;
             _sr = GetComponent<SpriteRenderer>();
             _anim = GetComponent<SpriteAnimator>();
@@ -77,6 +91,49 @@ namespace Loamlight.AI
         {
             CombatRegistry.Unregister(this);
             Live.Remove(this);
+            if (Def != null && _health.Alive) Despawned?.Invoke(this);
+        }
+
+        public void Shoot(Vector2 velocity, Vector2 from) =>
+            ProjectileRequested?.Invoke(this, string.IsNullOrEmpty(Def.projectile) ? "fireball" : Def.projectile, from, velocity);
+
+        public void Summon(string id, Vector2 at) => MinionRequested?.Invoke(this, id, at);
+        public void Darken(float level) => DarknessRequested?.Invoke(this, level);
+        public void RaisePhase(int phase) => BossPhaseChanged?.Invoke(this, phase);
+        public void MakeInvulnerable(float seconds) => _health.invulnerable = Mathf.Max(_health.invulnerable, seconds);
+
+        SpriteRenderer _line;
+        static Sprite _pixel;
+
+        /// <summary>A pulsing line along a coming attack's path (dash telegraph).</summary>
+        public void ShowLine(Vector2 from, Vector2 to, float pulse)
+        {
+            if (_line == null)
+            {
+                if (_pixel == null)
+                {
+                    var tex = new Texture2D(1, 1) { filterMode = FilterMode.Point };
+                    tex.SetPixel(0, 0, Color.white);
+                    tex.Apply();
+                    _pixel = Sprite.Create(tex, new Rect(0, 0, 1, 1), new Vector2(0f, 0.5f), 1f);
+                }
+                var go = new GameObject("Telegraph line");
+                _line = go.AddComponent<SpriteRenderer>();
+                _line.sprite = _pixel;
+                _line.sortingLayerName = "Overlay";
+                _line.sharedMaterial = Resources.Load<Material>("Materials/SpriteUnlit");
+            }
+            var d = to - from;
+            _line.enabled = true;
+            _line.transform.position = from;
+            _line.transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(d.y, d.x) * Mathf.Rad2Deg);
+            _line.transform.localScale = new Vector3(d.magnitude, 0.18f + 0.12f * pulse, 1f);
+            _line.color = new Color(1f, 0.35f, 0.25f, 0.35f + 0.4f * pulse);
+        }
+
+        public void HideLine()
+        {
+            if (_line != null) _line.enabled = false;
         }
 
         float Rand()
@@ -114,6 +171,7 @@ namespace Loamlight.AI
             Sfx.Play("enemy_die", Center, 0.7f);
             CombatEvents.RaiseKilled(this, hit);
             Died?.Invoke(this);
+            if (_line != null) Destroy(_line.gameObject);
             Destroy(gameObject);
         }
 
@@ -156,7 +214,7 @@ namespace Loamlight.AI
             {
                 // nobody near: drift and eventually despawn
                 _stuck += dt;
-                if (_stuck > 3f) { Destroy(gameObject); return; }
+                if (_stuck > 3f) { HideLine(); if (_line != null) Destroy(_line.gameObject); Destroy(gameObject); return; }
             }
             else _stuck = 0f;
 
@@ -166,6 +224,7 @@ namespace Loamlight.AI
                 case AiKind.Flyer: Flyer(target, dt); break;
                 case AiKind.Walker: Walker(target, dt); break;
                 case AiKind.Caster: Caster(target, dt); break;
+                case AiKind.Boss: Boss.Tick(this, target, dt); break;
                 default: Walker(target, dt); break;
             }
 
@@ -176,7 +235,8 @@ namespace Loamlight.AI
                 float g = wet > 0.4f ? 24f : 70f;
                 _body.velocity.y = math.max(_body.velocity.y - g * dt, wet > 0.4f ? -6f : -40f);
             }
-            TileCollision.Move(ref _body, dt, Grid, _gravity ? 1.05f : 0f);
+            if (Boss != null) _body.position += _body.velocity * dt;   // the warden passes through rock
+            else TileCollision.Move(ref _body, dt, Grid, _gravity ? 1.05f : 0f);
 
             // contact damage to the player
             if (target != null && Hurtbox.Overlaps(target.Hurtbox))
@@ -341,6 +401,11 @@ namespace Loamlight.AI
         {
             if (_anim == null || _anim.Animations == null) return;
             string clip;
+            if (!string.IsNullOrEmpty(ClipOverride))
+            {
+                _anim.Play(_anim.Animations.Find(ClipOverride) != null ? ClipOverride : _anim.Animations.clips[0].name);
+                return;
+            }
             switch (Def.ai)
             {
                 case AiKind.Hopper:

@@ -16,7 +16,7 @@ namespace Loamlight.Game.DebugTools
     /// </summary>
     public sealed class CaptureRunner : MonoBehaviour
     {
-        const float WatchdogSeconds = 180f;
+        static float WatchdogSeconds => float.TryParse(LaunchArgs.Get("-llWatchdog", "300"), out var s) ? s : 300f;
         const int TimingFrames = 240;
 
         string _dir;

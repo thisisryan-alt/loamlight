@@ -4,6 +4,10 @@
     { "id": "gloop", "entries": [{ "item": "gloop_gel", "min": 1, "max": 3, "chance": 1.0 }] },
     { "id": "duskbat", "entries": [{ "item": "bat_wing", "min": 1, "max": 1, "chance": 0.6 }] },
     { "id": "hollow", "entries": [{ "item": "husk_cloth", "min": 1, "max": 2, "chance": 0.8 }, { "item": "heartroot", "min": 1, "max": 1, "chance": 0.04 }] },
-    { "id": "cinder_imp", "entries": [{ "item": "ember_core", "min": 1, "max": 1, "chance": 0.5 }, { "item": "cinderite_ore", "min": 2, "max": 4, "chance": 0.35 }] }
+    { "id": "cinder_imp", "entries": [{ "item": "ember_core", "min": 1, "max": 1, "chance": 0.5 }, { "item": "cinderite_ore", "min": 2, "max": 4, "chance": 0.35 }] },
+    { "id": "gloamwarden", "entries": [{ "item": "gloam_shard", "min": 12, "max": 18, "chance": 1.0 }, { "item": "warden_lantern", "min": 1, "max": 1, "chance": 1.0 }, { "item": "heartroot", "min": 2, "max": 3, "chance": 1.0 }, { "item": "lumite_bar", "min": 8, "max": 12, "chance": 1.0 }] },
+    { "id": "cabin_chest", "entries": [{ "item": "torch", "min": 8, "max": 15, "chance": 1.0 }, { "item": "glowcap_brew", "min": 1, "max": 2, "chance": 0.6 }, { "item": "iron_bar", "min": 3, "max": 6, "chance": 0.5 }, { "item": "copper_bar", "min": 4, "max": 8, "chance": 0.5 }, { "item": "wooden_arrow", "min": 20, "max": 40, "chance": 0.5 }, { "item": "heartroot", "min": 1, "max": 1, "chance": 0.25 }, { "item": "wooden_bow", "min": 1, "max": 1, "chance": 0.15 }] },
+    { "id": "shrine_chest", "entries": [{ "item": "glowcap_brew", "min": 2, "max": 2, "chance": 0.7 }, { "item": "lumite_bar", "min": 2, "max": 5, "chance": 0.5 }, { "item": "heartroot", "min": 1, "max": 1, "chance": 0.35 }, { "item": "iron_broadsword", "min": 1, "max": 1, "chance": 0.2 }, { "item": "sandstone_bricks", "min": 10, "max": 20, "chance": 0.5 }] },
+    { "id": "vault_chest", "entries": [{ "item": "cinderite_bar", "min": 4, "max": 8, "chance": 0.8 }, { "item": "ember_core", "min": 1, "max": 2, "chance": 0.6 }, { "item": "heartroot", "min": 1, "max": 1, "chance": 0.5 }, { "item": "glowcap_brew", "min": 3, "max": 3, "chance": 0.8 }, { "item": "wick_charm", "min": 1, "max": 1, "chance": 0.3 }, { "item": "ember_staff", "min": 1, "max": 1, "chance": 0.1 }] }
   ]
 }

@@ -29,3 +29,8 @@ MonoBehaviour:
     loop: 0
     frames:
     - {fileID: 1961693795, guid: b99fe5ee73af6c94aafbd426dd1852f4, type: 3}
+  - name: wisp
+    fps: 1
+    loop: 0
+    frames:
+    - {fileID: 633806460, guid: b99fe5ee73af6c94aafbd426dd1852f4, type: 3}

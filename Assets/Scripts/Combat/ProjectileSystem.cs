@@ -51,6 +51,8 @@ namespace Loamlight.Combat
         readonly List<IDamageable> _query = new List<IDamageable>();
 
         public int LiveCount => _live.Count;
+        /// <summary>Hits that landed on the enemy team (scenario diagnostics).</summary>
+        public int PlayerHits { get; private set; }
 
         public void Register(ProjectileSpec spec) => _specs[spec.id] = spec;
         public bool Has(string id) => _specs.ContainsKey(id);
@@ -145,6 +147,7 @@ namespace Loamlight.Combat
             };
             if (t.ApplyDamage(hit))
             {
+                if (s.team == Team.Player) PlayerHits++;
                 Sfx.Play(s.spec.impactSound, s.pos, 0.6f);
                 if (s.team == Team.Player) GameClock.Hitstop(0.035f);
             }

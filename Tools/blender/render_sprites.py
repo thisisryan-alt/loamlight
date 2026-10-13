@@ -623,10 +623,11 @@ def build_warden():
     c = {"robe": "#2b2238", "robe_d": "#1c1626", "hem": "#3a2e4c", "cage": "#7a6a4a", "cage_d": "#4e4430", "core": "#ffd27a",
          "core_hot": "#fff6d8", "claw": "#bfb6a8", "arm": "#3a2e4c", "chain": "#5e5a52"}
     root = empty("warden_root")
+    root.scale = (1.45, 1.45, 1.45)      # a boss should loom: about 6 tiles tall
     body = empty("warden_body", root, (0, 0, 10 * PX))
     # robe: a long flared cone with a tattered hem of hanging strips
     bm = bmesh.new()
-    bmesh.ops.create_cone(bm, cap_ends=True, cap_tris=False, segments=16, radius1=13 * PX, radius2=6 * PX, depth=40 * PX)
+    bmesh.ops.create_cone(bm, cap_ends=True, cap_tris=False, segments=16, radius1=16 * PX, radius2=7 * PX, depth=40 * PX)
     for v in bm.verts:
         v.co = Vector((v.co.x, v.co.y * 0.6, v.co.z + 20 * PX))
     new_object("warden_robe", bm, c["robe"], body, smooth=True)
@@ -719,7 +720,7 @@ SHEETS = {
         "animations": [("hover", 4, 8, True), ("cast", 3, 5, False)],
     },
     "warden": {
-        "frame_px": 112, "pivot_px": (56, 4), "outline": True, "meshType": "Tight",
+        "frame_px": 144, "pivot_px": (72, 4), "outline": True, "meshType": "Tight",
         "animations": [("float", 4, 6, True), ("flare", 2, 6, True), ("dash", 1, 1, False), ("cast", 3, 6, False)],
     },
 }

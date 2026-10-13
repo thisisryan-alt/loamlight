@@ -271,23 +271,30 @@ MonoBehaviour:
     w: 1
     h: 1
     variants: 1
+  - id: warden_lantern
+    layout: 3
+    start: 1103
+    count: 2
+    w: 1
+    h: 2
+    variants: 1
   - id: wood_planks
     layout: 1
-    start: 1103
+    start: 1105
     count: 48
     w: 1
     h: 1
     variants: 3
   - id: wood_platform
     layout: 4
-    start: 1151
+    start: 1153
     count: 1
     w: 1
     h: 1
     variants: 1
   - id: workbench
     layout: 3
-    start: 1152
+    start: 1154
     count: 2
     w: 2
     h: 1
@@ -295,49 +302,49 @@ MonoBehaviour:
   walls:
   - id: basalt_wall
     layout: 4
-    start: 1154
+    start: 1156
     count: 3
     w: 1
     h: 1
     variants: 1
   - id: dirt_wall
     layout: 4
-    start: 1157
+    start: 1159
     count: 3
     w: 1
     h: 1
     variants: 1
   - id: ice_wall
     layout: 4
-    start: 1160
+    start: 1162
     count: 3
     w: 1
     h: 1
     variants: 1
   - id: sandstone_wall
     layout: 4
-    start: 1163
+    start: 1165
     count: 3
     w: 1
     h: 1
     variants: 1
   - id: stone_brick_wall
     layout: 4
-    start: 1166
+    start: 1168
     count: 3
     w: 1
     h: 1
     variants: 1
   - id: stone_wall
     layout: 4
-    start: 1169
+    start: 1171
     count: 3
     w: 1
     h: 1
     variants: 1
   - id: wood_wall
     layout: 4
-    start: 1172
+    start: 1174
     count: 3
     w: 1
     h: 1
@@ -345,14 +352,14 @@ MonoBehaviour:
   liquids:
   - id: lava
     layout: 4
-    start: 1177
+    start: 1179
     count: 2
     w: 1
     h: 1
     variants: 1
   - id: water
     layout: 4
-    start: 1175
+    start: 1177
     count: 2
     w: 1
     h: 1
@@ -1537,3 +1544,5 @@ MonoBehaviour:
   - {x: 0.0009765625, y: 0.22851562, z: 0.016601562, w: 0.25976562}
   - {x: 0.018554688, y: 0.22851562, z: 0.034179688, w: 0.25976562}
   - {x: 0.036132812, y: 0.22851562, z: 0.051757812, w: 0.25976562}
+  - {x: 0.053710938, y: 0.22851562, z: 0.06933594, w: 0.25976562}
+  - {x: 0.07128906, y: 0.22851562, z: 0.08691406, w: 0.25976562}

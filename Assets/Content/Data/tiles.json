@@ -125,6 +125,9 @@
     { "id": "dune_grass", "name": "Dune Grass", "kind": "Decor", "solid": false, "hardness": 0.0, "tier": 0, "tool": "None", "drop": "",
       "mapColor": "#b9a25a", "placement": "Floor", "sound": "dig_soft",
       "art": { "style": "grass_decor", "top": "#b9a25a", "topDark": "#8f7a3e", "topLight": "#e0cf8a" } },
+    { "id": "warden_lantern", "name": "Warden's Lantern", "kind": "Object", "solid": false, "hardness": 0.4, "tier": 0, "tool": "None", "drop": "warden_lantern",
+      "mapColor": "#ffd27a", "size": [1, 2], "placement": "Floor", "light": [1.0, 0.82, 0.5], "lightRadius": 14, "sound": "dig_hard",
+      "art": { "style": "object", "object": "warden_lantern" } },
     { "id": "debug_calib", "name": "Calibration Sphere", "kind": "Object", "solid": false, "hardness": 0.1, "tier": 0, "drop": "",
       "mapColor": "#a0a0a0", "size": [4, 4], "sound": "dig",
       "art": { "style": "sheet", "sheet": "calib", "frame": "calib_still_0" } }

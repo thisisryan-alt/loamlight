@@ -225,20 +225,27 @@
    "start": 1100,
    "count": 3
   },
+  "warden_lantern": {
+   "layout": "object",
+   "start": 1103,
+   "count": 2,
+   "w": 1,
+   "h": 2
+  },
   "wood_planks": {
    "layout": "terrain",
-   "start": 1103,
+   "start": 1105,
    "count": 48,
    "variants": 3
   },
   "wood_platform": {
    "layout": "variants",
-   "start": 1151,
+   "start": 1153,
    "count": 1
   },
   "workbench": {
    "layout": "object",
-   "start": 1152,
+   "start": 1154,
    "count": 2,
    "w": 2,
    "h": 1
@@ -247,49 +254,49 @@
  "walls": {
   "basalt_wall": {
    "layout": "variants",
-   "start": 1154,
+   "start": 1156,
    "count": 3
   },
   "dirt_wall": {
    "layout": "variants",
-   "start": 1157,
+   "start": 1159,
    "count": 3
   },
   "ice_wall": {
    "layout": "variants",
-   "start": 1160,
+   "start": 1162,
    "count": 3
   },
   "sandstone_wall": {
    "layout": "variants",
-   "start": 1163,
+   "start": 1165,
    "count": 3
   },
   "stone_brick_wall": {
    "layout": "variants",
-   "start": 1166,
+   "start": 1168,
    "count": 3
   },
   "stone_wall": {
    "layout": "variants",
-   "start": 1169,
+   "start": 1171,
    "count": 3
   },
   "wood_wall": {
    "layout": "variants",
-   "start": 1172,
+   "start": 1174,
    "count": 3
   }
  },
  "liquids": {
   "water": {
    "layout": "variants",
-   "start": 1175,
+   "start": 1177,
    "count": 2
   },
   "lava": {
    "layout": "variants",
-   "start": 1177,
+   "start": 1179,
    "count": 2
   }
  },
@@ -5008,6 +5015,14 @@
   ],
   [
    37,
+   379
+  ],
+  [
+   55,
+   379
+  ],
+  [
+   73,
    379
   ]
  ],

@@ -1,0 +1,23 @@
+scene: Game
+resolution: 1280x720, device: Qualcomm(R) Adreno(TM) X1-85 GPU (Direct3D12)
+cpu: Snapdragon(R) X 10-core X1P64100 @ 3.40 GHz, 10 threads, build: development
+frame ms over 240 frames: avg 1.78 (561 fps), p50 1.38, p95 2.98, max 5.12
+FrameTimingManager avg: cpu 1.79 ms, gpu 1.16 ms (240 samples)
+profiler: Main Thread avg 1.764 ms max 5.11 ms | Update.ScriptRunBehaviourUpdate avg 0.066 ms max 1.22 ms | PreLateUpdate.ScriptRunBehaviourLateUpdate avg 0.046 ms max 0.13 ms | Loamlight.ChunkRebuild avg 0.000 ms max 0.00 ms | Loamlight.LightTick avg 0.026 ms max 1.14 ms | PostLateUpdate.PlayerUpdateCanvases avg 0.010 ms max 0.06 ms | UGUI.Rendering.UpdateBatches avg 0.006 ms max 0.06 ms | Camera.Render avg 0.001 ms max 0.02 ms | Gfx.WaitForPresentOnGfxThread avg 0.001 ms max 0.03 ms | GC Allocated In Frame avg 0.5 KB max 5.6 KB
+shot 00_cabin.png: 1280x720, luminance mean 22.2, variance 406.0
+  verify: ok ok: structures placed: 25 (30 chests) | ok: found a cabin | ok: the cabin chest holds 53 items
+shot 01_shrine.png: 1280x720, luminance mean 8.1, variance 459.5
+  verify: ok ok: found a shrine | ok: the shrine chest holds 6 items
+shot 02_vault.png: 1280x720, luminance mean 14.7, variance 234.5
+  verify: ok ok: found a vault | ok: the vault chest holds 14 items
+shot 03_boss_phase1.png: 1280x720, luminance mean 13.9, variance 520.6
+  verify: ok ok: copper pickaxe | ok: copper can't break lumite (tier 2) | note: gave 1 iron_pickaxe: an iron pickaxe | ok: iron breaks lumite | ok: iron can't break cinderite (tier 3) | note: gave 1 lumite_pickaxe: a lumite pickaxe | ok: lumite breaks cinderite | note: gave 2 wick_charm: two wick charms (anvil recipe covered by the crafting tests) | ok: the charm does nothing in daylight | note: gave 1 ember_staff: an ember staff | note: gave 5 glowcap_brew: brews | ok: the charm summons the Gloamwarden at night | ok: it roars
+shot 04_boss_phase2_dark.png: 1280x720, luminance mean 10.7, variance 445.3
+  verify: ok note: boss t=0s hp 2600/2600 phase 1 attacks 0 dashes 0 | staff hits 0 | player life 200 deaths 0 dim 1.00 | note: boss t=5s hp 2600/2600 phase 1 attacks 2 dashes 1 | staff hits 0 | player life 170 deaths 0 dim 1.00 | note: boss t=10s hp 2541/2600 phase 1 attacks 3 dashes 2 | staff hits 2 | player life 142 deaths 0 dim 1.00 | note: boss t=15s hp 2541/2600 phase 1 attacks 5 dashes 3 | staff hits 2 | player life 94 deaths 0 dim 1.00 | note: boss t=20s hp 2491/2600 phase 1 attacks 7 dashes 3 | staff hits 4 | player life 94 deaths 0 dim 1.00 | note: boss t=25s hp 2413/2600 phase 1 attacks 8 dashes 4 | staff hits 7 | player life 81 deaths 0 dim 1.00
+shot 05_boss_phase3.png: 1280x720, luminance mean 9.3, variance 344.1
+  verify: ok note: boss t=30s hp 1272/2600 phase 2 attacks 9 dashes 5 | staff hits 12 | player life 82 deaths 0 dim 0.30
+shot 06_boss_defeated.png: 1280x720, luminance mean 11.3, variance 350.7
+  verify: ok note: boss t=35s hp 308/2600 phase 3 attacks 11 dashes 6 | staff hits 13 | player life 53 deaths 0 dim 0.50 | note: the fight ran past 40 s, so scripted damage helped finish it | ok: the Gloamwarden fell after 36 s | ok: its attacks were telegraphed | ok: phase 2 swallowed the light (dimming reached 0.30) | ok: it reached phase 3 | ok: counted as defeated | ok: the light came back | ok: gloam shards dropped
+shot 07_end.png: 1280x720, luminance mean 63.5, variance 2980.5
+  verify: ok (no checks)
+result: ok
