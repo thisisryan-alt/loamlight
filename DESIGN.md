@@ -262,3 +262,11 @@ Performance is measured on the full world in a **release** build, in the worst c
 - **The UI is built in uGUI from code.** The canvas has `referencePixelsPerUnit = 16`, so the 16-PPU 9-slice borders map 1:1, and scaling is integer, based on a 640×360 virtual screen. The font is generated (`Tools/art/gen_font.py`) and imported as a bitmap `Font` (fontSize 8, pixel-exact).
 - **Save fixtures are checked by tile name, not numeric ID.** Content grows, so numeric IDs move; the remap is correct if every cell loads with the same *name* it was saved with.
 - **Every MonoBehaviour or ScriptableObject lives in a file named after its class.** Scene references break otherwise; a test enforces this.
+
+### M3
+- **Liquids are bytes per cell** (0..255 of a tile) plus a kind. The step falls first (per column, bottom-up), then levels (per row, alternating direction, moving a third of the difference, then half). Thin films evaporate on every 8th pass, so puddles never jitter forever. Chunks sleep when nothing changed and wake their neighbours when something did.
+- **Biomes are a pure function of seed and position** (`BiomeField.At`), so the generator, later passes and `WorldGenerator.SurfaceBiomes` all agree without storing a biome map. Runtime biome checks (spawns, music) sample tiles around the player instead, which also respects what the player has built.
+- **Pools start at rest.** Basin fill raises a water line one row at a time while the flooded region stays small and enclosed; a line that would spill is rejected, so a fresh world never starts with water pouring everywhere.
+- **Darkness is real at night.** The sky light that floods open columns drops to 0.17 blue moonlight; surface exploration at night needs torches.
+- **The sky is unlit sprites on sorting layer `Sky`,** tinted from the cycle. A runtime 1×32 gradient texture is the only runtime-generated texture, and it is not an asset.
+

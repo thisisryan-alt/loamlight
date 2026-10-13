@@ -233,38 +233,27 @@ The user asked for the whole game to be finished without milestone check-ins (20
 
 ---
 
-## M3: Light and liquids (IN PROGRESS, paused 2026-10-12)
+## M3: Light, liquids and day/night (done 2026-10-13)
 
-### Done so far
-- Content: gravel (falls), obsidian (tier 2), mossy_stone (spreads onto stone, faint glow), glowcap (emissive decor); buckets (`ItemDef.bucket`), and a bucket recipe at the anvil.
-- Atlas art: gravel, obsidian, moss overlay with emission, glowcap, and water/lava frames (the `"liquids"` section in `tiles.atlas.json`: body and surface frames, with lava emissive).
-- `Loamlight.Liquids` assembly:
-  - Burst `LiquidFallJob` (per column) and `LiquidSpreadJob` (per row, alternating direction); water meeting lava makes obsidian;
-  - `FallingBlocksJob` and the data-driven `SpreadJob`;
-  - `SimulationRunner`: fixed 30/20/4 Hz ticks, camera region, chunk sleep. It is not wired into GameBootstrap yet.
+### Done
+- **Liquids:** a third chunk-mesh layer (sorting layer `Liquid`; water translucent, lava emissive with a surface frame), Burst fall + level jobs at 30 Hz with chunk sleep, water meeting lava makes obsidian (with a sizzle), and placing a solid block displaces liquid.
+- **Falling sand and gravel** at 20 Hz; grass and moss spread at 4 Hz (data-driven `spreadsOnto`).
+- **Worldgen v2 (biomes come forward from M5):**
+  - surface biomes Meadow (centre, spawn), Dunes and Frostfell (mirrored by seed), plus the Glowmire caverns and the Emberdeep floor;
+  - ores are data: `tiles.json` `"ore": { hosts, depthMin, depthMax, scale, threshold }` (copper, iron, lumite, cinderite);
+  - sand and gravel pockets settle per column at generation; bowl lakes on the meadow; Burst basin-fill water pools and lava pools (rejects any line that would spill); moss and glowcap passes; cacti, pines and dune grass.
+  - 4200×1200 generates in about 130 ms (EditMode), with 128 water and 91 lava pools.
+- **Day/night:**
+  - `DayNightCycle`: a 15-minute loop that drives the light map's sky colour and intensity, so night really is dark (0.17);
+  - `SkyBackdrop`: gradient, sun, moon, stars, clouds and three parallax silhouettes from `Tools/art/gen_sky.py`; fades to black underground;
+  - the Emberdeep has a faint red ambient.
+- **Player:** swimming (slow sink, hold jump to swim up, splash sounds), lava is thicker, and buckets scoop and pour (gathering from neighbours, so a thin layer still fills one).
+- **New SFX** for later milestones: splash, sizzle, hurt, hit, enemy_die, hop, screech, bow, cast, boom, roar, chime, heal, death and warn.
+- **Tests:** EditMode 138 and PlayMode 5. New ones cover liquid conservation and levelling, the obsidian reaction, falling sand, spread and burial, the day curve and its wrap, swimming and submersion, ore rules being data-driven, and every biome, ore tier and liquid appearing.
+- **Scenario m3** (all green, shots in `Docs/screenshots/M3`): noon, dusk and night (sky light 1.0 → 0.17), a torch at night, scooping a lake and pouring into a dug pit, swimming, water on lava → obsidian, sand collapsing, a lit Glowmire, the Emberdeep, dunes and frost.
 
-### Next steps (in order)
-1. **Liquid mesh layer.** The patch failed to apply: a heredoc problem; write it as a scratchpad Python script instead.
-   - `WorldAtlas.liquids` plus parsing it in `AtlasImport`.
-   - `WorldRenderData.WaterFrame` and `LavaFrame`.
-   - `ChunkMeshJob` gets 3 layers (wall, block, liquid) and a `BuildLiquids` pass.
-   - `ChunkRenderer` gets a third mesh on sorting layer `Liquid`.
-   - `ProjectSetup.SortingLayers` becomes `Sky, Background, Walls, World, Entities, Liquid, Foreground, Overlay`.
-   - The benchmark test needs the liquid fields.
-2. **Wire `SimulationRunner` into `GameBootstrap`.**
-3. **`WorldEdits.Place`** clears liquid where a solid block goes.
-4. **Push-out-of-solid** at the start of `TileCollision.Move`, so falling sand can't trap the player.
-5. **Worldgen:**
-   - gravel and sand pockets, settled per column;
-   - moss pass, then glowcap pass;
-   - single-threaded basin-fill water pools, and lava pools deep down.
-6. **Day/night** (Lighting): `DayNightCycle` drives the light map's sky intensity and colour, plus the camera background. `SkyBackdrop` adds a gradient, sun, moon, stars and parallax hills (Pillow `gen_sky.py`, unlit, sorting layer Sky).
-7. **Player:**
-   - swimming: `ICollisionGrid` gains liquid sampling; buoyancy and slow movement; splash SFX;
-   - bucket scoop and pour in `ToolUser`.
-8. **Tests and scenario `m3`.**
-   - Tests: liquid conservation, the obsidian reaction, falling sand, spread, the day curve.
-   - Scenario `m3`: pour water and watch it settle, lava meets water, sand falls, grass spreads, darkness and torches, night sky, swimming.
-9. Then M4 (combat, AI, boss pieces), M5 (biomes, structures, ore tiers, boss) and M6 (menus, settings, save UI, tutorial, release perf run), as planned in DESIGN.md.
+### Rough edges / known issues
+- Lakes can drain into a cave that opens under them; the simulation just lets them.
+- The parallax hills sit at the average surface height, so in deep valleys they can look high.
+- The dune surface is steppy, because of per-column noise and sand settling.
 
-Verify everything with `./Tools/verify.ps1`.

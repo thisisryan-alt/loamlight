@@ -1,0 +1,29 @@
+scene: Game
+resolution: 1280x720, device: Qualcomm(R) Adreno(TM) X1-85 GPU (Direct3D12)
+cpu: Snapdragon(R) X 10-core X1P64100 @ 3.40 GHz, 10 threads, build: development
+frame ms over 240 frames: avg 1.12 (890 fps), p50 0.98, p95 2.03, max 3.46
+FrameTimingManager avg: cpu 1.14 ms, gpu 0.85 ms (240 samples)
+profiler: Main Thread avg 1.105 ms max 3.46 ms | Update.ScriptRunBehaviourUpdate avg 0.046 ms max 1.10 ms | PreLateUpdate.ScriptRunBehaviourLateUpdate avg 0.033 ms max 0.13 ms | Loamlight.ChunkRebuild avg 0.000 ms max 0.00 ms | Loamlight.LightTick avg 0.020 ms max 1.06 ms | PostLateUpdate.PlayerUpdateCanvases avg 0.009 ms max 0.05 ms | UGUI.Rendering.UpdateBatches avg 0.005 ms max 0.05 ms | Camera.Render avg 0.000 ms max 0.00 ms | Gfx.WaitForPresentOnGfxThread avg 0.001 ms max 0.00 ms | GC Allocated In Frame avg 0.4 KB max 5.5 KB
+shot 00_noon.png: 1280x720, luminance mean 67.9, variance 2922.6
+  verify: ok ok: day/night, sky and simulation are running | ok: noon sky light 1.00
+shot 01_dusk.png: 1280x720, luminance mean 32.3, variance 749.7
+  verify: ok (no checks)
+shot 02_night_torch.png: 1280x720, luminance mean 11.6, variance 240.4
+  verify: ok ok: night sky light 0.17 | ok: open ground is dark at night (0.16 vs 1.00 at noon) | ok: found a spot for a torch | ok: torches in the kit | ok: torch light 0.84 at night
+shot 03_bucket_pit.png: 1280x720, luminance mean 77.0, variance 2545.6
+  verify: ok ok: found a body of water | ok: dry ground beside the water | note: gave 1 bucket: a bucket (its anvil recipe is covered by the crafting tests) | ok: holding the bucket | ok: water within reach (3.0 tiles) | ok: scooping turned the bucket into a water bucket | ok: pouring empties the bucket | ok: poured a tile of water into the pit (278) | ok: the water levelled across the pit floor
+shot 04_swimming.png: 1280x720, luminance mean 62.3, variance 3002.7
+  verify: ok ok: the player is in the water (submerged 1.00) | ok: sinking slowly (0.0) | ok: entering the water splashes | ok: holding jump swims up
+shot 05_lava_obsidian.png: 1280x720, luminance mean 25.4, variance 709.6
+  verify: ok ok: found a lava pool | ok: water met lava: 5 obsidian nearby, 12 reactions | ok: the reaction sizzles
+shot 06_glowmire.png: 1280x720, luminance mean 27.3, variance 461.3
+  verify: ok ok: floating sand did not stay in the air | ok: three sand blocks piled up on the ground (3) | ok: falling-block ticks moved 18 blocks | ok: found a Glowmire cavern | ok: glowcaps light the cavern (0.84)
+shot 07_emberdeep.png: 1280x720, luminance mean 18.9, variance 243.5
+  verify: ok ok: found standing room in the Emberdeep
+shot 08_dunes.png: 1280x720, luminance mean 81.9, variance 2481.6
+  verify: ok ok: Dunes exists on the surface
+shot 09_frostfell.png: 1280x720, luminance mean 77.1, variance 2973.2
+  verify: ok ok: Frostfell exists on the surface
+shot 10_end.png: 1280x720, luminance mean 77.1, variance 2973.2
+  verify: ok ok: spread ticks ran (73 conversions so far) | note: liquid ticks 146 (skipped asleep 269), last tick 0.10 ms
+result: ok

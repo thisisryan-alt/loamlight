@@ -18,6 +18,7 @@ namespace Loamlight.Game.Scenarios
             {
                 "perf" => new PerfScenario(),
                 "m2" => new M2Scenario(),
+                "m3" => new M3Scenario(),
                 _ => new M1Scenario(),
             };
             _scenario.Attach(g);

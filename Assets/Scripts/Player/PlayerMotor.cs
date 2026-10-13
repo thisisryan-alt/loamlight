@@ -123,7 +123,9 @@ namespace Loamlight.Player
             else if (b.velocity.y < 0f) b.velocity.y = 0f;
             if (swimming && b.velocity.y < -p.swimMaxFall * thick)
                 b.velocity.y = MoveTowards(b.velocity.y, -p.swimMaxFall * thick, 120f * dt);
-            if (b.grounded && !ev.jumped) b.velocity.y = -0.5f;   // keep contact so slopes/steps register
+            bool swimUp = swimming && input.jumpHeld;
+            if (b.grounded && !ev.jumped && !swimUp) b.velocity.y = -0.5f;   // keep contact so slopes/steps register
+            if (swimUp) b.grounded = false;
 
             b.dropThrough = input.downHeld;
             var r = TileCollision.Move(ref b, dt, grid, p.stepHeight);

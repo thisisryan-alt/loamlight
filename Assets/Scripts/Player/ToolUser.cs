@@ -135,7 +135,7 @@ namespace Loamlight.Player
             {
                 ResetMining();
                 CancelDrag();
-                if (pressed && Enabled && inReach && _cooldown <= 0f) UseBucket(tile, item);
+                if ((pressed || (held && !_useWasHeld)) && Enabled && inReach && _cooldown <= 0f) UseBucket(tile, item);
             }
             else if (item.toolType == ToolType.Hammer)
             {

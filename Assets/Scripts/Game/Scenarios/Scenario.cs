@@ -67,6 +67,14 @@ namespace Loamlight.Game.Scenarios
 
         protected Vector2 Feet => G.Player.Feet;
 
+        protected int Count(string item) => G.Inventory.Count(G.Db.ItemId(item));
+
+        protected void Give(string item, int count, string why)
+        {
+            G.Inventory.Add(G.Db.ItemId(item), count);
+            Note($"gave {count} {item}: {why}");
+        }
+
         protected int SlotOf(string itemId)
         {
             int id = G.Db.ItemId(itemId);

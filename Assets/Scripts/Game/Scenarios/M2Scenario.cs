@@ -249,13 +249,6 @@ namespace Loamlight.Game.Scenarios
             yield return new CaptureShot("after_save");
         }
 
-        int Count(string item) => G.Inventory.Count(G.Db.ItemId(item));
-
-        void Give(string item, int count, string why)
-        {
-            G.Inventory.Add(G.Db.ItemId(item), count);
-            Note($"gave {count} {item}: {why}");
-        }
 
         static bool Has(IReadOnlyList<RecipeDef> list, string id)
         {

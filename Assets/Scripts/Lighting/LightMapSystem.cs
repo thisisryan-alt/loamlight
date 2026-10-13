@@ -38,6 +38,9 @@ namespace Loamlight.Lighting
 
         public float lavaGlow = 1f;
         public Color lavaColor = new Color(1f, 0.45f, 0.12f);
+        [Header("Emberdeep ambient")]
+        public Color deepAmbient = new Color(0.34f, 0.12f, 0.06f);
+        [Range(0f, 0.3f)] public float deepFraction = 0.11f;
 
         /// <summary>Optional override that fills the light map instead of propagation (calibration scenes).</summary>
         public Func<int, int, Color> debugPattern;
@@ -166,6 +169,7 @@ namespace Loamlight.Lighting
                     layout = _world.Layout, ox = ox, oy = oy, w = _texW, h = _texH,
                     blocks = _world.Blocks, walls = _world.Walls, liquid = _world.Liquid, liquidKind = _world.LiquidKind,
                     props = _props, skyFloor = _skyFloor, sky = new float3(skyColor.r, skyColor.g, skyColor.b) * skyIntensity,
+                    deep = new float3(deepAmbient.r, deepAmbient.g, deepAmbient.b), deepLine = (int)(_world.Height * deepFraction),
                     lava = new float3(lavaColor.r, lavaColor.g, lavaColor.b) * lavaGlow,
                     light = _light, decay = _decay, pixels = pixels, emitters = _emitters,
                 }.Run();
@@ -276,7 +280,8 @@ namespace Loamlight.Lighting
             [ReadOnly] public NativeArray<byte> liquid, liquidKind;
             [ReadOnly] public NativeArray<TileProps> props;
             [ReadOnly] public NativeArray<int> skyFloor;
-            public float3 sky, lava;
+            public float3 sky, lava, deep;
+            public int deepLine;
             public NativeArray<float3> light;
             public NativeArray<float> decay;
             public NativeArray<Color32> pixels;
@@ -327,6 +332,8 @@ namespace Loamlight.Lighting
                         else d = math.min(d, WaterDecay);
                     }
                     if (y > skyFloor[x]) l = math.max(l, sky);
+                    // the Emberdeep smoulders: open cells near the world floor carry a faint red ambient
+                    if (y < deepLine && b == 0) l = math.max(l, deep * math.saturate((deepLine - y) / 24f + 0.35f));
                     light[r] = l;
                     decay[r] = d;
                 }
