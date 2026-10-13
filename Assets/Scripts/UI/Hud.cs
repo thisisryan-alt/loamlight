@@ -138,6 +138,28 @@ namespace Loamlight.UI
 
         public string LastToast { get; private set; }
 
+        Image _hintPanel;
+        Text _hint;
+
+        /// <summary>A tutorial hint under the hotbar (null hides it).</summary>
+        public void SetHint(string text)
+        {
+            if (_hint == null)
+            {
+                _hintPanel = UiKit.Panel("Hint", transform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0, 30), new Vector2(380, 18), Color.white,
+                    UiSprites.Get("ui_tooltip"));
+                _hint = UiKit.Label("Hint text", _hintPanel.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(370, 12), "", 8,
+                    TextAnchor.MiddleCenter, new Color(1f, 0.95f, 0.8f));
+            }
+            bool show = !string.IsNullOrEmpty(text);
+            _hintPanel.enabled = show;
+            _hint.enabled = show;
+            if (show) _hint.text = text;
+            CurrentHint = show ? text : null;
+        }
+
+        public string CurrentHint { get; private set; }
+
         void Update()
         {
             if (_toast == null) return;

@@ -99,11 +99,26 @@ namespace Loamlight.Core
             var s = Instance;
             if (s._library == null || s._library.music.Length == 0) return;
             var clip = s._library.music[Mathf.Abs(index) % s._library.music.Length];
-            if (s._music.clip == clip && s._music.isPlaying) return;
-            s._music.clip = clip;
-            s._music.volume = MusicVolume * MasterVolume;
-            s._music.Play();
+            CurrentMusic = Mathf.Abs(index) % s._library.music.Length;
+            if (s._music.clip == clip && s._music.isPlaying) { s._nextClip = null; return; }
+            if (!s._music.isPlaying)
+            {
+                s._music.clip = clip;
+                s._music.loop = true;
+                s._fade = 0f;
+                s._music.Play();
+                s._nextClip = null;
+                return;
+            }
+            s._nextClip = clip;    // crossfade: fade the current track out, then start this one
         }
+
+        public static int CurrentMusic { get; private set; } = -1;
+        public static int MusicTracks => _instance != null && _instance._library != null ? _instance._library.music.Length : 0;
+        public static void RefreshMusicVolume() { }
+
+        AudioClip _nextClip;
+        float _fade = 1f;
 
         public static void StopMusic()
         {
@@ -112,7 +127,20 @@ namespace Loamlight.Core
 
         void Update()
         {
-            if (_music != null) _music.volume = MusicVolume * MasterVolume;
+            if (_music == null) return;
+            if (_nextClip != null)
+            {
+                _fade = Mathf.MoveTowards(_fade, 0f, Time.unscaledDeltaTime / 1.2f);
+                if (_fade <= 0f)
+                {
+                    _music.clip = _nextClip;
+                    _music.loop = true;
+                    _music.Play();
+                    _nextClip = null;
+                }
+            }
+            else _fade = Mathf.MoveTowards(_fade, 1f, Time.unscaledDeltaTime / 1.5f);
+            _music.volume = MusicVolume * MasterVolume * _fade;
         }
     }
 }

@@ -37,8 +37,9 @@ Step "capture PipelineDemo" { & $unity capture -Scene PipelineDemo }
 Step "capture TileLab" { & $unity capture -Scene TileLab }
 $known = (Get-Content "$root/Assets/Scripts/Game/Scenarios/GameScenarioDirector.cs" -Raw)
 foreach ($s in $Scenarios) {
-    if ($known -notmatch "`"$s`"" -and $s -ne "m1") { $results.Add(("{0,-28} SKIP  (scenario not implemented yet)" -f "scenario $s")); continue }
-    Step "scenario $s" { & $unity capture -Scene Game -Scenario $s }
+    if ($known -notmatch "`"$s`"" -and $s -ne "m1" -and $s -ne "m6") { $results.Add(("{0,-28} SKIP  (scenario not implemented yet)" -f "scenario $s")); continue }
+    $scene = if ($s -eq "m6") { "MainMenu" } else { "Game" }
+    Step "scenario $s" { & $unity capture -Scene $scene -Scenario $s }
 }
 
 Write-Host ""

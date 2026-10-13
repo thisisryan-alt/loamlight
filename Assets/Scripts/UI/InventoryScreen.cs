@@ -152,7 +152,14 @@ namespace Loamlight.UI
             _cursorCount = UiKit.Label("Cursor count", _cursorIcon.transform, new Vector2(1, 0), new Vector2(1, 0), new Vector2(4, -4), new Vector2(20, 8), "", 8,
                 TextAnchor.LowerRight);
 
-            _toggle = new InputAction("Inventory", InputActionType.Button, "<Keyboard>/e");
+            _toggle = new InputAction("Inventory", InputActionType.Button, GameSettings.Key("Inventory") ?? "<Keyboard>/e");
+            GameSettings.Changed += () =>
+            {
+                if (_toggle == null) return;
+                _toggle.Disable();
+                _toggle.ApplyBindingOverride(0, GameSettings.Key("Inventory"));
+                _toggle.Enable();
+            };
             _toggle.AddBinding("<Keyboard>/tab");
             _toggle.AddBinding("<Gamepad>/buttonNorth");
             _back = new InputAction("Back", InputActionType.Button, "<Keyboard>/escape");

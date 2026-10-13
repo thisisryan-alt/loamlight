@@ -25,6 +25,7 @@ namespace Loamlight.EditorTools
         public const string PipelineDemoPath = SceneFolder + "/PipelineDemo.unity";
         public const string TileLabPath = SceneFolder + "/TileLab.unity";
         public const string GamePath = SceneFolder + "/Game.unity";
+        public const string MenuPath = SceneFolder + "/MainMenu.unity";
         public static readonly Color SkyColor = new Color(0.43f, 0.62f, 0.86f);
 
         public static readonly Color TorchColor = new Color(1f, 0.70f, 0.40f);
@@ -37,9 +38,10 @@ namespace Loamlight.EditorTools
             BuildIfChanged(PipelineDemoPath, BuildPipelineDemo);
             BuildIfChanged(TileLabPath, BuildTileLab);
             BuildIfChanged(GamePath, BuildGame);
+            BuildIfChanged(MenuPath, BuildMenu);
             var scenes = new[]
             {
-                new EditorBuildSettingsScene(GamePath, true), new EditorBuildSettingsScene(TileLabPath, true),
+                new EditorBuildSettingsScene(MenuPath, true), new EditorBuildSettingsScene(GamePath, true), new EditorBuildSettingsScene(TileLabPath, true),
                 new EditorBuildSettingsScene(PipelineDemoPath, true),
             };
             if (!EditorBuildSettings.scenes.Select(s => s.path).SequenceEqual(scenes.Select(s => s.path)))
@@ -150,6 +152,18 @@ namespace Loamlight.EditorTools
             boot.Configure(cam);
             new GameObject("Scenario Director").AddComponent<Loamlight.Game.Scenarios.GameScenarioDirector>();
             EditorSceneManager.SaveScene(scene, GamePath);
+        }
+
+        // ------------------------------------------------------------------------------------------ main menu
+        static void BuildMenu()
+        {
+            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            var cam = BuildCamera(new Vector3(0f, 12f, -10f), 960, 540);
+            cam.backgroundColor = SkyColor;
+            var menu = new GameObject("Main Menu").AddComponent<Loamlight.Game.MainMenu>();
+            menu.Configure(cam);
+            new GameObject("Menu Scenario Director").AddComponent<Loamlight.Game.Scenarios.MenuScenarioDirector>();
+            EditorSceneManager.SaveScene(scene, MenuPath);
         }
 
         // ------------------------------------------------------------------------------------------ tile lab

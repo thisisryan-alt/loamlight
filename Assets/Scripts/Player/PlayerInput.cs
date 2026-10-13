@@ -1,4 +1,5 @@
 using System;
+using Loamlight.Core;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -113,7 +114,21 @@ namespace Loamlight.Player
                 if (v > 0.01f) _scroll--;
                 else if (v < -0.01f) _scroll++;
             };
+            ApplyKeys();
+            GameSettings.Changed += ApplyKeys;
             Map.Enable();
+        }
+
+        /// <summary>Apply keyboard overrides from <see cref="GameSettings"/> (binding 0 of each action; parts 1 and 2 of the first Move composite).</summary>
+        public void ApplyKeys()
+        {
+            bool was = Map.enabled;
+            if (was) Map.Disable();
+            Move.ApplyBindingOverride(1, GameSettings.Key("MoveLeft"));
+            Move.ApplyBindingOverride(2, GameSettings.Key("MoveRight"));
+            Jump.ApplyBindingOverride(0, GameSettings.Key("Jump"));
+            Down.ApplyBindingOverride(0, GameSettings.Key("Down"));
+            if (was) Map.Enable();
         }
 
         public float MoveX => Mathf.Clamp(Move.ReadValue<float>(), -1f, 1f);
@@ -149,6 +164,7 @@ namespace Loamlight.Player
 
         public void Dispose()
         {
+            GameSettings.Changed -= ApplyKeys;
             Map.Disable();
             Map.Dispose();
         }

@@ -64,6 +64,12 @@ namespace Loamlight.Game
         public EnemySpawner Spawner { get; private set; }
         public CombatFx Fx { get; private set; }
         public HealthHud HealthUi { get; private set; }
+        public PauseMenu Pause { get; private set; }
+        public TutorialHints Tutorial { get; private set; }
+        public MusicDirector Music { get; private set; }
+        public string SavePath => !string.IsNullOrEmpty(GameSession.LoadPath) ? GameSession.LoadPath : GameSession.PathFor(Meta.name);
+        float _sessionStart, _nextAutosave;
+        bool _inventoryOpen;
         public BiomeSensor Biomes { get; private set; }
         /// <summary>Peaceful: no spawns and nothing hurts the player (older scenarios, perf runs, -llPeaceful).</summary>
         public bool Peaceful { get; private set; }
@@ -277,7 +283,19 @@ namespace Loamlight.Game
             InventoryUi.PlayerPosition = () => Player.Center;
             InventoryUi.ChestFor = origin => Chests.Get(origin);
             InventoryUi.DropOverflow = s => Pickups.Spawn(s.item, s.count, Player.Center, new Vector2(Player.Facing * 4f, 4f));
-            InventoryUi.OpenChanged += open => Tools.Enabled = !open;
+            InventoryUi.OpenChanged += open => { Tools.Enabled = !open; _inventoryOpen = open; };
+            Pause = PauseMenu.Create();
+            Pause.Blocked = () => _inventoryOpen;
+            Pause.Save = () => SaveNow(true);
+            Pause.QuitToMenu = QuitToMenu;
+            Pause.OpenChanged += open => Tools.Enabled = !open && !_inventoryOpen;
+            Tutorial = gameObject.AddComponent<TutorialHints>();
+            Tutorial.Init(this, _tutorialStep);
+            Music = gameObject.AddComponent<MusicDirector>();
+            Music.Init(this);
+            GameSettings.Apply(false);
+            _sessionStart = Time.unscaledTime;
+            _nextAutosave = Time.unscaledTime + 300f;
             Interactor.ChestOpened += origin => InventoryUi.OpenChest(origin);
             Interactor.SpawnSet += origin =>
             {
@@ -335,6 +353,12 @@ namespace Loamlight.Game
             return new Vector2(World.Width / 2 + 0.5f, World.Height * 0.75f);
         }
 
+        public void RestoreTutorial(int step)
+        {
+            _tutorialStep = step;
+            if (Tutorial != null) Tutorial.Step = step;
+        }
+
         public void SetPeaceful(bool peaceful)
         {
             Peaceful = peaceful;
@@ -381,6 +405,12 @@ namespace Loamlight.Game
         void Update()
         {
             if (!Ready) return;
+            if (Time.unscaledTime >= _nextAutosave && !Peaceful && Health.Alive)
+            {
+                _nextAutosave = Time.unscaledTime + 300f;
+                SaveNow(false);
+                Hud.Toast("Autosaved", 1.2f);
+            }
             // the warden's darkness eases in and out instead of snapping
             Light.dimming = Mathf.MoveTowards(Light.dimming, _targetDimming, Time.deltaTime * 0.8f);
             var boss = ActiveBoss;
@@ -504,8 +534,30 @@ namespace Loamlight.Game
             Inventory.Add(Db.ItemId("torch"), 25);
         }
 
+        /// <summary>Save the world and player to <see cref="SavePath"/>.</summary>
+        public void SaveNow(bool toast)
+        {
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            SaveTo(SavePath);
+            GameSession.LoadPath = SavePath;
+            if (toast) Hud.Toast($"World saved ({sw.ElapsedMilliseconds} ms)");
+        }
+
+        public void QuitToMenu()
+        {
+            SaveNow(false);
+            GameClock.Reset();
+            UnityEngine.SceneManagement.SceneManager.LoadScene(MainMenu.SceneName);
+        }
+
+        int _tutorialStep;
+
         public void SaveTo(string path)
         {
+            Meta.playSeconds += Time.unscaledTime - _sessionStart;
+            _sessionStart = Time.unscaledTime;
+            if (DayNight != null) Meta.timeOfDay = DayNight.time;
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
             Meta.gameJson = MiniJson.Serialize(GameState.Capture(this));
             WorldSave.Save(path, World, Meta, Db);
         }
@@ -533,6 +585,7 @@ namespace Loamlight.Game
             ["chests"] = g.Chests.Capture(),
             ["time"] = g.DayNight != null ? (double)g.DayNight.time : 0.08,
             ["life"] = g.Health != null ? (double)g.Health.Life : 100.0,
+            ["tutorial"] = g.Tutorial != null ? (double)g.Tutorial.Step : 0.0,
             ["maxLife"] = g.Health != null ? (double)g.Health.MaxLife : 100.0,
             ["day"] = g.DayNight != null ? (double)g.DayNight.day : 1.0,
         };
@@ -559,6 +612,7 @@ namespace Loamlight.Game
                 g.HasBedSpawn = spawn[2] is bool b && b;
             }
             if (root.TryGetValue("chests", out var c)) g.Chests.Restore(c as List<object>);
+            if (root.TryGetValue("tutorial", out var tut)) g.RestoreTutorial((int)Convert.ToDouble(tut));
             if (g.Health != null && root.TryGetValue("life", out var life))
                 g.Health.Restore((int)Convert.ToDouble(life), root.TryGetValue("maxLife", out var max) ? (int)Convert.ToDouble(max) : 100);
         }

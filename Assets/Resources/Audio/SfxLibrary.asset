@@ -176,4 +176,7 @@ MonoBehaviour:
     clips:
     - {fileID: 8300000, guid: 2b9596573df068147a55349f5d44017c, type: 3}
     volume: 1
-  music: []
+  music:
+  - {fileID: 8300000, guid: 4de88448772dcbf4593ae6c61dd6472c, type: 3}
+  - {fileID: 8300000, guid: 2b180fa58b147d84aaa5b01874e9029a, type: 3}
+  - {fileID: 8300000, guid: 3a7826943451cca41b1d4bfbbb514d61, type: 3}
