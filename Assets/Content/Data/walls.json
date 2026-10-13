@@ -8,6 +8,12 @@
     { "id": "wood_wall", "name": "Wood Wall", "drop": "wood_wall", "mapColor": "#4f3620",
       "art": { "style": "planks", "base": "#5c4026", "dark": "#45301c", "light": "#6e4e30", "speck": "#33230f" } },
     { "id": "stone_brick_wall", "name": "Stone Brick Wall", "drop": "stone_brick_wall", "mapColor": "#46454c",
-      "art": { "style": "bricks", "base": "#4c4b52", "dark": "#36353b", "light": "#5c5b63", "speck": "#2a292e" } }
+      "art": { "style": "bricks", "base": "#4c4b52", "dark": "#36353b", "light": "#5c5b63", "speck": "#2a292e" } },
+    { "id": "sandstone_wall", "name": "Sandstone Wall", "drop": "sandstone_wall", "mapColor": "#6e5432",
+      "art": { "style": "strata", "base": "#7d6038", "dark": "#614a2a", "light": "#8f6f44", "speck": "#4d3a20" } },
+    { "id": "basalt_wall", "name": "Basalt Wall", "drop": "", "mapColor": "#221e1f",
+      "art": { "style": "stone", "base": "#2a2527", "dark": "#1d191a", "light": "#362f31", "speck": "#141112" } },
+    { "id": "ice_wall", "name": "Ice Wall", "drop": "", "mapColor": "#46708e",
+      "art": { "style": "ice", "base": "#4f7896", "dark": "#3d5f78", "light": "#6c94b2", "speck": "#2e4a60" } }
   ]
 }

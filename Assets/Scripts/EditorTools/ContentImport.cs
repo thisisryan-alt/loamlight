@@ -29,7 +29,9 @@ namespace Loamlight.EditorTools
             public int tier, dropCount = 1;
             public float[] light;
             public int[] size;
+            public OreJson ore;
         }
+        [Serializable] public class OreJson { public string[] hosts; public float depthMin, depthMax = 1f, scale = 0.1f, threshold = 0.82f; }
         [Serializable] public class WallsFile { public int version; public WallJson[] walls; }
         [Serializable] public class WallJson { public string id, name, drop, mapColor; public float hardness = 0.3f; }
         [Serializable] public class ItemsFile { public int version; public ItemJson[] items; }
@@ -86,6 +88,9 @@ namespace Loamlight.EditorTools
                 d.size = j.size != null && j.size.Length >= 2 ? new Vector2Int(j.size[0], j.size[1]) : Vector2Int.one;
                 d.placement = Parse<Placement>(j.placement); d.interact = j.interact ?? ""; d.sound = j.sound ?? "dig";
                 d.isStation = j.isStation;
+                d.ore = j.ore != null && j.ore.hosts != null && j.ore.hosts.Length > 0
+                    ? new OreSpawn { enabled = true, hosts = j.ore.hosts, depthMin = j.ore.depthMin, depthMax = j.ore.depthMax, scale = j.ore.scale, threshold = j.ore.threshold }
+                    : default;
             })).ToArray();
             var walls = wallsJ.Select(j => Upsert<WallDef>("Walls", j.id, d =>
             {
@@ -191,6 +196,9 @@ namespace Loamlight.EditorTools
                     if (ing.count <= 0) errors.Add($"recipe {r.id}: ingredient {ing.item} count {ing.count}");
                 }
             }
+            foreach (var t in tiles)
+                if (t.ore != null && t.ore.hosts != null)
+                    foreach (var h in t.ore.hosts) Ref(h, tileIds, $"tile {t.id}.ore.hosts");
             foreach (var l in loot)
                 if (l.entries != null) foreach (var e in l.entries) Ref(e.item, itemIds, $"loot {l.id}");
             foreach (var e in enemies) { Ref(e.loot, lootIds, $"enemy {e.id}.loot"); Enum<AiKind>(e.ai, $"enemy {e.id}.ai"); }

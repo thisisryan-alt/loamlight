@@ -3,8 +3,8 @@
   "name": "icons_items",
   "frameWidth": 16,
   "frameHeight": 16,
-  "columns": 15,
-  "rows": 1,
+  "columns": 16,
+  "rows": 2,
   "pixelsPerUnit": 16,
   "pivot": [
     0.5,
@@ -32,7 +32,9 @@
         11,
         12,
         13,
-        14
+        14,
+        15,
+        16
       ]
     }
   ],
@@ -40,104 +42,118 @@
     {
       "name": "icon_anvil",
       "x": 0,
-      "y": 0,
+      "y": 16,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_bed",
       "x": 16,
-      "y": 0,
+      "y": 16,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_chair",
       "x": 32,
-      "y": 0,
+      "y": 16,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_chest",
       "x": 48,
-      "y": 0,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_cinderite_bar",
+      "x": 64,
+      "y": 16,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_copper_axe",
-      "x": 64,
-      "y": 0,
+      "x": 80,
+      "y": 16,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_copper_bar",
-      "x": 80,
-      "y": 0,
+      "x": 96,
+      "y": 16,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_copper_pickaxe",
-      "x": 96,
-      "y": 0,
+      "x": 112,
+      "y": 16,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_door",
-      "x": 112,
-      "y": 0,
+      "x": 128,
+      "y": 16,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_furnace",
-      "x": 128,
-      "y": 0,
+      "x": 144,
+      "y": 16,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_iron_axe",
-      "x": 144,
-      "y": 0,
+      "x": 160,
+      "y": 16,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_iron_bar",
-      "x": 160,
-      "y": 0,
+      "x": 176,
+      "y": 16,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_iron_pickaxe",
-      "x": 176,
-      "y": 0,
+      "x": 192,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_lumite_bar",
+      "x": 208,
+      "y": 16,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_table",
-      "x": 192,
-      "y": 0,
+      "x": 224,
+      "y": 16,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_wooden_hammer",
-      "x": 208,
-      "y": 0,
+      "x": 240,
+      "y": 16,
       "w": 16,
       "h": 16
     },
     {
       "name": "icon_workbench",
-      "x": 224,
+      "x": 0,
       "y": 0,
       "w": 16,
       "h": 16

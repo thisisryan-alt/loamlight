@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &78296513
+--- !u!1 &739083142
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,35 +127,34 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 78296515}
-  - component: {fileID: 78296514}
+  - component: {fileID: 739083144}
+  - component: {fileID: 739083143}
   m_Layer: 0
-  m_Name: Game Bootstrap
+  m_Name: Scenario Director
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &78296514
+--- !u!114 &739083143
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 78296513}
+  m_GameObject: {fileID: 739083142}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5be96e5d7c88b37459561e8388fdec3e, type: 3}
+  m_Script: {fileID: 11500000, guid: c5da23bc769aad34a99cbf8b06845355, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Loamlight.Game::Loamlight.Game.GameBootstrap
-  cam: {fileID: 162484081}
---- !u!4 &78296515
+  m_EditorClassIdentifier: Loamlight.Game::Loamlight.Game.Scenarios.GameScenarioDirector
+--- !u!4 &739083144
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 78296513}
+  m_GameObject: {fileID: 739083142}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -164,7 +163,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &162484080
+--- !u!1 &775082390
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -172,10 +171,10 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 162484084}
-  - component: {fileID: 162484081}
-  - component: {fileID: 162484083}
-  - component: {fileID: 162484082}
+  - component: {fileID: 775082394}
+  - component: {fileID: 775082391}
+  - component: {fileID: 775082393}
+  - component: {fileID: 775082392}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -183,13 +182,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!20 &162484081
+--- !u!20 &775082391
 Camera:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 162484080}
+  m_GameObject: {fileID: 775082390}
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
@@ -234,13 +233,13 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!114 &162484082
+--- !u!114 &775082392
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 162484080}
+  m_GameObject: {fileID: 775082390}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c88f5cead0c0b2a4eb05b5900433f8d1, type: 3}
@@ -258,13 +257,13 @@ MonoBehaviour:
   m_CropFrameX: 0
   m_CropFrameY: 0
   m_StretchFill: 0
---- !u!114 &162484083
+--- !u!114 &775082393
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 162484080}
+  m_GameObject: {fileID: 775082390}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
@@ -302,13 +301,13 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!4 &162484084
+--- !u!4 &775082394
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 162484080}
+  m_GameObject: {fileID: 775082390}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
@@ -317,7 +316,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &259474600
+--- !u!1 &1719124617
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -325,34 +324,35 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 259474602}
-  - component: {fileID: 259474601}
+  - component: {fileID: 1719124619}
+  - component: {fileID: 1719124618}
   m_Layer: 0
-  m_Name: Scenario Director
+  m_Name: Game Bootstrap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &259474601
+--- !u!114 &1719124618
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 259474600}
+  m_GameObject: {fileID: 1719124617}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5da23bc769aad34a99cbf8b06845355, type: 3}
+  m_Script: {fileID: 11500000, guid: 5be96e5d7c88b37459561e8388fdec3e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Loamlight.Game::Loamlight.Game.Scenarios.GameScenarioDirector
---- !u!4 &259474602
+  m_EditorClassIdentifier: Loamlight.Game::Loamlight.Game.GameBootstrap
+  cam: {fileID: 775082391}
+--- !u!4 &1719124619
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 259474600}
+  m_GameObject: {fileID: 1719124617}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -365,6 +365,6 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 162484084}
-  - {fileID: 78296515}
-  - {fileID: 259474602}
+  - {fileID: 775082394}
+  - {fileID: 1719124619}
+  - {fileID: 739083144}

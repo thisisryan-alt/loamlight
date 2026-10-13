@@ -54,6 +54,7 @@ function Build-All {
     Invoke-Step "pack sheets" { & $PythonPath "$root/Tools/art/pack_sheets.py" --frames $frames --out $out }
     Invoke-Step "tiles" { & $PythonPath "$root/Tools/art/gen_tiles.py" --out $out }
     Invoke-Step "audio" { & $PythonPath "$root/Tools/audio/synth_sfx.py" --out "$root/Assets/Audio/Generated" }
+    Invoke-Step "sky" { & $PythonPath "$root/Tools/art/gen_sky.py" --out $out }
     Invoke-Step "ui" { & $PythonPath "$root/Tools/art/gen_ui.py" --out $out }
     Invoke-Step "font" { & $PythonPath "$root/Tools/art/gen_font.py" --out "$root/Assets/Art/Generated/Font" }
     Invoke-Step "atlas" { & $PythonPath "$root/Tools/art/gen_atlas.py" --content "$root/Assets/Content/Data" --sprites $out --out "$root/Assets/Art/Generated/Atlas" }

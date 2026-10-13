@@ -131,6 +131,12 @@ namespace Loamlight.Player
                 if (Db.TryTileId(item.placesTile, out var oid)) GhostObject(Db.Tile(oid), tile, inReach);
                 if (use && inReach) TryPlaceObject(tile, item);
             }
+            else if (!string.IsNullOrEmpty(item.bucket))
+            {
+                ResetMining();
+                CancelDrag();
+                if (pressed && Enabled && inReach && _cooldown <= 0f) UseBucket(tile, item);
+            }
             else if (item.toolType == ToolType.Hammer)
             {
                 CancelDrag();
@@ -149,6 +155,56 @@ namespace Loamlight.Player
                 CancelDrag();
             }
             _useWasHeld = held;
+        }
+
+        /// <summary>
+        /// Empty bucket: scoop a tile's worth of water or lava (gathered from the target cell and its neighbours, so a
+        /// thin layer still fills it). Full bucket: pour a full tile into an open cell. The bucket item is swapped.
+        /// </summary>
+        void UseBucket(Vector2Int tile, ItemDef bucket)
+        {
+            var world = Edits.World;
+            if (bucket.bucket == "empty")
+            {
+                byte here = world.GetLiquid(tile.x, tile.y);
+                if (here == 0) return;
+                var type = (LiquidType)world.LiquidKind[world.Index(tile.x, tile.y)];
+                int need = 255, got = 0;
+                for (int r = 0; r <= 3 && got < need; r++)
+                for (int dy = -r; dy <= r && got < need; dy++)
+                for (int dx = -r; dx <= r && got < need; dx++)
+                {
+                    if (Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dy)) != r) continue;
+                    int x = tile.x + dx, y = tile.y + dy;
+                    byte a = world.GetLiquid(x, y);
+                    if (a == 0 || world.LiquidKind[world.Index(x, y)] != (byte)type) continue;
+                    int take = Mathf.Min(a, need - got);
+                    world.SetLiquid(x, y, (byte)(a - take), a - take == 0 ? LiquidType.None : type);
+                    got += take;
+                }
+                if (got < 200) return;   // not enough to fill: put nothing back, the puddle is gone either way
+                SwapHeld(type == LiquidType.Lava ? "lava_bucket" : "water_bucket");
+                Sfx.Play("splash", tile + new Vector2(0.5f, 0.5f), 0.7f);
+            }
+            else
+            {
+                ushort b = world.GetBlock(tile.x, tile.y);
+                if (b != 0 && Edits.Props(b).solid != 0) return;
+                if (world.GetLiquid(tile.x, tile.y) > 40) return;
+                var type = bucket.bucket == "lava" ? LiquidType.Lava : LiquidType.Water;
+                world.SetLiquid(tile.x, tile.y, 255, type);
+                SwapHeld("bucket");
+                Sfx.Play("splash", tile + new Vector2(0.5f, 0.5f), 0.7f);
+            }
+            _cooldown = bucket.useTime;
+            _swing = 0.25f;
+        }
+
+        void SwapHeld(string itemId)
+        {
+            if (!Db.TryItemId(itemId, out var id)) return;
+            int slot = Inventory.Selected;
+            Inventory.Set(slot, new ItemStack(id, 1));
         }
 
         bool InReach(Vector2Int tile, float reach) => Vector2.Distance(Player.Center, tile + new Vector2(0.5f, 0.5f)) <= reach + 0.5f;

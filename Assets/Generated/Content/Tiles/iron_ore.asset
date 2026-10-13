@@ -31,3 +31,13 @@ MonoBehaviour:
   interact: 
   sound: dig_hard
   isStation: 0
+  ore:
+    enabled: 1
+    hosts:
+    - stone
+    - sandstone
+    - ice
+    depthMin: 0.33
+    depthMax: 0.82
+    scale: 0.1
+    threshold: 0.84

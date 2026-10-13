@@ -85,14 +85,14 @@ namespace Loamlight.Tests
                     if (y < w.Height * 0.5f)
                     {
                         deep++;
-                        if (b == ids.stone) stone++;
+                        if (b == ids.stone || b == ids.basalt || b == ids.sandstone || b == ids.ice || b == ids.mossyStone || b == ids.ash) stone++;
                         if (b == 0) open++;
                     }
                 }
             }
             Assert.That(sky, Is.EqualTo(w.Width), "top row is open sky");
             Assert.That(grass, Is.GreaterThan(w.Width / 2), "most columns have grass on top");
-            Assert.That((float)stone / deep, Is.GreaterThan(0.4f), "deep layers are mostly stone");
+            Assert.That((float)stone / deep, Is.GreaterThan(0.4f), "deep layers are mostly rock");
             float caves = (float)open / deep;
             Assert.That(caves, Is.InRange(0.05f, 0.5f), $"cave fraction {caves:P0} underground");
         }

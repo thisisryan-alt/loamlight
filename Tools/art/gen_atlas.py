@@ -317,10 +317,104 @@ def style_glowcap(art, rng):
     return rgb, height, alpha
 
 
-SHAPED = {"glowcap": style_glowcap, "bark": style_bark, "platform": style_platform, "grass_decor": style_grass_decor}
+def style_ice(art, rng):
+    """Clear blue with long diagonal glints and a few trapped bubbles; smooth height so it reads glassy."""
+    pal = palette(art)
+    yy, xx = np.mgrid[0:CELL, 0:CELL]
+    depth = value_noise(rng, CELL, 2)
+    idx = np.where(depth > 0.62, 3, np.where(depth < 0.25, 1, 2))
+    rgb = np.array(pal)[idx] * 0.85 + np.array(pal)[2] * 0.15
+    height = 0.7 + 0.1 * depth
+    for _ in range(rng.integers(1, 3)):              # glints: thin bright diagonals
+        c = int(rng.integers(-8, 24))
+        length = int(rng.integers(4, 9))
+        start = int(rng.integers(0, CELL - length))
+        for k in range(length):
+            y, x = start + k, c - (start + k)
+            if 0 <= x < CELL:
+                rgb[y, x] = pal[3]
+                height[y, x] = 0.85
+    for _ in range(rng.integers(1, 4)):              # bubbles
+        y, x = rng.integers(1, CELL - 1, 2)
+        rgb[y, x] = pal[3] * 0.7 + pal[2] * 0.3
+        rgb[y + 1, x] = pal[1]
+    for _ in range(rng.integers(0, 2)):              # a crack
+        y, x = rng.integers(2, CELL - 2, 2)
+        for _ in range(rng.integers(3, 6)):
+            rgb[y, x] = pal[0]
+            height[y, x] = 0.4
+            x = int(np.clip(x + rng.choice([-1, 1]), 0, CELL - 1))
+            y = int(np.clip(y + 1, 0, CELL - 1))
+    return rgb, height
+
+
+def style_strata(art, rng):
+    """Sandstone: wavy horizontal bands of light and dark with a soft grain."""
+    pal = palette(art)
+    yy, xx = np.mgrid[0:CELL, 0:CELL]
+    phase = rng.random() * 6.28
+    wave = yy + 1.2 * np.sin(xx * 0.35 + phase)
+    band = (np.floor(wave / 4).astype(int) + int(rng.integers(0, 4))) % 4
+    tone = np.array([pal[2], pal[3], pal[2], pal[1]])[band]
+    grain = rng.random((CELL, CELL))
+    rgb = tone * (0.93 + 0.1 * grain[..., None])
+    height = 0.55 + 0.08 * band + 0.05 * grain
+    edge = (np.floor(wave).astype(int) % 4) == 3
+    rgb[edge] = rgb[edge] * 0.9
+    height[edge] -= 0.12
+    for _ in range(rng.integers(1, 3)):
+        y, x = rng.integers(0, CELL, 2)
+        rgb[y, x] = pal[0]
+    return rgb, height
+
+
+def style_cactus(art, rng):
+    """A ribbed green column with pale spines; arms on some variants."""
+    pal = palette(art)
+    rgb = np.zeros((CELL, CELL, 3))
+    height = np.zeros((CELL, CELL))
+    alpha = np.zeros((CELL, CELL))
+    x0, x1 = 4, 12
+    for x in range(x0, x1):
+        u = (x - x0 + 0.5) / (x1 - x0)
+        rib = (x - x0) % 3 == 1
+        tone = pal[3] if rib else pal[2] if 0.2 < u < 0.8 else pal[1]
+        for y in range(CELL):
+            rgb[y, x] = tone * (0.94 + 0.08 * rng.random())
+            alpha[y, x] = 1
+            height[y, x] = 0.5 + 0.4 * np.sin(u * np.pi) + (0.08 if rib else 0)
+    arm = rng.random()
+    if arm < 0.5:
+        side = 1 if arm < 0.25 else -1
+        ay = int(rng.integers(5, 9))
+        xs = range(x1, CELL - 1) if side > 0 else range(1, x0)
+        for x in xs:
+            for y in range(ay, ay + 4):
+                rgb[y, x] = pal[2]
+                alpha[y, x] = 1
+                height[y, x] = 0.7
+        tip = CELL - 3 if side > 0 else 1
+        for y in range(ay - 4, ay):
+            for x in (tip, tip + 1):
+                rgb[y, x] = pal[2] if x == tip else pal[1]
+                alpha[y, x] = 1
+                height[y, x] = 0.7
+    spine = hex_rgb(art.get("speck", "#efe6b8"))
+    for _ in range(int(rng.integers(5, 9))):
+        y = int(rng.integers(0, CELL))
+        x = x0 - 1 if rng.random() < 0.5 else x1
+        if alpha[y, x] == 0:
+            rgb[y, x] = spine
+            alpha[y, x] = 1
+            height[y, x] = 0.9
+    rgb[:, x0] = np.where(alpha[:, x0:x0 + 1] > 0, pal[1][None, :] * 0.8, rgb[:, x0])
+    return rgb, height, alpha
+
+
+SHAPED = {"cactus": style_cactus, "glowcap": style_glowcap, "bark": style_bark, "platform": style_platform, "grass_decor": style_grass_decor}
 
 STYLES = {"gravel": style_gravel, "obsidian": style_obsidian, "moss": style_stone, "earth": style_earth, "stone": style_stone, "sand": style_sand, "planks": style_planks,
-          "bricks": style_bricks, "grass": style_grass, "ore": style_ore}
+          "bricks": style_bricks, "grass": style_grass, "ore": style_ore, "ice": style_ice, "strata": style_strata}
 
 
 # ------------------------------------------------------------------------------------------------- terrain
@@ -372,6 +466,12 @@ def terrain_frame(art, style, rng_base, mask):
         rgb[moss] = np.array(top)[np.clip((r.random((CELL, CELL))[moss] * 3).astype(int), 0, 2)]
         height[moss] += 0.15
         emission[moss & (r.random((CELL, CELL)) < 0.25)] = np.array(top[2]) * 0.22
+    if style == "ore" and art.get("glow"):
+        ore = np.array([hex_rgb(art[k]) for k in ("oreDark", "ore", "oreLight")])
+        hit = np.zeros((CELL, CELL), dtype=bool)
+        for c in ore:
+            hit |= np.all(np.abs(rgb - c) < 1.0, axis=-1)
+        emission[hit] = rgb[hit] * float(art["glow"])
     # outline + rounded corners on open sides
     outline = None
     dark = hex_rgb(art.get("dark", art["base"])) * 0.55
@@ -619,7 +719,7 @@ def main():
                 i = atlas.add(to_rgba(rgb, alpha), normals_from_height(height, alpha, 1.8), em)
                 start = i if start is None else start
             layout["tiles"][t["id"]] = {"layout": "variants", "start": start, "count": count}
-            if style in ("platform", "glowcap"):
+            if style in ("platform", "glowcap", "cactus"):
                 icons.append(to_rgba(rgb, alpha)); icon_normals.append(normals_from_height(height, alpha, 1.8))
                 icon_names.append(t["id"])
         elif style == "object":
@@ -702,6 +802,8 @@ def main():
         key = it.get("placesTile") or it.get("placesWall")
         if key:
             by_place.setdefault(key, []).append(it["id"])
+        elif it["id"] in icon_names and it.get("category") == "Material":
+            by_place.setdefault(it["id"], []).append(it["id"])
     sheet_frames, sheet_normals, sheet_names = [], [], []
     for icon, nrm, src in zip(icons, icon_normals, icon_names):
         for item_id in by_place.get(src, []):

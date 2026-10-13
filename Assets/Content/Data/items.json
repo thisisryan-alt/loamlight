@@ -42,6 +42,19 @@
       "toolSpeed": 1.5, "useTime": 0.25, "reach": 6, "damage": 7, "knockback": 3, "description": "Fells trees quickly." },
     { "id": "wooden_hammer", "name": "Wooden Hammer", "category": "Tool", "maxStack": 1, "toolType": "Hammer", "toolPower": 1,
       "toolSpeed": 1.0, "useTime": 0.3, "reach": 5.5, "damage": 3, "knockback": 4,
-      "description": "Shapes blocks into slopes and half blocks. Knocks down walls." }
+      "description": "Shapes blocks into slopes and half blocks. Knocks down walls." },
+    { "id": "snow", "name": "Snow", "category": "Block", "placesTile": "snow", "useTime": 0.12, "description": "Packed and cold." },
+    { "id": "ice", "name": "Ice", "category": "Block", "placesTile": "ice", "useTime": 0.12, "description": "Clear, hard and slick." },
+    { "id": "sandstone", "name": "Sandstone", "category": "Block", "placesTile": "sandstone", "useTime": 0.12, "description": "Sand pressed into stripes of stone." },
+    { "id": "sandstone_bricks", "name": "Sandstone Bricks", "category": "Block", "placesTile": "sandstone_bricks", "useTime": 0.12, "description": "Warm, dressed desert stone." },
+    { "id": "ash", "name": "Ash", "category": "Block", "placesTile": "ash", "useTime": 0.12, "description": "Grey dust of the Emberdeep." },
+    { "id": "basalt", "name": "Basalt", "category": "Block", "placesTile": "basalt", "useTime": 0.12, "description": "Dark rock from far below." },
+    { "id": "obsidian_bricks", "name": "Obsidian Bricks", "category": "Block", "placesTile": "obsidian_bricks", "useTime": 0.12, "description": "Glassy and nearly unbreakable." },
+    { "id": "lumite_ore", "name": "Lumite Ore", "category": "Block", "placesTile": "lumite_ore", "useTime": 0.12, "description": "Glows faintly. Needs an iron pickaxe." },
+    { "id": "cinderite_ore", "name": "Cinderite Ore", "category": "Block", "placesTile": "cinderite_ore", "useTime": 0.12, "description": "Still warm. Needs a lumite pickaxe." },
+    { "id": "lumite_bar", "name": "Lumite Bar", "category": "Material", "maxStack": 99, "description": "Light, strong, softly glowing metal." },
+    { "id": "cinderite_bar", "name": "Cinderite Bar", "category": "Material", "maxStack": 99, "description": "Metal forged in the deep fire." },
+    { "id": "cactus", "name": "Cactus", "category": "Material", "maxStack": 999, "description": "Prickly pulp from the dunes." },
+    { "id": "sandstone_wall", "name": "Sandstone Wall", "category": "Wall", "placesWall": "sandstone_wall", "useTime": 0.08, "description": "A striped desert backdrop." }
   ]
 }

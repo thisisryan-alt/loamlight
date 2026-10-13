@@ -9,6 +9,8 @@ namespace Loamlight.Player
         public bool jumpHeld;
         public bool jumpPressed;
         public bool downHeld;
+        public float submerged;     // 0..1 of the body under liquid
+        public bool lava;           // that liquid is lava (thicker)
     }
 
     /// <summary>Movement feel, in tiles and seconds.</summary>
@@ -18,10 +20,12 @@ namespace Loamlight.Player
         public float gravity, apexGravityScale, apexThreshold, maxFall;
         public float jumpSpeed, jumpCut;
         public float coyoteTime, jumpBuffer, stepHeight;
+        public float swimGravityScale, swimMaxFall, swimSpeed, swimRunScale, lavaThickness;
 
         public static MotorParams Default => new MotorParams
         {
             maxRun = 9.5f, groundAccel = 75f, groundDecel = 90f, airAccel = 48f, airDecel = 30f,
+            swimGravityScale = 0.28f, swimMaxFall = 7f, swimSpeed = 9.5f, swimRunScale = 0.6f, lavaThickness = 0.6f,
             gravity = 82f, apexGravityScale = 0.55f, apexThreshold = 4f, maxFall = 42f,
             jumpSpeed = 29.5f, jumpCut = 0.42f,
             coyoteTime = 0.1f, jumpBuffer = 0.12f, stepHeight = 1.05f,
@@ -73,8 +77,11 @@ namespace Loamlight.Player
             s.coyote = b.grounded ? p.coyoteTime : math.max(0f, s.coyote - dt);
             s.knockbackTime = math.max(0f, s.knockbackTime - dt);
 
+            bool swimming = input.submerged > 0.35f;
+            float thick = input.lava ? p.lavaThickness : 1f;
+
             // horizontal: accelerate toward the target speed, decelerate faster than we accelerate
-            float target = math.clamp(input.moveX, -1f, 1f) * p.maxRun;
+            float target = math.clamp(input.moveX, -1f, 1f) * p.maxRun * (swimming ? p.swimRunScale * thick : 1f);
             bool turning = target != 0f && math.sign(target) != math.sign(b.velocity.x) && b.velocity.x != 0f;
             float accel = b.grounded
                 ? (target == 0f || turning ? p.groundDecel : p.groundAccel)
@@ -106,8 +113,16 @@ namespace Loamlight.Player
             // gravity, softer around the apex while the button is held (more hang time, easier to aim)
             float g = p.gravity;
             if (input.jumpHeld && math.abs(b.velocity.y) < p.apexThreshold) g *= p.apexGravityScale;
+            if (swimming)
+            {
+                // liquid: slow sinking, hold jump to swim up, and a hop out at the surface
+                g *= p.swimGravityScale;
+                if (input.jumpHeld && !ev.jumped) b.velocity.y = math.max(b.velocity.y, p.swimSpeed * thick);
+            }
             if (!b.grounded) b.velocity.y = math.max(b.velocity.y - g * dt, -p.maxFall);
             else if (b.velocity.y < 0f) b.velocity.y = 0f;
+            if (swimming && b.velocity.y < -p.swimMaxFall * thick)
+                b.velocity.y = MoveTowards(b.velocity.y, -p.swimMaxFall * thick, 120f * dt);
             if (b.grounded && !ev.jumped) b.velocity.y = -0.5f;   // keep contact so slopes/steps register
 
             b.dropThrough = input.downHeld;

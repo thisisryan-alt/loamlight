@@ -27,6 +27,7 @@ namespace Loamlight.Content
         public string interact;
         public string sound = "dig";
         public bool isStation;
+        public OreSpawn ore;
 
         public bool EmitsLight => light.maxColorComponent > 0.001f;
     }

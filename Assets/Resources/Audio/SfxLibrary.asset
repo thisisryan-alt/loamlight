@@ -13,9 +13,24 @@ MonoBehaviour:
   m_Name: SfxLibrary
   m_EditorClassIdentifier: Loamlight.Core::Loamlight.Core.SfxLibrary
   groups:
+  - name: boom
+    clips:
+    - {fileID: 8300000, guid: 6b3fbc8b470d1674f9e214aea8a31525, type: 3}
+    - {fileID: 8300000, guid: 3a7cf10c096bbbd489082e27482b9dde, type: 3}
+    volume: 1
+  - name: bow
+    clips:
+    - {fileID: 8300000, guid: f8fd76dcbd3644c43916f195014d48df, type: 3}
+    - {fileID: 8300000, guid: 30dc2491911904f439ad1b19d7e89801, type: 3}
+    volume: 1
   - name: cant
     clips:
     - {fileID: 8300000, guid: cc502c5b6883c0243abc1aa06b2c6e8b, type: 3}
+    volume: 1
+  - name: cast
+    clips:
+    - {fileID: 8300000, guid: 5164f3fa6c851bd459aa8ffd70371ebe, type: 3}
+    - {fileID: 8300000, guid: 389ab76af08788d4e83da0c55c8ce9f8, type: 3}
     volume: 1
   - name: chest_close
     clips:
@@ -25,9 +40,17 @@ MonoBehaviour:
     clips:
     - {fileID: 8300000, guid: ce581496c1a92bd438cbeef43c074b12, type: 3}
     volume: 1
+  - name: chime
+    clips:
+    - {fileID: 8300000, guid: 5149ad7f2ec360c49b8861248f4f66a1, type: 3}
+    volume: 1
   - name: craft
     clips:
     - {fileID: 8300000, guid: da6e204ac823e1544979ff09815f0403, type: 3}
+    volume: 1
+  - name: death
+    clips:
+    - {fileID: 8300000, guid: d8e66528a78097140868bbbff277aa3f, type: 3}
     volume: 1
   - name: dig
     clips:
@@ -60,6 +83,32 @@ MonoBehaviour:
     clips:
     - {fileID: 8300000, guid: ac6ba465e972d7942a8ae52ed7fa25f4, type: 3}
     volume: 1
+  - name: enemy_die
+    clips:
+    - {fileID: 8300000, guid: 7b6d35f364b191546b0de7561ece8c44, type: 3}
+    - {fileID: 8300000, guid: 238eeec20e1f4854a82592788d45325a, type: 3}
+    volume: 1
+  - name: heal
+    clips:
+    - {fileID: 8300000, guid: 4e54a4af6c3c3b54d816d261631cc350, type: 3}
+    volume: 1
+  - name: hit
+    clips:
+    - {fileID: 8300000, guid: 1ec333616aea27e4d9dfeb0954edd0b1, type: 3}
+    - {fileID: 8300000, guid: cfb369211966ffe469962eb5c9954603, type: 3}
+    - {fileID: 8300000, guid: b04a5d2c7bd19c04dbc969c1790ad2d9, type: 3}
+    volume: 1
+  - name: hop
+    clips:
+    - {fileID: 8300000, guid: d080906d3d9f19f449fd17656f722fb1, type: 3}
+    - {fileID: 8300000, guid: a92c583a3534b2644976b2e1b95e4b20, type: 3}
+    volume: 1
+  - name: hurt
+    clips:
+    - {fileID: 8300000, guid: 7bbff10802411f44181de522ba4c8da7, type: 3}
+    - {fileID: 8300000, guid: 818f47b7c144d17468306087be57d8b0, type: 3}
+    - {fileID: 8300000, guid: b6be5836f097fdc41b2fd48a318308aa, type: 3}
+    volume: 1
   - name: jump
     clips:
     - {fileID: 8300000, guid: f03b17f103c390843a373df435ed3839, type: 3}
@@ -78,6 +127,24 @@ MonoBehaviour:
     clips:
     - {fileID: 8300000, guid: 3d576feb0447cf14db9f9b3e02142f78, type: 3}
     - {fileID: 8300000, guid: 90bac47dc5f4eb34d9342f22c4c5e4b5, type: 3}
+    volume: 1
+  - name: roar
+    clips:
+    - {fileID: 8300000, guid: d9b5ae623565b4046b9aba54543de821, type: 3}
+    volume: 1
+  - name: screech
+    clips:
+    - {fileID: 8300000, guid: c3650a85dba4a0c478de9d6d71c736ab, type: 3}
+    - {fileID: 8300000, guid: 5b26d7717aa71e641b3bd582b2a7d600, type: 3}
+    volume: 1
+  - name: sizzle
+    clips:
+    - {fileID: 8300000, guid: dab352ac0cd0ef546a6c506534dc2a4c, type: 3}
+    volume: 1
+  - name: splash
+    clips:
+    - {fileID: 8300000, guid: b36c091b2dbfac647a13ee538abd159c, type: 3}
+    - {fileID: 8300000, guid: 16d99b85d2c6b32429f8b556f94b2762, type: 3}
     volume: 1
   - name: step
     clips:
@@ -104,5 +171,9 @@ MonoBehaviour:
   - name: ui_open
     clips:
     - {fileID: 8300000, guid: 2425c08f707e49246805cd6284942ee1, type: 3}
+    volume: 1
+  - name: warn
+    clips:
+    - {fileID: 8300000, guid: 2b9596573df068147a55349f5d44017c, type: 3}
     volume: 1
   music: []

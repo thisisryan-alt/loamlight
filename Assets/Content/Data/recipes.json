@@ -22,6 +22,12 @@
 
     { "id": "bucket", "result": "bucket", "station": "anvil", "ingredients": [ { "item": "iron_bar", "count": 3 } ] },
     { "id": "iron_pickaxe", "result": "iron_pickaxe", "station": "anvil", "ingredients": [ { "item": "iron_bar", "count": 10 }, { "item": "wood", "count": 3 } ] },
-    { "id": "iron_axe", "result": "iron_axe", "station": "anvil", "ingredients": [ { "item": "iron_bar", "count": 8 }, { "item": "wood", "count": 3 } ] }
+    { "id": "iron_axe", "result": "iron_axe", "station": "anvil", "ingredients": [ { "item": "iron_bar", "count": 8 }, { "item": "wood", "count": 3 } ] },
+
+    { "id": "sandstone_bricks", "result": "sandstone_bricks", "station": "workbench", "ingredients": [ { "item": "sandstone", "count": 2 } ] },
+    { "id": "sandstone_wall", "result": "sandstone_wall", "resultCount": 4, "station": "workbench", "ingredients": [ { "item": "sandstone_bricks", "count": 1 } ] },
+    { "id": "obsidian_bricks", "result": "obsidian_bricks", "station": "furnace", "ingredients": [ { "item": "obsidian", "count": 2 } ] },
+    { "id": "lumite_bar", "result": "lumite_bar", "station": "furnace", "ingredients": [ { "item": "lumite_ore", "count": 3 } ] },
+    { "id": "cinderite_bar", "result": "cinderite_bar", "station": "furnace", "ingredients": [ { "item": "cinderite_ore", "count": 3 }, { "item": "obsidian", "count": 1 } ] }
   ]
 }

@@ -54,6 +54,8 @@ namespace Loamlight.Game
         public ChunkRenderer Chunks { get; private set; }
         public LightMapSystem Light { get; private set; }
         public SimulationRunner Simulation { get; private set; }
+        public DayNightCycle DayNight { get; private set; }
+        public SkyBackdrop Sky { get; private set; }
         public PlayerController Player { get; private set; }
         public ToolUser Tools { get; private set; }
         public Interactor Interactor { get; private set; }
@@ -119,6 +121,7 @@ namespace Loamlight.Game
             playerGo.AddComponent<SpriteAnimator>().Configure(SpriteSheetIndex.Get("miner"), "idle");
             Player = playerGo.AddComponent<PlayerController>();
             Player.Grid = Grid;
+            Player.Liquids = Grid;
             Player.Input = HumanInput;
 
             Pickups = new GameObject("Pickups").AddComponent<PickupSystem>();
@@ -177,6 +180,17 @@ namespace Loamlight.Game
             Light.Init(World, Render.TileProps, cam);
             Simulation = new GameObject("Simulation").AddComponent<SimulationRunner>();
             Simulation.Init(World, Render.TileProps, Db, cam);
+            Simulation.Reacted += n => Sfx.Play("sizzle", cam.transform.position, Mathf.Clamp01(0.25f + n * 0.05f));
+            DayNight = new GameObject("Day Night").AddComponent<DayNightCycle>();
+            DayNight.Light = Light;
+            if (!string.IsNullOrEmpty(GameSession.LoadPath)) GameState.RestoreTime(this, Meta.gameJson);
+            DayNight.SetTime(DayNight.time);
+            Sky = SkyBackdrop.Create(cam, DayNight, WorldGenerator.SurfaceLevel(World.Height, GenParams.Default));
+            Player.Splashed += (under, kind) =>
+            {
+                if (kind == LiquidType.Lava) Sfx.Play("sizzle", Player.Center, 0.6f);
+                else Sfx.Play("splash", Player.Feet, under ? 0.7f : 0.45f);
+            };
 
             // UI
             if (FindAnyObjectByType<EventSystem>() == null)
@@ -220,13 +234,7 @@ namespace Loamlight.Game
             if (LaunchArgs.TryGet("-llLoad", out var load)) GameSession.LoadPath = load;
         }
 
-        public static GenIds GenIdsFor(ContentDatabase db) => new GenIds
-        {
-            dirt = db.TileId("dirt"), grass = db.TileId("grass"), stone = db.TileId("stone"), sand = db.TileId("sand"),
-            clay = db.TileId("clay"), copperOre = db.TileId("copper_ore"), ironOre = db.TileId("iron_ore"),
-            treeTrunk = db.TileId("tree_trunk"), treeTop = db.TileId("tree_top"), grassDecor = db.TileId("grass_decor"),
-            dirtWall = db.WallId("dirt_wall"), stoneWall = db.WallId("stone_wall"),
-        };
+        public static GenIds GenIdsFor(ContentDatabase db) => GenIds.From(db);
 
         SpriteRenderer CreateOverlay(string name)
         {
@@ -290,7 +298,16 @@ namespace Loamlight.Game
             },
             ["spawn"] = new List<object> { (double)g.SpawnPointWorld.x, (double)g.SpawnPointWorld.y, g.HasBedSpawn },
             ["chests"] = g.Chests.Capture(),
+            ["time"] = g.DayNight != null ? (double)g.DayNight.time : 0.08,
+            ["day"] = g.DayNight != null ? (double)g.DayNight.day : 1.0,
         };
+
+        public static void RestoreTime(GameBootstrap g, string json)
+        {
+            if (string.IsNullOrEmpty(json) || !(MiniJson.Parse(json) is Dictionary<string, object> root) || g.DayNight == null) return;
+            if (root.TryGetValue("time", out var t)) g.DayNight.time = Mathf.Repeat((float)Convert.ToDouble(t), 1f);
+            if (root.TryGetValue("day", out var d)) g.DayNight.day = (int)Convert.ToDouble(d);
+        }
 
         public static void Restore(GameBootstrap g, string json)
         {

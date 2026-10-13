@@ -101,7 +101,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
+        y: 16
         width: 16
         height: 16
       alignment: 9
@@ -123,7 +123,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 16
-        y: 0
+        y: 16
         width: 16
         height: 16
       alignment: 9
@@ -145,7 +145,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 32
-        y: 0
+        y: 16
         width: 16
         height: 16
       alignment: 9
@@ -167,7 +167,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 48
-        y: 0
+        y: 16
         width: 16
         height: 16
       alignment: 9
@@ -188,8 +188,8 @@ TextureImporter:
       name: icon_copper_axe
       rect:
         serializedVersion: 2
-        x: 64
-        y: 0
+        x: 80
+        y: 16
         width: 16
         height: 16
       alignment: 9
@@ -210,8 +210,8 @@ TextureImporter:
       name: icon_copper_bar
       rect:
         serializedVersion: 2
-        x: 80
-        y: 0
+        x: 96
+        y: 16
         width: 16
         height: 16
       alignment: 9
@@ -232,8 +232,8 @@ TextureImporter:
       name: icon_copper_pickaxe
       rect:
         serializedVersion: 2
-        x: 96
-        y: 0
+        x: 112
+        y: 16
         width: 16
         height: 16
       alignment: 9
@@ -254,8 +254,8 @@ TextureImporter:
       name: icon_door
       rect:
         serializedVersion: 2
-        x: 112
-        y: 0
+        x: 128
+        y: 16
         width: 16
         height: 16
       alignment: 9
@@ -276,8 +276,8 @@ TextureImporter:
       name: icon_furnace
       rect:
         serializedVersion: 2
-        x: 128
-        y: 0
+        x: 144
+        y: 16
         width: 16
         height: 16
       alignment: 9
@@ -298,8 +298,8 @@ TextureImporter:
       name: icon_iron_axe
       rect:
         serializedVersion: 2
-        x: 144
-        y: 0
+        x: 160
+        y: 16
         width: 16
         height: 16
       alignment: 9
@@ -320,8 +320,8 @@ TextureImporter:
       name: icon_iron_bar
       rect:
         serializedVersion: 2
-        x: 160
-        y: 0
+        x: 176
+        y: 16
         width: 16
         height: 16
       alignment: 9
@@ -342,8 +342,8 @@ TextureImporter:
       name: icon_iron_pickaxe
       rect:
         serializedVersion: 2
-        x: 176
-        y: 0
+        x: 192
+        y: 16
         width: 16
         height: 16
       alignment: 9
@@ -364,8 +364,8 @@ TextureImporter:
       name: icon_table
       rect:
         serializedVersion: 2
-        x: 192
-        y: 0
+        x: 224
+        y: 16
         width: 16
         height: 16
       alignment: 9
@@ -386,8 +386,8 @@ TextureImporter:
       name: icon_wooden_hammer
       rect:
         serializedVersion: 2
-        x: 208
-        y: 0
+        x: 240
+        y: 16
         width: 16
         height: 16
       alignment: 9
@@ -408,7 +408,7 @@ TextureImporter:
       name: icon_workbench
       rect:
         serializedVersion: 2
-        x: 224
+        x: 0
         y: 0
         width: 16
         height: 16
@@ -422,6 +422,50 @@ TextureImporter:
       bones: []
       spriteID: c46ecc7155e681029bc404a62f47f126
       internalID: 1842744750
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_cinderite_bar
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 16
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dd34b4475c0c3695feb8813596618f7f
+      internalID: 1068200110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_lumite_bar
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 16
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 384dbe7cdfd9992d05326d0c9c842365
+      internalID: 1697526163
       vertices: []
       indices: 
       edges: []
@@ -446,6 +490,7 @@ TextureImporter:
       icon_bed: -1058637884
       icon_chair: 1288113972
       icon_chest: 57434722
+      icon_cinderite_bar: 1068200110
       icon_copper_axe: -531738543
       icon_copper_bar: 1449577731
       icon_copper_pickaxe: 1369605695
@@ -454,6 +499,7 @@ TextureImporter:
       icon_iron_axe: -1660465365
       icon_iron_bar: -1696839487
       icon_iron_pickaxe: 2104570212
+      icon_lumite_bar: 1697526163
       icon_table: 1897060876
       icon_wooden_hammer: -562145489
       icon_workbench: 1842744750

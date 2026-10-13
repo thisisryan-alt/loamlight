@@ -72,7 +72,8 @@ namespace Loamlight.Tests
             // progression check: starting with world resources (wood, stone, ores, sand, clay) and nothing else,
             // walk recipes and stations until nothing new can be made; every recipe result must become obtainable.
             var book = new CraftingBook(Db);
-            var have = new HashSet<string> { "wood", "stone", "dirt", "sand", "clay", "copper_ore", "iron_ore", "copper_pickaxe", "copper_axe", "torch" };
+            var have = new HashSet<string> { "wood", "stone", "dirt", "sand", "clay", "copper_ore", "iron_ore", "copper_pickaxe", "copper_axe", "torch",
+                "gravel", "obsidian", "sandstone", "snow", "ice", "ash", "basalt", "lumite_ore", "cinderite_ore", "cactus", "glowcap" };   // starting kit + natural world drops
             var stations = new HashSet<string>();
             bool changed = true;
             while (changed)

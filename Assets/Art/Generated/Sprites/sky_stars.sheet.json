@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "name": "sky_stars",
+  "frameWidth": 256,
+  "frameHeight": 160,
+  "columns": 1,
+  "rows": 1,
+  "pixelsPerUnit": 16,
+  "pivot": [
+    0.5,
+    0.5
+  ],
+  "meshType": "FullRect",
+  "normalMap": "",
+  "animations": [
+    {
+      "name": "all",
+      "fps": 1,
+      "loop": false,
+      "frames": [
+        0
+      ]
+    }
+  ],
+  "frames": [
+    {
+      "name": "sky_stars",
+      "x": 0,
+      "y": 0,
+      "w": 256,
+      "h": 160
+    }
+  ],
+  "source": "Tools/art/gen_sky.py"
+}

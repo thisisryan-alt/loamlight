@@ -178,15 +178,33 @@ def obj_tree_top():
     B("trunk_top", 2.25, 0.0, 2.75, 0.9, "#6b4a2c", depth=0.4, y=0.3)
 
 
+def obj_pine_top():
+    """Tiered conifer: stacked cones darkening toward the bottom, a dusting of snow on each tier."""
+    tiers = [(0.55, 2.4, 1.15, "#24563f"), (1.35, 2.0, 1.0, "#2b6549"), (2.1, 1.55, 0.9, "#337353"), (2.8, 1.05, 0.85, "#3b805c")]
+    for i, (z, r, hgt, col) in enumerate(tiers):
+        bm = bmesh.new()
+        bmesh.ops.create_cone(bm, cap_ends=True, cap_tris=False, segments=12, radius1=r, radius2=0.08, depth=hgt)
+        for v in bm.verts:
+            v.co = Vector((v.co.x + 2.5, v.co.y * 0.55 - 0.1, v.co.z + z + hgt / 2))
+        rs.new_object(f"tier{i}", bm, col)
+        bm = bmesh.new()
+        bmesh.ops.create_cone(bm, cap_ends=True, cap_tris=False, segments=12, radius1=r * 0.55, radius2=0.05, depth=hgt * 0.45)
+        for v in bm.verts:
+            v.co = Vector((v.co.x + 2.5, v.co.y * 0.5 - 0.2, v.co.z + z + hgt * 0.78))
+        rs.new_object(f"snow{i}", bm, "#e8f0f6")
+    B("trunk_top", 2.3, 0.0, 2.7, 0.7, "#5a3d24", depth=0.4, y=0.3)
+
+
 OBJECTS = {
     "workbench": (2, 1, obj_workbench), "furnace": (3, 2, obj_furnace), "anvil": (2, 1, obj_anvil),
     "table": (3, 2, obj_table), "chair": (1, 2, obj_chair), "chest": (2, 2, obj_chest),
     "door": (1, 3, lambda: obj_door(False)), "door_open": (1, 3, lambda: obj_door(True)),
-    "bed": (4, 2, obj_bed), "tree_top": (5, 4, obj_tree_top),
+    "bed": (4, 2, obj_bed), "tree_top": (5, 4, obj_tree_top), "pine_top": (5, 4, obj_pine_top),
 }
 
 # ------------------------------------------------------------------------------------------------- icons
-METAL = {"copper": ("#c87533", "#8a4a24", "#f2a96a"), "iron": ("#a8a7b0", "#6d6c75", "#d8d7de")}
+METAL = {"copper": ("#c87533", "#8a4a24", "#f2a96a"), "iron": ("#a8a7b0", "#6d6c75", "#d8d7de"),
+         "lumite": ("#3fd6c0", "#1f8a7e", "#b6fff2"), "cinderite": ("#ff7a2a", "#a3360f", "#ffd08a")}
 
 
 def icon_tool(kind, metal):
@@ -235,6 +253,7 @@ ICONS = {
     "copper_axe": lambda: icon_tool("axe", "copper"), "iron_axe": lambda: icon_tool("axe", "iron"),
     "wooden_hammer": lambda: icon_tool("hammer", "copper"),
     "copper_bar": lambda: icon_bar("copper"), "iron_bar": lambda: icon_bar("iron"),
+    "lumite_bar": lambda: icon_bar("lumite"), "cinderite_bar": lambda: icon_bar("cinderite"),
 }
 
 
@@ -314,13 +333,13 @@ def main():
     manifest = []
     for name, spec in OBJECTS.items():
         manifest.append(render_object(name, spec, obj_dir))
-        if name not in ("tree_top", "door_open"):
+        if name not in ("tree_top", "pine_top", "door_open"):
             render_object_icon(name, spec, icon_dir)
     for name, build in ICONS.items():
         render_icon(name, build, icon_dir)
     with open(os.path.join(obj_dir, "manifest.json"), "w", encoding="utf-8", newline="\n") as f:
         json.dump(manifest, f, indent=2)
-    icons = sorted(n for n in list(ICONS) + [n for n in OBJECTS if n not in ("tree_top", "door_open")])
+    icons = sorted(n for n in list(ICONS) + [n for n in OBJECTS if n not in ("tree_top", "pine_top", "door_open")])
     with open(os.path.join(icon_dir, "manifest.json"), "w", encoding="utf-8", newline="\n") as f:
         json.dump(icons, f, indent=2)
     print(f"[render_objects] {len(manifest)} objects, {len(icons)} icons -> {root}")

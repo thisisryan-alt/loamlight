@@ -100,8 +100,8 @@ TextureImporter:
       name: icon_clay
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
+        x: 64
+        y: 16
         width: 16
         height: 16
       alignment: 9
@@ -122,8 +122,8 @@ TextureImporter:
       name: icon_dirt
       rect:
         serializedVersion: 2
-        x: 32
-        y: 0
+        x: 96
+        y: 16
         width: 16
         height: 16
       alignment: 9
@@ -144,8 +144,8 @@ TextureImporter:
       name: icon_sand
       rect:
         serializedVersion: 2
-        x: 112
-        y: 0
+        x: 224
+        y: 16
         width: 16
         height: 16
       alignment: 9
@@ -166,7 +166,7 @@ TextureImporter:
       name: icon_stone
       rect:
         serializedVersion: 2
-        x: 128
+        x: 32
         y: 0
         width: 16
         height: 16
@@ -188,7 +188,7 @@ TextureImporter:
       name: icon_stone_bricks
       rect:
         serializedVersion: 2
-        x: 144
+        x: 48
         y: 0
         width: 16
         height: 16
@@ -210,7 +210,7 @@ TextureImporter:
       name: icon_torch
       rect:
         serializedVersion: 2
-        x: 160
+        x: 64
         y: 0
         width: 16
         height: 16
@@ -232,7 +232,7 @@ TextureImporter:
       name: icon_stone_brick_wall
       rect:
         serializedVersion: 2
-        x: 208
+        x: 128
         y: 0
         width: 16
         height: 16
@@ -254,7 +254,7 @@ TextureImporter:
       name: icon_wood_wall
       rect:
         serializedVersion: 2
-        x: 224
+        x: 144
         y: 0
         width: 16
         height: 16
@@ -276,8 +276,8 @@ TextureImporter:
       name: icon_copper_ore
       rect:
         serializedVersion: 2
-        x: 16
-        y: 0
+        x: 80
+        y: 16
         width: 16
         height: 16
       alignment: 9
@@ -298,8 +298,8 @@ TextureImporter:
       name: icon_iron_ore
       rect:
         serializedVersion: 2
-        x: 80
-        y: 0
+        x: 160
+        y: 16
         width: 16
         height: 16
       alignment: 9
@@ -320,7 +320,7 @@ TextureImporter:
       name: icon_wood
       rect:
         serializedVersion: 2
-        x: 176
+        x: 80
         y: 0
         width: 16
         height: 16
@@ -342,7 +342,7 @@ TextureImporter:
       name: icon_wood_platform
       rect:
         serializedVersion: 2
-        x: 192
+        x: 96
         y: 0
         width: 16
         height: 16
@@ -364,8 +364,8 @@ TextureImporter:
       name: icon_glowcap
       rect:
         serializedVersion: 2
-        x: 48
-        y: 0
+        x: 112
+        y: 16
         width: 16
         height: 16
       alignment: 9
@@ -386,8 +386,8 @@ TextureImporter:
       name: icon_gravel
       rect:
         serializedVersion: 2
-        x: 64
-        y: 0
+        x: 128
+        y: 16
         width: 16
         height: 16
       alignment: 9
@@ -408,8 +408,8 @@ TextureImporter:
       name: icon_obsidian
       rect:
         serializedVersion: 2
-        x: 96
-        y: 0
+        x: 192
+        y: 16
         width: 16
         height: 16
       alignment: 9
@@ -422,6 +422,248 @@ TextureImporter:
       bones: []
       spriteID: a74652a45129eeedd21f65b99eb7ced7
       internalID: -929672009
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_ash
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 16
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d461dd7667a64b211ef1b0be53aed8d3
+      internalID: 160164223
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_basalt
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 16
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 911fdc60a151c33d6248e6ddeaf9ac49
+      internalID: 678079839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_cactus
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 16
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e3f2c3e57ed6c80d7f11b6b7d08ea3b3
+      internalID: -1787520897
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_cinderite_ore
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 16
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 19c25735213a82ef17a0b311c4f50c29
+      internalID: -838317690
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_ice
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 16
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d2efecc306e1b7a15149c1fc7683f7a1
+      internalID: -1379008665
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_lumite_ore
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 16
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3341d77f37f05614d167a6efe1996e6d
+      internalID: -912223253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_obsidian_bricks
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 16
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 15375258a330bf8a8b58635e8549e13d
+      internalID: -417940545
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_sandstone
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 16
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b6bada30b4228fe5464966851b3bc44b
+      internalID: -1329946175
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_sandstone_bricks
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dbdaa3641df8de5952b92edf0c553566
+      internalID: 1911306729
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_snow
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 0
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4bd9fa7fe8526faf14aab04840a2662c
+      internalID: 123756547
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_sandstone_wall
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 0
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b14a62e3517953be64b002a496942eeb
+      internalID: -1210605731
       vertices: []
       indices: 
       edges: []
@@ -442,14 +684,25 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
+      icon_ash: 160164223
+      icon_basalt: 678079839
+      icon_cactus: -1787520897
+      icon_cinderite_ore: -838317690
       icon_clay: -1870674132
       icon_copper_ore: 1036631913
       icon_dirt: -1443467524
       icon_glowcap: 53161660
       icon_gravel: 1692039051
+      icon_ice: -1379008665
       icon_iron_ore: 1974185782
+      icon_lumite_ore: -912223253
       icon_obsidian: -929672009
+      icon_obsidian_bricks: -417940545
       icon_sand: -1659341413
+      icon_sandstone: -1329946175
+      icon_sandstone_bricks: 1911306729
+      icon_sandstone_wall: -1210605731
+      icon_snow: 123756547
       icon_stone: -1019700118
       icon_stone_brick_wall: -377150393
       icon_stone_bricks: -911803985

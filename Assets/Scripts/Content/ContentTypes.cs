@@ -31,6 +31,17 @@ namespace Loamlight.Content
         public int count;
     }
 
+    /// <summary>Where the world generator scatters an ore: noise blobs inside host tiles within a depth band.</summary>
+    [Serializable]
+    public struct OreSpawn
+    {
+        public bool enabled;
+        public string[] hosts;
+        [Tooltip("Band, as a fraction of world height measured from the top (0 = sky, 1 = bedrock).")]
+        public float depthMin, depthMax;
+        public float scale, threshold;
+    }
+
     [Serializable]
     public struct LootEntry
     {

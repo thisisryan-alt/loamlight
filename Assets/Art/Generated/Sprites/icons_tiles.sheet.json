@@ -3,8 +3,8 @@
   "name": "icons_tiles",
   "frameWidth": 16,
   "frameHeight": 16,
-  "columns": 15,
-  "rows": 1,
+  "columns": 16,
+  "rows": 2,
   "pixelsPerUnit": 16,
   "pivot": [
     0.5,
@@ -32,112 +32,200 @@
         11,
         12,
         13,
-        14
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25
       ]
     }
   ],
   "frames": [
     {
+      "name": "icon_ash",
+      "x": 0,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_basalt",
+      "x": 16,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_cactus",
+      "x": 32,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_cinderite_ore",
+      "x": 48,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
       "name": "icon_clay",
+      "x": 64,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_copper_ore",
+      "x": 80,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_dirt",
+      "x": 96,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_glowcap",
+      "x": 112,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_gravel",
+      "x": 128,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_ice",
+      "x": 144,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_iron_ore",
+      "x": 160,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_lumite_ore",
+      "x": 176,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_obsidian",
+      "x": 192,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_obsidian_bricks",
+      "x": 208,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_sand",
+      "x": 224,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_sandstone",
+      "x": 240,
+      "y": 16,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "name": "icon_sandstone_bricks",
       "x": 0,
       "y": 0,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_copper_ore",
+      "name": "icon_snow",
       "x": 16,
       "y": 0,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_dirt",
+      "name": "icon_stone",
       "x": 32,
       "y": 0,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_glowcap",
+      "name": "icon_stone_bricks",
       "x": 48,
       "y": 0,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_gravel",
+      "name": "icon_torch",
       "x": 64,
       "y": 0,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_iron_ore",
+      "name": "icon_wood",
       "x": 80,
       "y": 0,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_obsidian",
+      "name": "icon_wood_platform",
       "x": 96,
       "y": 0,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_sand",
+      "name": "icon_sandstone_wall",
       "x": 112,
       "y": 0,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_stone",
+      "name": "icon_stone_brick_wall",
       "x": 128,
       "y": 0,
       "w": 16,
       "h": 16
     },
     {
-      "name": "icon_stone_bricks",
-      "x": 144,
-      "y": 0,
-      "w": 16,
-      "h": 16
-    },
-    {
-      "name": "icon_torch",
-      "x": 160,
-      "y": 0,
-      "w": 16,
-      "h": 16
-    },
-    {
-      "name": "icon_wood",
-      "x": 176,
-      "y": 0,
-      "w": 16,
-      "h": 16
-    },
-    {
-      "name": "icon_wood_platform",
-      "x": 192,
-      "y": 0,
-      "w": 16,
-      "h": 16
-    },
-    {
-      "name": "icon_stone_brick_wall",
-      "x": 208,
-      "y": 0,
-      "w": 16,
-      "h": 16
-    },
-    {
       "name": "icon_wood_wall",
-      "x": 224,
+      "x": 144,
       "y": 0,
       "w": 16,
       "h": 16

@@ -59,7 +59,7 @@ namespace Loamlight.Liquids
 
         void OnDestroy() => Dispose();
 
-        void Dispose()
+        public void Dispose()
         {
             if (_changed.IsCreated) _changed.Dispose();
             if (_perLine.IsCreated) _perLine.Dispose();
@@ -130,6 +130,7 @@ namespace Loamlight.Liquids
             reactionsRows.Dispose();
             evap.Dispose();
             Reactions += react;
+            if (react > 0) Reacted?.Invoke(react);
             Evaporated += ev;
             ApplyChanged(r, WorldData.FlagLiquidActive, true);
             LiquidTicks++;
@@ -203,6 +204,8 @@ namespace Loamlight.Liquids
         }
 
         public event System.Action LiquidChanged;
+        /// <summary>Water met lava this tick (count of cells that turned to obsidian).</summary>
+        public event System.Action<int> Reacted;
 
         /// <summary>Total liquid in a region (conservation checks).</summary>
         public long TotalLiquid(SimRegion r, LiquidType type)

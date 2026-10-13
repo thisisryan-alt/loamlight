@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "name": "sky_moon",
+  "frameWidth": 24,
+  "frameHeight": 24,
+  "columns": 1,
+  "rows": 1,
+  "pixelsPerUnit": 16,
+  "pivot": [
+    0.5,
+    0.5
+  ],
+  "meshType": "FullRect",
+  "normalMap": "",
+  "animations": [
+    {
+      "name": "all",
+      "fps": 1,
+      "loop": false,
+      "frames": [
+        0
+      ]
+    }
+  ],
+  "frames": [
+    {
+      "name": "sky_moon",
+      "x": 0,
+      "y": 0,
+      "w": 24,
+      "h": 24
+    }
+  ],
+  "source": "Tools/art/gen_sky.py"
+}

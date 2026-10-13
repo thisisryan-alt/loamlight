@@ -1,5 +1,6 @@
 using System;
 using Loamlight.Core;
+using Loamlight.World;
 using Loamlight.World.Collision;
 using Unity.Mathematics;
 using UnityEngine;
@@ -21,6 +22,11 @@ namespace Loamlight.Player
         /// <summary>Multiplier on simulated time (1 = normal, 0 = frozen for hitstop).</summary>
         public float TimeScale { get; set; } = 1f;
         public bool Frozen { get; set; }
+        public ILiquidSampler Liquids { get; set; }
+        public float Submerged { get; private set; }
+        public LiquidType SubmergedIn { get; private set; }
+        /// <summary>Head went under or came back out of a liquid (splash sounds, particles).</summary>
+        public event Action<bool, LiquidType> Splashed;
 
         MotorState _state, _prev;
         float _accum;
@@ -60,9 +66,14 @@ namespace Loamlight.Player
             {
                 _prev = _state;
                 jumpPressed |= Input.ConsumeJumpPressed();
+                float wet = TileCollision.Submersion(_state.body, Liquids, out var kind);
+                if ((wet > 0.35f) != (Submerged > 0.35f)) Splashed?.Invoke(wet > 0.35f, wet > 0.35f ? kind : SubmergedIn);
+                Submerged = wet;
+                SubmergedIn = wet > 0f ? kind : LiquidType.None;
                 var input = new MotorInput
                 {
                     moveX = Input.MoveX, jumpHeld = Input.JumpHeld, jumpPressed = jumpPressed, downHeld = Input.DownHeld,
+                    submerged = wet, lava = kind == LiquidType.Lava,
                 };
                 jumpPressed = false;
                 var ev = PlayerMotor.Step(ref _state, input, motor, Grid, StepTime);

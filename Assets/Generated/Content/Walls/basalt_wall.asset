@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e4c678a24ba52241b3fa781881992d5, type: 3}
+  m_Name: basalt_wall
+  m_EditorClassIdentifier: Loamlight.Content::Loamlight.Content.WallDef
+  id: basalt_wall
+  displayName: Basalt Wall
+  drop: 
+  hardness: 0.3
+  mapColor: {r: 0.13333334, g: 0.11764706, b: 0.12156863, a: 1}

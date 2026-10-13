@@ -13,8 +13,14 @@ namespace Loamlight.World.Collision
         CellCollision Cell(int x, int y, out TileShape shape);
     }
 
+    /// <summary>Liquid at a tile: amount 0..255 (255 = full tile) and its type.</summary>
+    public interface ILiquidSampler
+    {
+        byte Liquid(int x, int y, out LiquidType type);
+    }
+
     /// <summary>Collision view of a <see cref="WorldData"/>: terrain is solid, platforms are one-way, closed doors solid.</summary>
-    public sealed class WorldCollisionGrid : ICollisionGrid
+    public sealed class WorldCollisionGrid : ICollisionGrid, ILiquidSampler
     {
         readonly WorldData _world;
         readonly NativeArray<TileProps> _props;
@@ -48,6 +54,16 @@ namespace Loamlight.World.Collision
                 default:
                     return CellCollision.Empty;
             }
+        }
+
+        public byte Liquid(int x, int y, out LiquidType type)
+        {
+            type = LiquidType.None;
+            if (!_world.InBounds(x, y)) return 0;
+            int i = _world.Layout.Index(x, y);
+            byte amount = _world.Liquid[i];
+            if (amount != 0) type = (LiquidType)_world.LiquidKind[i];
+            return amount;
         }
     }
 
@@ -270,6 +286,29 @@ namespace Loamlight.World.Collision
                 if (ty + MaxTop(shape, tx, left, right) > bottom + Eps) return false;
             }
             return true;
+        }
+
+        /// <summary>
+        /// Fraction (0..1) of the body's height that is under liquid, sampled down the body's centre column. A cell's
+        /// liquid fills it from the bottom (amount / 255 of a tile). Lava wins over water when both touch the body.
+        /// </summary>
+        public static float Submersion(Body b, ILiquidSampler liquids, out LiquidType type)
+        {
+            type = LiquidType.None;
+            if (liquids == null) return 0f;
+            int tx = (int)math.floor(b.position.x);
+            int ty0 = (int)math.floor(b.Bottom), ty1 = (int)math.floor(b.Top - Eps);
+            float wet = 0f;
+            for (int ty = ty0; ty <= ty1; ty++)
+            {
+                byte amount = liquids.Liquid(tx, ty, out var t);
+                if (amount == 0) continue;
+                float top = ty + amount / 255f;
+                float lo = math.max(ty, b.Bottom), hi = math.min(top, b.Top);
+                if (hi > lo) wet += hi - lo;
+                if (t == LiquidType.Lava || type == LiquidType.None) type = t;
+            }
+            return math.saturate(wet / b.size.y);
         }
 
         public static bool Overlaps(Body b, int tx, int ty) =>
