@@ -41,7 +41,10 @@ namespace Loamlight.Game.Scenarios
             // --- mining the block under our feet, item goes to the inventory
             Check(Select("copper_pickaxe"), "pickaxe is in the inventory");
             yield return Frames(2);
+            // the body is 1.25 tiles wide: mine under whichever column it actually stands on
             var below = new Vector2Int(FeetTile.x, FeetTile.y - 1);
+            foreach (int x in BodyColumns())
+                if (G.Edits.IsSolidTerrain(x, FeetTile.y - 1)) { below = new Vector2Int(x, FeetTile.y - 1); break; }
             ushort mined = G.World.GetBlock(below.x, below.y);
             var minedDef = G.Db.Tile(mined);
             string dropId = minedDef != null ? minedDef.drop : "";

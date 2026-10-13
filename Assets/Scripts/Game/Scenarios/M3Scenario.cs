@@ -35,7 +35,7 @@ namespace Loamlight.Game.Scenarios
             Check(G.DayNight.IsNight && G.Light.skyIntensity < 0.25f, $"night sky light {G.Light.skyIntensity:0.00}");
             Check(night < noon * 0.4f, $"open ground is dark at night ({night:0.00} vs {noon:0.00} at noon)");
             // a torch pushes back the dark
-            var torchSpot = FindPlaceSpot(t => w.GetBlock(t.x, t.y) == 0 && w.GetBlock(t.x, t.y - 1) != 0 && Mathf.Abs(t.x - FeetTile.x) >= 2);
+            var torchSpot = FindPlaceSpot(t => w.GetBlock(t.x, t.y) == 0 && G.Edits.IsSolidTerrain(t.x, t.y - 1) && Mathf.Abs(t.x - FeetTile.x) >= 2);
             Check(torchSpot.HasValue, "found a spot for a torch");
             if (torchSpot.HasValue)
             {

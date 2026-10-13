@@ -258,32 +258,56 @@ The user asked for the whole game to be finished without milestone check-ins (20
 - The dune surface is steppy, because of per-column noise and sand settling.
 
 
-## M4: Fight (plan, 2026-10-13)
+## M4: Fight (done 2026-10-13)
 
-### Architecture
-- **`Loamlight.Combat` (Core, Content, World).**
-  - `Health` (pure `HealthState` plus a component), `DamageInfo`, knockback, i-frames.
-  - `Hitstop`: a gameplay time scale that player, enemies, projectiles and tools all multiply in. It is never `Time.timeScale`, so UI and audio keep running.
-  - `Projectiles`: pooled, gravity-optional, they collide with tiles and bodies.
-  - `MeleeArc` hit queries, plus `CombatFx`: sparks, damage numbers and shake requests, delivered through events so Combat stays UI-free.
-- **`Loamlight.AI` (Core, Content, World, Combat).**
-  - An `Enemy` body on the shared `TileCollision`, at a fixed 60 Hz.
-  - Brains per `AiKind`:
-    - Hopper: squash telegraph, then a leap;
-    - Flyer: erratic drift; wing flare and a screech, then a dive;
-    - Walker: night husk; raises its arms, then lunges;
-    - Caster: hover; a 0.7 s charge glow, then a fireball.
-  - `EnemySpawner`: off-screen, weighted by biome (a tile sensor), depth, night and spawn weight; caps and despawn.
+### Done
+- **Assemblies:**
+  - `Loamlight.Combat`: `HealthState` (damage after defence, a ±15% roll, crits, i-frames, regeneration), `IDamageable`, `CombatRegistry`, `CombatEvents` and the pooled `ProjectileSystem` (gravity, piercing, explosions, attached lights);
+  - `Loamlight.AI`: `Enemy`, with 4 brains and telegraphs, and `EnemySpawner`.
+  - AI finds the player only through the registry; the assembly-graph test enforces that.
+- **`GameClock`:** hitstop and pause on gameplay time; player, enemies, projectiles and tools all scale by it.
 - **Player:**
-  - `PlayerHealth`: 100 life (hearts in the HUD), 0.67 s i-frames with flicker, contact and projectile damage, fall damage over 12 tiles, lava burns, and drowning after 7 s of breath;
-  - death overlay, then respawn at the bed or world spawn after 4 s; no item loss (softcore).
-- **Weapons** (a `WeaponUser` beside `ToolUser`, data in `items.json`):
-  - copper shortsword: fast stab;
-  - iron broadsword: wide arc, heavy hitstop and shake;
-  - wooden bow with wooden arrows (ammo, gravity);
-  - lumite glaive: long piercing thrust;
-  - ember staff: an exploding fireball that lights its path.
-- **Feel:** hitstop 50–90 ms scaled per weapon, knockback (scaled by resistance), screen shake (decaying, per hit), white hit flash, sparks, damage numbers, death puffs, and SFX for every event.
-- **Loot:** `loot.json` tables (gel, bat wing, husk cloth, ember core), plus a healing brew (glowcap + gel).
-- **Art:** Blender rigs for gloop, duskbat, hollow and cinder imp (sprite sheets with normal maps), weapon icons and projectiles.
-- **Tests:** health and i-frames, damage formula, knockback, hitstop clock, projectile tile collision, loot rolls, spawn rules. Scenario `m4`: fight each enemy with each weapon, take damage, die and respawn.
+  - `PlayerHealth`: 100 life, 0.67 s i-frames with flicker, knockback, fall damage, lava, drowning (7 s breath), regeneration, death overlay and respawn;
+  - heartroot (+20 max life, up to 200) and glowcap brew (+50, 20 s cooldown);
+  - a headlamp light, so nights are readable.
+- **Weapons** (`WeaponUser`, fed by `ToolUser`, the only consumer of Use):
+  - copper shortsword: stab;
+  - iron broadsword: overhead arc, heavy hitstop and shake;
+  - wooden bow with arrows: ammo and gravity;
+  - lumite glaive: long reach;
+  - ember staff: exploding, light-carrying fireball.
+  - Melee sweeps the blade between frames and hits each target once per swing.
+- **Enemies** (Blender rigs):
+  - gloop: hopper that squashes before it leaps;
+  - duskbat: flyer that flares its wings and screeches before diving;
+  - hollow: night walker that raises its arms before a lunge;
+  - cinder imp: Emberdeep caster whose orb charges before it fires a bolt.
+  - The spawner weighs biome (tile sensor), depth, night and weight, with caps of 3 by day, 7 at night and 6 underground.
+- **Feedback:** damage numbers (crits larger and gold), sparks, death puffs, explosions, camera shake, a red hit flash, a tint while telegraphing, and SFX for every event.
+- **Art upgrade** (the "models look better" goal):
+  - every Blender model bakes a banded top-left key light into its albedo;
+  - the miner gained gloves, collar, cuffs, boot soles, knee patches, hair, brow, a helmet ridge and pack details, plus an attack pose;
+  - trees are now 7×6 leafy crowns and pines are 5×7 drooping tiers with snow, with canopy sizes read from content;
+  - weapons have held sprites.
+- **Tests:** EditMode 192 and PlayMode 5, plus scenario m4, all green. m4 covers:
+  - each enemy fought with a different weapon, with tells and hitstop observed;
+  - brew, heartroot and fall damage;
+  - natural night spawns;
+  - i-frames, knockback, death and respawn.
+- **Scenarios:** m1–m3 and perf run peaceful, and an unknown scenario name is now an error.
+
+### Rough edges
+- At night only the headlamp and torches show enemies. The hollow is dark grey and hard to see.
+- The perf run had one 150 ms hitch, at its start (first teleport and world streaming).
+
+## M5: Biomes, structures, ore tiers, boss (plan)
+- Biomes and data-only ore tiers are already done in M3.
+- **Structures:** data templates (`structures.json`: rows plus a legend), placed after decoration with seeded attempts, an embed check and a ruin chance. Three of them: a meadow cabin, a dune shrine and an Emberdeep vault. Chest loot is rolled from loot tables when the world is created.
+- **Boss "Gloamwarden":**
+  - a lantern-headed wraith, summoned with a Wick Charm at night or underground;
+  - phase 1: volleys and telegraphed dashes;
+  - phase 2 (60%): snuffs the light, summons duskbats and adds a ring attack;
+  - phase 3 (25%): enraged, with dash chains;
+  - boss bar, and transitions with invulnerability and a roar;
+  - drops gloam shards (for a gloamblade), its lantern (a big light) and heartroots.
+- **Scenario m5:** structure chests hold loot; tier gating holds; a full boss fight through every phase.

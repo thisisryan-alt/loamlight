@@ -617,6 +617,79 @@ def pose_cinder_imp(rig, anim, i, n):
         w.rotation_euler = (0, math.radians(flap if k == 0 else flap * 0.8), 0)
 
 
+def build_warden():
+    """The Gloamwarden: a towering robed wraith whose head is a caged lantern. Long arms end in hooked claws; a chain
+    hangs from the cage. About 4.5 tiles tall. The lantern core is the brightest thing on the sprite."""
+    c = {"robe": "#2b2238", "robe_d": "#1c1626", "hem": "#3a2e4c", "cage": "#7a6a4a", "cage_d": "#4e4430", "core": "#ffd27a",
+         "core_hot": "#fff6d8", "claw": "#bfb6a8", "arm": "#3a2e4c", "chain": "#5e5a52"}
+    root = empty("warden_root")
+    body = empty("warden_body", root, (0, 0, 10 * PX))
+    # robe: a long flared cone with a tattered hem of hanging strips
+    bm = bmesh.new()
+    bmesh.ops.create_cone(bm, cap_ends=True, cap_tris=False, segments=16, radius1=13 * PX, radius2=6 * PX, depth=40 * PX)
+    for v in bm.verts:
+        v.co = Vector((v.co.x, v.co.y * 0.6, v.co.z + 20 * PX))
+    new_object("warden_robe", bm, c["robe"], body, smooth=True)
+    for k in range(7):
+        x = (-11 + k * 3.6) * PX
+        ln = (6 + (k * 5) % 7) * PX
+        box(f"warden_hem_{k}", (3 * PX, 0.5, ln), (x, -0.05, -ln / 2 + 1 * PX), c["hem"] if k % 2 else c["robe_d"], body)
+    box("warden_sash", (16 * PX, 0.56, 3 * PX), (0, -0.02, 22 * PX), c["robe_d"], body)
+    # hood and the lantern cage head
+    head = empty("warden_head", body, (1 * PX, 0, 46 * PX))
+    ellipsoid("warden_hood", (9 * PX, 0.5, 8 * PX), (-1.5 * PX, 0.06, 1 * PX), c["robe_d"], head, (16, 10))
+    for k, x in enumerate((-4.5, 4.5)):
+        box(f"warden_bar_{k}", (1.4 * PX, 0.36, 12 * PX), (x * PX, -0.3, 0), c["cage"], head)
+    for k, z in enumerate((-6, 6)):
+        box(f"warden_ring_{k}", (11 * PX, 0.38, 1.6 * PX), (0, -0.3, z * PX), c["cage_d"], head)
+    box("warden_cap", (7 * PX, 0.4, 2.4 * PX), (0, -0.28, 8 * PX), c["cage"], head)
+    box("warden_hook", (1.6 * PX, 0.2, 3 * PX), (0, -0.28, 10.5 * PX), c["cage_d"], head)
+    core = empty("warden_core", head, (0, -0.32, 0))
+    ellipsoid("warden_flame", (3.2 * PX, 0.3, 4.4 * PX), (0, 0, 0), c["core"], core, (14, 10))
+    ellipsoid("warden_flame_hot", (1.6 * PX, 0.32, 2.4 * PX), (-0.4 * PX, -0.05, 0.6 * PX), c["core_hot"], core, (10, 8))
+    # chain from the cage
+    for k in range(5):
+        box(f"warden_chain_{k}", (1.2 * PX, 0.2, 2.2 * PX), (5.5 * PX, -0.3, (-7 - k * 2.2) * PX), c["chain"], head, round_px=0)
+    # long arms with hooked claws
+    arms = {}
+    for side, y in (("near", -0.4), ("far", 0.4)):
+        sh = empty(f"warden_arm_{side}", body, (2 * PX, y, 36 * PX))
+        box(f"warden_upper_{side}", (3.4 * PX, 0.2, 14 * PX), (0, 0, -7 * PX), c["arm"] if side == "near" else c["robe_d"], sh)
+        box(f"warden_fore_{side}", (2.8 * PX, 0.2, 13 * PX), (0, 0, -19.5 * PX), c["arm"] if side == "near" else c["robe_d"], sh)
+        for k in range(3):
+            cl = cone(f"warden_claw_{side}_{k}", 0.9 * PX, 0.1 * PX, 5 * PX, ((k - 1) * 1.4 * PX, 0, -27.5 * PX), c["claw"], sh,
+                      rot=(0, math.radians(165 + (k - 1) * 12), 0), segments=6)
+        arms[side] = sh
+    return {"root": root, "body": body, "head": head, "core": core, "arms": arms}
+
+
+def pose_warden(rig, anim, i, n):
+    body, head, core, arms = rig["body"], rig["head"], rig["core"], rig["arms"]
+    body.location = (0, 0, 10 * PX)
+    body.rotation_euler = (0, 0, 0)
+    head.rotation_euler = (0, 0, 0)
+    core.scale = (1, 1, 1)
+    if anim == "float":
+        body.location = (0, 0, (10 + [0, 1, 2, 1][i]) * PX)
+        swing(arms["near"], [18, 22, 26, 22][i])
+        swing(arms["far"], [-8, -4, 0, -4][i])
+        head.rotation_euler = (0, math.radians([0, 2, 0, -2][i]), 0)
+    elif anim == "flare":    # telegraph: arms flung wide, the lantern swells
+        swing(arms["near"], 120 + 10 * i)
+        swing(arms["far"], -60 - 10 * i)
+        s = 1.35 + 0.2 * i
+        core.scale = (s, 1, s)
+        head.rotation_euler = (0, math.radians(-8), 0)
+    elif anim == "dash":     # leaning hard into the charge, claws forward
+        body.rotation_euler = (0, math.radians(38), 0)
+        swing(arms["near"], 95)
+        swing(arms["far"], 80)
+    else:                    # cast: one arm raised, the other pointing
+        swing(arms["near"], [60, 100, 140][i])
+        swing(arms["far"], 165)
+        core.scale = (1.2, 1, 1.2)
+
+
 # --------------------------------------------------------------------------------------------- sheets
 SHEETS = {
     # frame_px: square frame size; pivot_px: pivot from the bottom-left of a frame, in pixels
@@ -645,9 +718,14 @@ SHEETS = {
         "frame_px": 48, "pivot_px": (24, 3), "outline": True, "meshType": "Tight",
         "animations": [("hover", 4, 8, True), ("cast", 3, 5, False)],
     },
+    "warden": {
+        "frame_px": 112, "pivot_px": (56, 4), "outline": True, "meshType": "Tight",
+        "animations": [("float", 4, 6, True), ("flare", 2, 6, True), ("dash", 1, 1, False), ("cast", 3, 6, False)],
+    },
 }
 
 BUILDERS = {
+    "warden": (build_warden, pose_warden),
     "gloop": (build_gloop, pose_gloop), "duskbat": (build_duskbat, pose_duskbat),
     "hollow": (build_hollow, pose_hollow), "cinder_imp": (build_cinder_imp, pose_cinder_imp),
 }

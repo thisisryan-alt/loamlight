@@ -62,8 +62,8 @@ namespace Loamlight.Lighting
             new Key(0.30f, "#3f7fd6", "#9fd0f5", new Color(1f, 0.98f, 0.93f), 1.0f, 0f),
             new Key(0.52f, "#4a7cc8", "#b6d2ec", new Color(1f, 0.94f, 0.84f), 0.95f, 0f),
             new Key(0.60f, "#3b3f7c", "#f0895a", new Color(1f, 0.68f, 0.48f), 0.5f, 0.3f),
-            new Key(0.67f, "#0b1026", "#1b2547", new Color(0.5f, 0.6f, 0.95f), 0.17f, 1f),
-            new Key(0.93f, "#0b1026", "#1d284d", new Color(0.5f, 0.6f, 0.95f), 0.17f, 1f),
+            new Key(0.67f, "#0b1026", "#1b2547", new Color(0.5f, 0.6f, 0.95f), 0.22f, 1f),
+            new Key(0.93f, "#0b1026", "#1d284d", new Color(0.5f, 0.6f, 0.95f), 0.22f, 1f),
             new Key(1.00f, "#56689e", "#f2a27a", new Color(1f, 0.82f, 0.68f), 0.55f, 0.35f),
         };
 

@@ -211,6 +211,9 @@ namespace Loamlight.Game
             Simulation = new GameObject("Simulation").AddComponent<SimulationRunner>();
             Simulation.Init(World, Render.TileProps, Db, cam);
             Simulation.Reacted += n => Sfx.Play("sizzle", cam.transform.position, Mathf.Clamp01(0.25f + n * 0.05f));
+            // the miner's headlamp: a small warm light that matters at night and underground
+            var lamp = LightMapSystem.CreatePointLight("Headlamp", playerGo.transform, new Color(1f, 0.86f, 0.62f), 6.5f, 0.75f);
+            lamp.transform.localPosition = new Vector3(0.4f, 2.1f, 0f);
             DayNight = new GameObject("Day Night").AddComponent<DayNightCycle>();
             DayNight.Light = Light;
             if (!string.IsNullOrEmpty(GameSession.LoadPath)) GameState.RestoreTime(this, Meta.gameJson);

@@ -216,11 +216,25 @@ def obj_pine_top():
     B("trunk_top", 2.3, 0.0, 2.7, 0.9, "#5a3d24", depth=0.4, y=0.3)
 
 
+def obj_warden_lantern():
+    """The Gloamwarden's lantern, set on a post: a caged flame that lights a wide area."""
+    B("post", 0.42, 0.0, 0.58, 1.1, "#3a2e2a", depth=0.3)
+    B("foot", 0.2, 0.0, 0.8, 0.12, "#2a2220", depth=0.4)
+    B("cage_l", 0.18, 1.1, 0.26, 1.85, "#7a6a4a", depth=0.36)
+    B("cage_r", 0.74, 1.1, 0.82, 1.85, "#7a6a4a", depth=0.36)
+    B("cage_top", 0.12, 1.82, 0.88, 1.94, "#4e4430", depth=0.42)
+    B("cage_bottom", 0.12, 1.06, 0.88, 1.16, "#4e4430", depth=0.42)
+    core = sphere("lantern_flame", 0.2, (0.5, -0.05, 1.47), "#ffd27a", subdiv=2, scale=(1, 1, 1.35))
+    core.data.materials[0] = glow_material("#ffd27a")
+    hot = sphere("lantern_hot", 0.1, (0.47, -0.16, 1.5), "#fff6d8", subdiv=1)
+    hot.data.materials[0] = glow_material("#fff6d8")
+
+
 OBJECTS = {
     "workbench": (2, 1, obj_workbench), "furnace": (3, 2, obj_furnace), "anvil": (2, 1, obj_anvil),
     "table": (3, 2, obj_table), "chair": (1, 2, obj_chair), "chest": (2, 2, obj_chest),
     "door": (1, 3, lambda: obj_door(False)), "door_open": (1, 3, lambda: obj_door(True)),
-    "bed": (4, 2, obj_bed), "tree_top": (7, 6, obj_tree_top), "pine_top": (5, 7, obj_pine_top),
+    "bed": (4, 2, obj_bed), "tree_top": (7, 6, obj_tree_top), "pine_top": (5, 7, obj_pine_top), "warden_lantern": (1, 2, obj_warden_lantern),
 }
 
 # ------------------------------------------------------------------------------------------------- icons
@@ -398,6 +412,31 @@ def item_heartroot():
     sphere("shine", 0.05, (-0.16, -0.18, 0.16), "#ffd0d8", subdiv=1)
 
 
+def item_charm():
+    bm = bmesh.new()
+    bmesh.ops.create_cone(bm, cap_ends=False, cap_tris=False, segments=16, radius1=0.34, radius2=0.34, depth=0.1)
+    o = rs.new_object("ring", bm, "#3fd6c0", None)
+    o.rotation_euler = (math.radians(90), 0, 0)
+    o.location = (0, 0, -0.08)
+    rs.box("wick", (0.06, 0.08, 0.36), (0, -0.02, 0.0), "#e8e0c8", round_px=0)
+    f = sphere("charm_flame", 0.1, (0, -0.06, 0.24), "#ffd27a", subdiv=1, scale=(1, 1, 1.5))
+    f.data.materials[0] = glow_material("#ffd27a")
+    for k, x in enumerate((-0.22, 0.22)):
+        rs.box(f"tassel{k}", (0.05, 0.05, 0.22), (x, -0.02, -0.38), "#4a4f5a", round_px=0)
+
+
+def item_shard():
+    bm = bmesh.new()
+    bmesh.ops.create_cone(bm, cap_ends=True, cap_tris=False, segments=5, radius1=0.2, radius2=0.0, depth=0.8)
+    o = rs.new_object("shard", bm, "#5a3a8a", None)
+    o.rotation_euler = (0, math.radians(25), 0)
+    bm = bmesh.new()
+    bmesh.ops.create_cone(bm, cap_ends=True, cap_tris=False, segments=5, radius1=0.12, radius2=0.0, depth=0.45)
+    o2 = rs.new_object("shard2", bm, "#7a5ab0", None)
+    o2.rotation_euler = (0, math.radians(-30), 0)
+    o2.location = (-0.18, -0.05, -0.15)
+
+
 ICONS = {
     "copper_pickaxe": lambda: icon_tool("pickaxe", "copper"), "iron_pickaxe": lambda: icon_tool("pickaxe", "iron"),
     "copper_axe": lambda: icon_tool("axe", "copper"), "iron_axe": lambda: icon_tool("axe", "iron"),
@@ -408,7 +447,7 @@ ICONS = {
     "copper_shortsword": lambda: item_sword("copper", 0.82, 0.12, 0.26), "iron_broadsword": lambda: item_sword("iron", 1.0, 0.18, 0.4),
     "lumite_glaive": lambda: item_spear("lumite"), "ember_staff": item_staff, "wooden_bow": item_bow, "wooden_arrow": item_arrow,
     "gloop_gel": item_gel, "bat_wing": item_wing, "husk_cloth": item_cloth, "ember_core": item_core, "glowcap_brew": item_brew,
-    "heartroot": item_heartroot,
+    "heartroot": item_heartroot, "wick_charm": item_charm, "gloam_shard": item_shard,
 }
 
 
